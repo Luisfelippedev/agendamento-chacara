@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { UserAdmin } from "./UserAdmin";
+import { User } from "./User";
 import { DayOfSchedule } from "./DayOfSchedule";
 
 export interface Address {
@@ -29,11 +29,11 @@ export class CountryHouse {
   @Column({ type: "jsonb" }) // JSONB para armazenar o endereço como um objeto JSON no banco de dados
   address: Address;
 
-  @OneToOne(() => UserAdmin, (userAdmin) => userAdmin.countryHouse)
+  @OneToOne(() => User, (user) => user.countryHouse)
   @JoinColumn({ name: "user-admin_id" }) // Chave Estrangeira
-  owner: UserAdmin;
+  owner: User;
 
-  @OneToMany(()=>DayOfSchedule, dayOfSchedule => dayOfSchedule.countryHouse)
+  @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.countryHouse)
   @JoinColumn({ name: "day-of-schedule_id" }) // Chave estrangeira
-  daysSchedule: DayOfSchedule[]
+  daysSchedule: DayOfSchedule[];
 }

@@ -7,19 +7,19 @@ import {
 } from "typeorm";
 import { CountryHouse } from "./CountryHouse";
 
-@Entity("user-admin")
-export class UserAdmin {
+@Entity("user")
+export class User {
   @PrimaryGeneratedColumn() // Chave Primária
   id: number;
 
-  @Column()
-  cpf: number;
+  @Column({ type: "text" })
+  cpf: string;
 
   @Column({ type: "text" })
   name: string;
 
-  @Column()
-  phoneNumber: number;
+  @Column({ type: "text" })
+  phoneNumber: string;
 
   @OneToOne(() => CountryHouse, (countryHouse) => countryHouse.owner)
   @JoinColumn({ name: "country-house_id" }) // Chave estrangeira

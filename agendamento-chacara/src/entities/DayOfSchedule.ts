@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { CountryHouse } from "./CountryHouse";
 import { Scheduling } from "./Scheduling";
 
@@ -19,11 +25,13 @@ export class DayOfSchedule {
   @Column({ type: "text" })
   status: string;
 
-  @ManyToOne(()=> CountryHouse, countryHouse => countryHouse.daysSchedule)
+  @ManyToOne(() => CountryHouse, (countryHouse) => countryHouse.daysSchedule)
   @JoinColumn({ name: "country-house_id" }) // Chave estrangeira
-  countryHouse: CountryHouse
+  countryHouse: CountryHouse;
 
-  @ManyToOne(()=>Scheduling, scheduling => scheduling.dayOfSchedule, {nullable: true})
+  @ManyToOne(() => Scheduling, (scheduling) => scheduling.dayOfSchedule, {
+    nullable: true,
+  })
   @JoinColumn({ name: "scheduling_id" }) // Chave estrangeira
-  scheduling: Scheduling
+  scheduling: Scheduling;
 }
