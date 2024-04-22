@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { getUserController } from "../controllers/userControllers/getUserController";
+import { GetUserController } from "../controllers/userControllers/GetUserController";
 
 const userRoutes = Router();
 
-userRoutes.post("/getUserByCpf", new getUserController().getByCpf);
+userRoutes.get("/", (req, res) => {
+  res.json({ message: "teste" });
+});
+
+userRoutes.get("/getUserByCpf/:cpf", new GetUserController().getByCpf)
 
 export default userRoutes;
