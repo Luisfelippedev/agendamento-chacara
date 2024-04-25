@@ -10,8 +10,8 @@ import { Scheduling } from "./Scheduling";
 
 @Entity("day-of-schedule")
 export class DayOfSchedule {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: "text" })
   entryTime: string;
