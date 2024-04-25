@@ -24,7 +24,7 @@ export class CountryHouseService {
     if (!user) {
       throw new NotFoundError("User Not Found");
     }
-    if (foreignKeyUser.countryHouse.id) {
+    if (foreignKeyUser.countryHouse !== null) {
       throw new BadRequestError("The user already has a country house");
     }
 
