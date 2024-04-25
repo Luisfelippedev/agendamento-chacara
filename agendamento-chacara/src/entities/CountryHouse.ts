@@ -17,8 +17,8 @@ export interface Address {
 
 @Entity("country-house")
 export class CountryHouse {
-  @PrimaryGeneratedColumn() // Chave Primária
-  id: number;
+  @PrimaryGeneratedColumn('uuid') // Chave Primária
+  id: string;
 
   @Column({ type: "text" })
   name: string;
@@ -29,7 +29,7 @@ export class CountryHouse {
   @Column({ type: "jsonb" }) // JSONB para armazenar o endereço como um objeto JSON no banco de dados
   address: Address;
 
-  @OneToOne(() => User, (user) => user.countryHouse)
+  @OneToOne(() => User, (user) => user.countryHouse, {nullable: true})
   @JoinColumn({ name: "user-admin_id" }) // Chave Estrangeira
   owner: User;
 

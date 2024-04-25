@@ -14,4 +14,12 @@ export class NotFoundError extends ApiError {
   }
 }
 
+
+export class BadRequestError extends ApiError {
+  constructor(message: string) {
+    super(message, HttpStatusCode.BAD_REQUEST);
+  }
+}
+
   
+

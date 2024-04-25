@@ -1,12 +1,20 @@
 import { Router } from "express";
-import { GetUserController } from "../controllers/userControllers/GetUserController";
+import { UserController } from "../controllers/UserController";
+import { CountryHouseController } from "../controllers/CountryHouseController";
 
 const userRoutes = Router();
 
 userRoutes.get("/", (req, res) => {
-  res.json({ message: "teste" });
+  res.json({ message: "test" });
 });
 
-userRoutes.get("/getUserByCpf/:cpf", new GetUserController().getByCpf)
+userRoutes.get("/getUserById/:id", new UserController().getById);
+
+userRoutes.post("/create/user", new UserController().createUser);
+
+userRoutes.post(
+  "/create/countryHouse/:userId",
+  new CountryHouseController().createCountryHouse
+);
 
 export default userRoutes;

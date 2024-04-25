@@ -15,9 +15,9 @@ AppDataSource.initialize()
     // Middleware error
     app.use(errorMiddleware);
     return app.listen(process.env.APP_PORT, () => {
-      console.log(`Express rodando na porta ${process.env.APP_PORT}...`);
+      console.log(`App running in port ${process.env.APP_PORT}...`);
     });
   })
   .catch((err) => {
-    console.log("Ocorreu um erro ao se conectar com o banco: " + err);
+    console.log(`Fixed error when connecting to the bank: ${err}`);
   });

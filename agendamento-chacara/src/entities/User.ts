@@ -9,11 +9,14 @@ import { CountryHouse } from "./CountryHouse";
 
 @Entity("user")
 export class User {
-  @PrimaryGeneratedColumn() // Chave Primária
-  id: number;
+  @PrimaryGeneratedColumn('uuid') // Chave Primária
+  id: string;
 
-  @Column({ type: "text" })
+  @Column({ type: "text", unique: true })
   cpf: string;
+
+  @Column({ type: "text"})
+  password: string;
 
   @Column({ type: "text" })
   name: string;
