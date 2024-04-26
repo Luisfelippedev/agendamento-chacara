@@ -22,10 +22,10 @@ export class CountryHouseService {
     const foreignKeyUser = await this.userRepository.findUserForeignKey(userId);
 
     if (!user) {
-      throw new NotFoundError("User Not Found");
+      throw new NotFoundError("User Not Found"); // Error middleware usage example
     }
     if (foreignKeyUser.countryHouse !== null) {
-      throw new BadRequestError("The user already has a country house");
+      throw new BadRequestError("The user already has a country house"); // Error middleware usage example
     }
 
     const newCountryHouse =

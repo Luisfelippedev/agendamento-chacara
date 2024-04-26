@@ -3,6 +3,10 @@ import { UserRepository } from "../repositories/UserRepository";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+type IPayLoad = {
+  id: string;
+};
+
 export class LoginService {
   private userRepository: UserRepository;
 
@@ -24,10 +28,40 @@ export class LoginService {
       throw new UnauthorizedError("Unauthenticated user");
     }
 
-    const token = jwt.sign({ id: userExists.id }, process.env.JWT_PASS ?? "");
+    const token = jwt.sign({ id: userExists.id }, process.env.JWT_PASS ?? "", {
+      expiresIn: "8h",
+    });
 
     const { password: _, ...user } = userExists;
 
     return { user, token: token };
   }
+
+  public getProfile = async (authorization: string | undefined) => {
+    if (!authorization) {
+      throw new UnauthorizedError("Unauthenticated user");
+    }
+
+    const token = authorization.split(" ")[1];
+
+    try {
+      const { id } = jwt.verify(token, process.env.JWT_PASS ?? "") as IPayLoad;
+
+      if (!id) {
+          throw new UnauthorizedError("Unauthenticated user");
+      }
+
+      const userExists = await this.userRepository.findUserById(id);
+
+      if (!userExists) {
+          throw new UnauthorizedError("Unauthenticated user");
+      }
+
+      const { password, ...user } = userExists;
+
+      return user;
+  } catch (error) {
+      throw new UnauthorizedError("Invalid token");
+  }
+  };
 }

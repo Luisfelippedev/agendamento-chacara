@@ -12,8 +12,11 @@ export class LoginController {
     const { cpf, password } = req.body;
 
     const user = await this.loginService.login(cpf, password);
-    console.log(user);
 
     res.status(200).json(user);
   };
-}
+
+  public getProfile (req: Request, res: Response){
+    res.json(req.user);
+  };
+} 
