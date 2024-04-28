@@ -27,6 +27,13 @@ export class UnauthorizedError extends ApiError {
   }
 }
 
+
+export class ConflictEror extends ApiError {
+  constructor(message: string) {
+    super(message, HttpStatusCode.CONFLICT);
+  }
+}
+
   
   
 

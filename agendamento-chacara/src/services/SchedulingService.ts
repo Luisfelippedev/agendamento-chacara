@@ -1,5 +1,5 @@
 import { DayOfSchedule } from "../entities/DayOfSchedule";
-import { NotFoundError } from "../helpers/api-errors";
+import { ConflictEror, NotFoundError } from "../helpers/api-errors";
 import { DayOfScheduleRepository } from "../repositories/DayOfScheduleRepository";
 import { SchedulingRepository } from "../repositories/SchedulingRepository";
 
@@ -21,6 +21,17 @@ export class SchedulingService {
     if (!dayOfSchedule) {
       throw new NotFoundError("Day of schedule not found");
     }
+
+    const foreignKey = await this.dayOfSchedule.findForeignKey(dayOfScheduleId);
+
+    foreignKey.scheduling.forEach((item) => {
+      if (item.phoneNumber == phoneNumber) {
+        throw new ConflictEror(
+          "There is already an appointment with the same phone number for the day"
+        );
+      }
+    });
+
     const scheduling = await this.schedulingRepository.create(
       clientName,
       phoneNumber,
@@ -31,14 +42,10 @@ export class SchedulingService {
   }
 
   public async delete(id: string) {
-
-    const scheduling = await this.schedulingRepository.findById(id)
-    if(!scheduling){
-        throw new NotFoundError('scheduling not found')
+    const scheduling = await this.schedulingRepository.findById(id);
+    if (!scheduling) {
+      throw new NotFoundError("scheduling not found");
     }
     await this.schedulingRepository.delete(id);
-
-
-
   }
 }
