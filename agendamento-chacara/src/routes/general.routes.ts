@@ -26,4 +26,6 @@ generalRoutes.post("/create/scheduling/:dayOfScheduleId", new SchedulingControll
 
 generalRoutes.delete("/delete/scheduling/:schedulingId",new SchedulingController().delete)
 
+generalRoutes.get("/get/all/scheduling", new SchedulingController().getAll)
+
 export default generalRoutes
