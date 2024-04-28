@@ -24,7 +24,7 @@ export class User {
   @Column({ type: "text" })
   phoneNumber: string;
 
-  @OneToOne(() => CountryHouse, (countryHouse) => countryHouse.owner)
+  @OneToOne(() => CountryHouse, (countryHouse) => countryHouse.owner, {nullable: true})
   @JoinColumn({ name: "country-house_id" }) // Chave estrangeira
   countryHouse: CountryHouse;
 }

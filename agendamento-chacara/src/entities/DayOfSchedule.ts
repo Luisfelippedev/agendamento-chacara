@@ -11,8 +11,8 @@ import { CountryHouse } from "./CountryHouse";
 import { Scheduling } from "./Scheduling";
 
 export enum Status {
-  Free = 'free',
-  Occupied = 'ocupado', // ou 'ocupado', conforme sua convenção de escrita
+  Free = "free",
+  Occupied = "ocupado", // ou 'ocupado', conforme sua convenção de escrita
 }
 
 @Entity("day-of-schedule")
@@ -30,23 +30,20 @@ export class DayOfSchedule {
   date: string;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: Status,
     default: Status.Free, // Definir o valor padrão como 'free'
   })
   status: Status;
 
-  @ManyToOne(() => CountryHouse, (countryHouse) => countryHouse.daysSchedule)
+  @ManyToOne(() => CountryHouse, (countryHouse) => countryHouse.daysSchedule, {
+    cascade: true,
+  })
   @JoinColumn({ name: "country-house_id" }) // Chave estrangeira
   countryHouse: CountryHouse;
 
   @ManyToMany(() => Scheduling, (scheduling) => scheduling.dayOfSchedule, {
     nullable: true,
-  })
-  @JoinTable({
-    name: "day-of-schedule_scheduling",
-    joinColumn: { name: "scheduling_id", referencedColumnName: "id" }, // Aqui
-    inverseJoinColumn: { name: "dayOfSchedule_id", referencedColumnName: "id" },
   })
   scheduling: Scheduling[];
 }
