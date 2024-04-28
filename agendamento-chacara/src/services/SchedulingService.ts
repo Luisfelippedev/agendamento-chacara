@@ -1,4 +1,3 @@
-import { DayOfSchedule } from "../entities/DayOfSchedule";
 import { ConflictEror, NotFoundError } from "../helpers/api-errors";
 import { DayOfScheduleRepository } from "../repositories/DayOfScheduleRepository";
 import { SchedulingRepository } from "../repositories/SchedulingRepository";
@@ -10,6 +9,11 @@ export class SchedulingService {
   constructor() {
     this.schedulingRepository = new SchedulingRepository();
     this.dayOfSchedule = new DayOfScheduleRepository();
+  }
+
+  public async findAll() {
+    const allScheduling = await this.schedulingRepository.findAll();
+    return allScheduling;
   }
 
   public async create(
@@ -43,9 +47,10 @@ export class SchedulingService {
 
   public async delete(id: string) {
     const scheduling = await this.schedulingRepository.findById(id);
+    console.log(scheduling);
     if (!scheduling) {
       throw new NotFoundError("scheduling not found");
     }
-    await this.schedulingRepository.delete(id);
+    await this.schedulingRepository.delete(scheduling);
   }
 }

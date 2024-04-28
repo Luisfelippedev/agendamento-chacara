@@ -28,4 +28,10 @@ export class SchedulingController {
 
     res.status(200).json({ message: "scheduling deleted sucessfully!" });
   };
+
+  public getAll = async (req: Request, res: Response) => {
+    const allScheduling = await this.schedulingService.findAll();
+
+    res.status(200).json(allScheduling);
+  };
 }

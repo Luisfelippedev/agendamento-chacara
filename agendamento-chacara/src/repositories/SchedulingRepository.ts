@@ -22,34 +22,26 @@ export class SchedulingRepository {
   }
 
   public async findAll() {
-    const daysOfSchedule = await this.schedulingRepository.find();
-    return daysOfSchedule;
+    const allScheduling = await this.schedulingRepository.find({
+      relations: ['dayOfSchedule'],
+    });
+    return allScheduling;
   }
   public async findByPhoneNumber(phoneNumber: string) {
-    const daysOfSchedule = await this.schedulingRepository.findOneBy({
+    const scheduling = await this.schedulingRepository.findOneBy({
       phoneNumber,
     });
-    return daysOfSchedule;
+    return scheduling;
   }
 
   public async findById(id: string) {
-    const daysOfSchedule = await this.schedulingRepository.findOneBy({
+    const scheduling = await this.schedulingRepository.findOneBy({
       id: id,
     });
-    return daysOfSchedule;
+    return scheduling;
   }
 
-  public async delete(id: string) {
-    const scheduling = await this.schedulingRepository.findOneBy({ id: id });
-
-    if (!scheduling) {
-      throw new NotFoundError("Scheduling not found");
-    }
-
-    scheduling.dayOfSchedule = [];
-
-    await this.schedulingRepository.save(scheduling);
-
-    await this.schedulingRepository.delete(scheduling); // error
+  public async delete(scheduling: Scheduling) {
+    await this.schedulingRepository.delete(scheduling); 
   }
 }
