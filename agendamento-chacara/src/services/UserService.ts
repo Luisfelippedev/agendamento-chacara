@@ -1,10 +1,7 @@
+import bcrypt from "bcrypt";
 import { BadRequestError, NotFoundError } from "../helpers/api-errors";
 import { UserRepository } from "../repositories/UserRepository";
-import bcrypt from "bcrypt";
-
-const removeNonNumerics = (str: string) => {
-  return str.replace(/[^\d]/g, "");
-};
+import { removeNonNumerics } from "../utils/remove-non-numerics";
 
 export class UserService {
   private userRepository: UserRepository;

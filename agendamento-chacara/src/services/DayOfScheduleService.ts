@@ -1,24 +1,8 @@
-import { captureRejectionSymbol } from "events";
 import { BadRequestError, NotFoundError } from "../helpers/api-errors";
 import { CountryHouseRepository } from "../repositories/CountryHouseRepository";
 import { DayOfScheduleRepository } from "../repositories/DayOfScheduleRepository";
 import { Status } from "../entities/DayOfSchedule";
-
-export const dateExist = (date: string) => {
-  const day = Number(date.split("/")[0]);
-
-  if (day > 31 || day <= 0) {
-    return false;
-  }
-
-  const month = Number(date.split("/")[1]);
-
-  if (month > 12 || month <= 0) {
-    return false;
-  }
-
-  return true;
-};
+import { dateExist } from "../utils/valid-date-exists";
 
 export class DayOfScheduleService {
   private dayOfScheduleRepository: DayOfScheduleRepository;
