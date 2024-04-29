@@ -1,0 +1,19 @@
+@import "../../themes//theme.scss";
+
+.container{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    padding: 1%;
+    box-sizing: border-box;
+    gap: 10px;
+    .logoImage{
+        width: 4rem;
+        height: 4rem;
+    }
+    .logoText{
+        color: $primary-text-color;
+        font-size: 1rem;
+    }
+}

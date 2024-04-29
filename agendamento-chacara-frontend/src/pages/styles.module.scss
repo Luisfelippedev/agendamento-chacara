@@ -1,0 +1,10 @@
+@import "../themes/theme.scss";
+
+.background{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../public/chacara-image.jpg");
+    //background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.8)), url("../../public/chacara-image.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    flex: 1;
+}
