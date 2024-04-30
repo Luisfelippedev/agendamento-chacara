@@ -7,7 +7,6 @@ import { uuid } from "uuidv4";
 import { User } from "@/app/models/User";
 import CryptoJS from "crypto-js";
 import { UserRepository } from "@/repositories/UserRespository";
-import jwt from "jsonwebtoken";
 
 export class UserService {
   private userRepository: UserRepository;
@@ -51,9 +50,6 @@ export class UserService {
       throw new Error("User not found");
     }
     const { id } = userExists;
-    const token = jwt.sign({ id: id }, process.env.JWT_PASS ?? "", {
-      expiresIn: "8h",
-    });
-    return token;
+    return userExists
   }
 }
