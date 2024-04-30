@@ -23,14 +23,11 @@ export class CountryHouse {
   @Column({ type: "text" })
   name: string;
 
-  @Column({ type: "text" })
-  status: string;
-
   @Column({ type: "jsonb" }) // JSONB para armazenar o endereço como um objeto JSON no banco de dados
   address: Address;
 
   @OneToOne(() => User, (user) => user.countryHouse)
-  @JoinColumn({ name: "user-admin_id" }) // Chave Estrangeira
+  @JoinColumn({ name: "user_id" }) // Chave Estrangeira
   owner: User;
 
   @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.countryHouse, {nullable: true})
