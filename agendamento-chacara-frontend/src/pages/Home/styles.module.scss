@@ -11,7 +11,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: 1%;
     .midContainer{
         display: flex;
         flex-direction: column;
@@ -80,43 +79,122 @@
                 font-size: 1.2rem;
             }
         }
+     
     }
 
-    .lastContainer{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        flex: 1.5;
-        width: 98%;
-        border-radius: 1rem;
-        background: linear-gradient(to right, rgba(252, 252, 253, 0.9) 0%, rgba(252, 252, 253, 0.9) 85%);
-        .selectBox{
+   .footerContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    width: 95%;
+    margin-bottom: 1%;
+        .infoBox{
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            padding: 0 15% 0 15%;
-            width: 100%;
-            border-bottom: 1px solid rgb(34, 34, 34, 0.3);
-            flex: 1;
-            
-            .itemSelect{
-                height: 1.6rem;
-                border-bottom: 1px solid black;
-                padding: 5% 0 15% 0;
-                .itemSelectText{
-                    font-size: 1rem;
-                    color: black;
-
+            flex-direction: column;
+            gap: 0.6rem;
+            .textFooter{
+                gap: 10px;
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                justify-content: start;
+                color: $primary-text-color;
+                .iconFooter{
+                    height: 30px;
+                    width: 30px;
                 }
             }
-            
-
         }
-        .infoBox{
-            flex: 5;
+        .mapBox{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+
+            $jump-duration: 1s; // Duração do salto
+            $jump-delay: 2s; // Intervalo entre os saltos
+            @keyframes jumpAnimation { 
+                0%, 100% {
+                    transform: translateY(0); // Define a posição inicial e final
+                } 
+                50% { transform: translateY(-6px); // Define a posição máxima do salto
+                }
+            }
+
+            .iconMap{
+                height: 50px;
+                width: 50px;
+                animation: jumpAnimation $jump-duration ease-in-out infinite; // Aplica a animação
+                animation-delay: $jump-delay; // Define o intervalo entre os saltos
+                cursor: pointer;
+            }
+        }
+
+        @media(min-width: 768px){
+            .infoBox{
+                .textFooter{
+                    font-size: 1.2rem;
+                }
+            }
+        }
+        @media(min-width:1440px){
+            .infoBox{
+                .textFooter{
+                    font-size: 1.5rem;
+                }
+            }
+            .mapBox{
+                .iconMap{
+                    height: 60px;
+                    width: 60px;
+                }
+            }
+        }
+   }
+
+   .modalBackground {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+        .modalContent {
+        background-color: white;
+        border-radius: 10px;
+        width: 90%;
+        height: 60%;
+        padding: 1%;
+            .closeIcon{
+                position: fixed;
+                right: 0;
+                margin-right: 5px;
+                z-index: 9999999999;
+                cursor: pointer;
+            }
+        @media(min-width: 1440px){
+            height: 70%;
+            width: 70%;
+        
+        }
+        @media(min-width: 768px){
+            .closeIcon{
+                margin-right: 8px;
+            }
+        }
+        @media(min-width: 1024px){
+            .closeIcon{
+                margin-right: 10px;
+            }
+        }
+        @media(min-width: 1440px){
+            .closeIcon{
+                margin-right: 20px;
+            }
         }
     }
+  }
 
 
 }
