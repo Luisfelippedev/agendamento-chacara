@@ -23,10 +23,10 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
-  const handleClickButton = async () => {
-    const userService = new UserService();
-    userService.login("123456789", "123abc");
-  };
+  // const handleClickButton = async () => {
+  //   const userService = new UserService();
+  //   userService.login("123456789", "123abc");
+  // };
 
   return (
     <div className={styles.background}>
@@ -35,7 +35,7 @@ export const HomePage = () => {
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
         <Button
-          onClick={handleClickButton}
+          // onClick={handleClickButton}
           className={styles.button}
           variant="contained"
           href="#"
@@ -90,7 +90,7 @@ export const HomePage = () => {
               size={30}
               color="red"
             />
-            {/* <Map></Map> */}
+            <Map />
           </motion.div>
         </div>
       )}

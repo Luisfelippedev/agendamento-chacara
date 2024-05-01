@@ -1,14 +1,25 @@
 import { firestore } from "@/database/firestore";
-import { collection, doc, getDocs, query, setDoc, where, getDoc } from "firebase/firestore";
-import { uuid } from "uuidv4";
-import {User} from "../app/models/User"
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+  getDoc,
+} from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid"
+import { User } from "../app/models/User";
 
 export class UserRepository {
   constructor() {}
 
   public async findById(id: string) {
     let user;
-    const newQuery = query(collection(firestore, "User"), where("id", "==", id));
+    const newQuery = query(
+      collection(firestore, "User"),
+      where("id", "==", id)
+    );
     const querySnapshot = await getDocs(newQuery);
     querySnapshot.forEach((doc) => {
       const data = doc.data();
@@ -18,8 +29,11 @@ export class UserRepository {
     return user;
   }
   public async findByCpf(cpf: string): Promise<User | null> {
-    let user: User | null = null; 
-    const newQuery = query(collection(firestore, "User"), where("cpf", "==", cpf));
+    let user: User | null = null;
+    const newQuery = query(
+      collection(firestore, "User"),
+      where("cpf", "==", cpf)
+    );
     const querySnapshot = await getDocs(newQuery);
     querySnapshot.forEach((doc) => {
       const data = doc.data();
@@ -28,15 +42,15 @@ export class UserRepository {
         cpf: data.cpf,
         fullName: data.fullName,
         password: data.password,
-        phoneNumber: data.phoneNumber
+        phoneNumber: data.phoneNumber,
       };
     });
-    return user; 
+    return user;
   }
 
   public async createUser(user: User) {
     const { cpf, fullName, password, phoneNumber } = user;
-    const id = uuid();
+    const id = uuidv4();
     await setDoc(doc(firestore, "User", id), {
       id,
       fullName,
@@ -46,17 +60,16 @@ export class UserRepository {
     });
   }
   public async getAllUsers() {
-
     const collectionRef = collection(firestore, "User");
-  
+
     const querySnapshot = await getDocs(collectionRef);
     const users = [];
-  
+
     for (const document of querySnapshot.docs) {
       const user = document.data();
       users.push(user);
     }
-  
+
     return users;
   }
 }
