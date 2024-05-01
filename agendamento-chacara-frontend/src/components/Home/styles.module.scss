@@ -85,7 +85,7 @@
    .footerContainer{
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: flex-start;
     width: 95%;
     margin-bottom: 1%;
         .infoBox{
@@ -97,7 +97,7 @@
                 display: flex;
                 align-items: center;
                 flex-direction: row;
-                justify-content: start;
+                justify-content: flex-start;
                 color: $primary-text-color;
                 .iconFooter{
                     height: 30px;
