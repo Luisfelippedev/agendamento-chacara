@@ -1,6 +1,3 @@
-import { firestore } from "@/database/firestore";
-import { doc, setDoc } from "firebase/firestore";
-import { uuid } from "uuidv4";
 import { User } from "@/app/models/User";
 import CryptoJS from "crypto-js";
 import { UserRepository } from "@/repositories/UserRespository";
@@ -63,7 +60,28 @@ export class UserService {
       .token;
     const expirationTime = new Date();
     expirationTime.setTime(expirationTime.getTime() + 24 * 60 * 60 * 1000);
-    setCookie("token", token, { expires: expirationTime, secure: true, sameSite: "lax" });
-    
+    // Seto o token para o cookie, e quando eu precisar do id do user que está logado, posso pegar no payload do token por exemplo
+    setCookie("token", token, {
+      expires: expirationTime,
+      secure: true,
+      sameSite: "lax",
+    });
   }
+
+  public async getProfile(token: string) {
+    try {
+      const response = await fetch("http://localhost:3000/api/getprofile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: token }),
+      });
+      const userExists = await response.json();
+      return userExists;
+    } catch (error) {
+      throw new Error("User unauthenticated");
+    }
+  }
+
 }
