@@ -21,6 +21,7 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
+
   return (
     <div className={styles.background}>
       <NavBar />
