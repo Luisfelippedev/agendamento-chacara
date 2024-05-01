@@ -9,6 +9,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Map } from "@/components/Map/Map";
 import { IoCloseCircle } from "react-icons/io5";
+import { User } from "@/app/models/User";
+import { UserService } from "@/services/UserService";
 
 export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -21,13 +23,23 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
+  const handleClickButton = async () => {
+    const userService = new UserService();
+    userService.login("123456789", "123abc");
+  };
+
   return (
     <div className={styles.background}>
       <NavBar />
       <div className={styles.midContainer}>
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
-        <Button className={styles.button} variant="contained" href="#">
+        <Button
+          onClick={handleClickButton}
+          className={styles.button}
+          variant="contained"
+          href="#"
+        >
           RESERVAR
         </Button>
       </div>
@@ -78,7 +90,7 @@ export const HomePage = () => {
               size={30}
               color="red"
             />
-            <Map></Map>
+            {/* <Map></Map> */}
           </motion.div>
         </div>
       )}
