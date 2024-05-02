@@ -12,6 +12,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { User } from "@/app/models/User";
 import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -41,14 +42,15 @@ export const HomePage = () => {
       <div className={styles.midContainer}>
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
-        <Button
-          onClick={handleClickButton}
-          className={styles.button}
-          variant="contained"
-          href="#"
-        >
-          RESERVAR
-        </Button>
+        <Link href={"/reservation"}>
+          <Button
+            className={styles.button}
+            variant="contained"
+            href="#"
+          >
+            RESERVAR
+          </Button>
+        </Link>
       </div>
 
       <div className={styles.footerContainer}>
