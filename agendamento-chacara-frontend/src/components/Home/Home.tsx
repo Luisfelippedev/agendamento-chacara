@@ -11,9 +11,12 @@ import { Map } from "@/components/Map/Map";
 import { IoCloseCircle } from "react-icons/io5";
 import { User } from "@/app/models/User";
 import { UserService } from "@/services/UserService";
+import { useRouter } from "next/navigation";
 
 export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
+
+  const router = useRouter();
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -21,6 +24,10 @@ export const HomePage = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleClickButton = () => {
+    router.push("/reservation");
   };
 
   // const handleClickButton = async () => {
@@ -35,7 +42,7 @@ export const HomePage = () => {
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
         <Button
-          // onClick={handleClickButton}
+          onClick={handleClickButton}
           className={styles.button}
           variant="contained"
           href="#"
