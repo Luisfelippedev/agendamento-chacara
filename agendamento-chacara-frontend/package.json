@@ -11,10 +11,14 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.15.15",
+    "@mui/material": "^5.15.16",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@mui/x-date-pickers": "^7.3.1",
     "axios": "^1.6.8",
     "cookies-next": "^4.1.1",
     "crypto-js": "^4.2.0",
+    "date-fns": "^3.6.0",
+    "dayjs": "^1.11.11",
     "firebase": "^10.11.1",
     "framer-motion": "^11.1.7",
     "jsonwebtoken": "^9.0.2",
@@ -25,6 +29,7 @@
     "react-dom": "^18",
     "react-icons": "^5.1.0",
     "react-leaflet": "^4.2.1",
+    "styled-components": "^6.1.9",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
