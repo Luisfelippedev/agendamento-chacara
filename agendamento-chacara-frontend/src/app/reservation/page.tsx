@@ -18,6 +18,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "dayjs/locale/pt-br"; // Importe o locale desejado, neste caso, português do Brasil
 import localizedFormat from "dayjs/plugin/localizedFormat"; //
+import Link from "next/link";
+import { SchedulingService } from "@/services/SchedulingService";
+import { Scheduling } from "../models/Scheduling";
 
 const ReservationPage = () => {
   dayjs.extend(localizedFormat); // Adicione o plugin de localização ao dayjs
@@ -33,14 +36,15 @@ const ReservationPage = () => {
     return dataFormatada;
   };
 
-  const initialDate = dayjsDateToString(date);
+  function dayjsDateToSimpleDate(date: any) {
+    const data = dayjs(date).locale("pt-br"); // Parse da string de data e configuração do local
+    const dataFormatada = data.format("DD-MM-YYYY"); // Formato desejado
+    return dataFormatada;
+  }
 
   const [dateActualValue, setDateActualValue]: any = useState();
+  const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
   const [dateFromBd, setDateFromBd]: any = useState();
-
-  useEffect(() => {
-    console.log(dateFromBd);
-  }, [dateFromBd]);
 
   const customPtBrLocale: Locale = {
     ...ptBR,
@@ -51,17 +55,48 @@ const ReservationPage = () => {
     },
   };
 
-  const handleClickDayButton = (dateValue: any) => {
-    const dateFormated = dayjsDateToString(dateValue);
-    setDateActualValue(dateFormated);
-    setDateFromBd(dateValue);
+  const handleClickDayButton = async (dateValue: any) => {
+    setSchedulingStatus(false);
+    const stringDateFormated = dayjsDateToString(dateValue);
+    setDateActualValue(stringDateFormated);
+    const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
+    setDateFromBd(simpleDateFormated);
+    const schedulingService = new SchedulingService();
+    try {
+      const schedulingExists = await schedulingService.getByDate(
+        simpleDateFormated
+      );
+      schedulingExists.forEach((scheduling) => {
+        if (scheduling.status == undefined || scheduling.status == false) {
+          console.log("chegou");
+          setSchedulingStatus(false);
+          return;
+        }
+        setSchedulingStatus(true);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClickBackButton = () => {
     router.push("/");
   };
 
-  const handleClickConfirmButton = () => {
+  const handleClickConfirmButton = async () => {
+    if (dateFromBd) {
+      router.push(`/form/${dateFromBd}`);
+    }
+
+    // const schedulingService = new SchedulingService();
+    // const objScheduling: Scheduling = {
+    //   clientName: "asdads",
+    //   cpf: "12345678907889",
+    //   date: "03-05-2023",
+    //   phoneNumber: "1234567887699",
+    //   status: false,
+    // };
+    // await schedulingService.createScheduling(objScheduling);
     // salvar data no contexto
     // redirecionar o usuário para a outra aba
     // na outra aba confiro se há um valor no context, caso não tenha, o useEffect de la irá retornar o usuário para essa página novamente
@@ -99,13 +134,26 @@ const ReservationPage = () => {
           <p className={styles.textDate}>
             {dateActualValue && dateActualValue}
           </p>
-          <div className={styles.statusLabel}>Livre</div>
+          {schedulingStatus === true ? (
+            <div
+              style={{ color: "red", borderColor: "red" }}
+              className={styles.statusLabel}
+            >
+              Reservado
+            </div>
+          ) : schedulingStatus === "loading" ? (
+            ""
+          ) : (
+            <div className={styles.statusLabel}>Livre</div>
+          )}
           <div className={styles.buttonContainer}>
             <Button
+              disabled={
+                schedulingStatus === "loading" || schedulingStatus === true
+              }
               onClick={handleClickConfirmButton}
               className={styles.button}
               variant="contained"
-              href="#"
             >
               CONTINUAR
             </Button>

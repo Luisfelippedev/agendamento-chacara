@@ -27,9 +27,6 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
-  const handleClickButton = () => {
-    router.push("/reservation");
-  };
 
   // const handleClickButton = async () => {
   //   const userService = new UserService();
@@ -43,11 +40,7 @@ export const HomePage = () => {
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
         <Link href={"/reservation"}>
-          <Button
-            className={styles.button}
-            variant="contained"
-            href="#"
-          >
+          <Button className={styles.button} variant="contained" href="#">
             RESERVAR
           </Button>
         </Link>
