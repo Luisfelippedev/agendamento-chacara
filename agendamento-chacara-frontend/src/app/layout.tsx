@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Lobster } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.scss";
 
-const lobster = Lobster({ weight: "400", subsets: ["latin"] });
+const lobster = Roboto({ weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Chácara do Dandão",
