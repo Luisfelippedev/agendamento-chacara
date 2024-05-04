@@ -2,15 +2,17 @@
 import styles from "./styles.module.scss";
 import {
   DateCalendar,
+  DateCalendarProps,
   DateField,
   LocalizationProvider,
+  PickersDay,
+  PickersDayProps,
 } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Locale, format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { Locale, format, addYears, parse } from "date-fns";
+import { oc, ptBR } from "date-fns/locale";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { IoMdClose } from "react-icons/io";
 import { Header } from "@/components/Header/Header";
 import { Button } from "@mui/material";
 import { IoIosArrowBack } from "react-icons/io";
@@ -18,34 +20,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "dayjs/locale/pt-br"; // Importe o locale desejado, neste caso, português do Brasil
 import localizedFormat from "dayjs/plugin/localizedFormat"; //
-import Link from "next/link";
 import { SchedulingService } from "@/services/SchedulingService";
-import { Scheduling } from "../models/Scheduling";
+import { styled } from "@mui/material/styles";
 
 const ReservationPage = () => {
   dayjs.extend(localizedFormat); // Adicione o plugin de localização ao dayjs
-
-  const router = useRouter();
-  const date = dayjs();
-  const nextYear = date.add(1, "year");
-
-  const dayjsDateToString = (date: any) => {
-    const dataFormatada = dayjs(date, "dddd, MMM DD, YYYY")
-      .locale("pt-br")
-      .format("dddd, MMMM DD, YYYY");
-    return dataFormatada;
-  };
-
-  function dayjsDateToSimpleDate(date: any) {
-    const data = dayjs(date).locale("pt-br"); // Parse da string de data e configuração do local
-    const dataFormatada = data.format("DD-MM-YYYY"); // Formato desejado
-    return dataFormatada;
-  }
-
-  const [dateActualValue, setDateActualValue]: any = useState();
-  const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
-  const [dateFromBd, setDateFromBd]: any = useState();
-
   const customPtBrLocale: Locale = {
     ...ptBR,
     options: {
@@ -55,9 +34,63 @@ const ReservationPage = () => {
     },
   };
 
+  const router = useRouter();
+  const date = new Date();
+  const nextYear = addYears(date, 1);
+
+  const dateToString = (date: any) => {
+    const formattedDate = format(date, "eeee, MMMM dd, yyyy", { locale: ptBR });
+    return formattedDate;
+  };
+
+  function dayjsDateToSimpleDate(date: any) {
+    const data = dayjs(date).locale("pt-br"); // Parse da string de data e configuração do local
+    const formattedDate = data.format("DD-MM-YYYY"); // Formato desejado
+    return formattedDate;
+  }
+
+  const [dateActualValue, setDateActualValue]: any = useState();
+  const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
+  const [dateFromBd, setDateFromBd]: any = useState();
+  const [occupiedDays, setOccupiedDays]: any = useState();
+
+  const bdDateToDate = (dateString: string) => {
+    const [day, month, year] = dateString.split("-");
+    const formattedDate = parse(
+      `${year}-${month}-${day}`,
+      "yyyy-MM-dd",
+      new Date()
+    );
+    return formattedDate;
+  };
+
+  const searchOcuppiedDays = async () => {
+    const schedulingService = new SchedulingService();
+    try {
+      const occupiedDaysArr: any = [];
+      const allSchedulings = await schedulingService.getAll();
+
+      allSchedulings.forEach((scheduling) => {
+        if (scheduling.status == true) {
+          const dateFormated = bdDateToDate(scheduling.date);
+          occupiedDaysArr.push(dateFormated);
+        }
+      });
+      setOccupiedDays(occupiedDaysArr);
+      return;
+    } catch (error) {
+      setOccupiedDays([]);
+      return;
+    }
+  };
+  useEffect(() => {
+    searchOcuppiedDays();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleClickDayButton = async (dateValue: any) => {
     setSchedulingStatus(false);
-    const stringDateFormated = dayjsDateToString(dateValue);
+    const stringDateFormated = dateToString(dateValue);
     setDateActualValue(stringDateFormated);
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
     setDateFromBd(simpleDateFormated);
@@ -67,15 +100,12 @@ const ReservationPage = () => {
         simpleDateFormated
       );
       schedulingExists.forEach((scheduling) => {
-        if (scheduling.status == undefined || scheduling.status == false) {
-          console.log("chegou");
-          setSchedulingStatus(false);
-          return;
+        if (scheduling.status == true) {
+          setSchedulingStatus(true);
         }
-        setSchedulingStatus(true);
       });
     } catch (error) {
-      console.log(error);
+      return;
     }
   };
 
@@ -87,19 +117,49 @@ const ReservationPage = () => {
     if (dateFromBd) {
       router.push(`/form/${dateFromBd}`);
     }
-
     // const schedulingService = new SchedulingService();
     // const objScheduling: Scheduling = {
     //   clientName: "asdads",
-    //   cpf: "12345678907889",
-    //   date: "03-05-2023",
-    //   phoneNumber: "1234567887699",
+    //   cpf: "1234567734978",
+    //   date: "25-04-2024",
+    //   phoneNumber: "123445674899",
     //   status: false,
     // };
     // await schedulingService.createScheduling(objScheduling);
     // salvar data no contexto
     // redirecionar o usuário para a outra aba
     // na outra aba confiro se há um valor no context, caso não tenha, o useEffect de la irá retornar o usuário para essa página novamente
+  };
+
+  const customCalendarDay = (props: any): any => {
+    const { day, ...others } = props;
+    let reservedDay = false;
+    occupiedDays.forEach((element: string) => {
+      if (element == day.toString()) {
+        reservedDay = true;
+      }
+    });
+
+    return (
+      <PickersDay
+        {...others}
+        style={{
+          color: reservedDay ? "red" : "none",
+          fontWeight: reservedDay ? "bold" : "normal",
+        }}
+        day={day}
+        sx={{
+          ...(reservedDay
+            ? {
+                "&.Mui-selected": {
+                  backgroundColor: "rgb(253, 64, 64) !important",
+                  color: "white !important",
+                },
+              }
+            : {}),
+        }}
+      />
+    );
   };
 
   return (
@@ -119,15 +179,23 @@ const ReservationPage = () => {
             dateAdapter={AdapterDateFns}
             adapterLocale={customPtBrLocale}
           >
-            <DateCalendar
-              value={dateActualValue}
-              onChange={(newValue) => {
-                handleClickDayButton(newValue);
-              }}
-              minDate={date}
-              maxDate={nextYear}
-              autoFocus={true}
-            />
+            {occupiedDays ? (
+              <DateCalendar
+                value={dateActualValue}
+                onChange={(newValue) => {
+                  handleClickDayButton(newValue);
+                }}
+                minDate={date}
+                maxDate={nextYear}
+                autoFocus={true}
+                slots={{
+                  
+                  day: customCalendarDay,
+                }}
+              />
+            ) : (
+              <DateCalendar disabled />
+            )}
           </LocalizationProvider>
         </div>
         <div className={styles.confirmationContainer}>

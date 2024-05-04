@@ -11,7 +11,6 @@ export class SchedulingService {
   public async createScheduling(scheduling: Scheduling) {
     const { clientName, cpf, date, phoneNumber } = scheduling;
     const allScheduling = await this.schedulingRepository.findAll();
-
     if (allScheduling) {
       allScheduling.forEach((item) => {
         if (item.cpf == cpf) {
@@ -20,8 +19,10 @@ export class SchedulingService {
         if (item.phoneNumber == phoneNumber) {
           throw new Error("Phone number already exists");
         }
-        if (item.status == true) {
-          throw new Error("Date occupied");
+        if (item.date === date) {
+          if (item.status === true) {
+            throw new Error("Date occupied");
+          }
         }
       });
     }
@@ -44,7 +45,16 @@ export class SchedulingService {
     if (scheduling == null) {
       throw new Error("Scheduling not found");
     }
-    console.log(scheduling);
     return scheduling;
+  }
+
+  public async getAll() {
+    const allScheduling = await this.schedulingRepository.findAll();
+
+    if (allScheduling.length <= 0) {
+      throw new Error("Schedulings not found");
+    }
+
+    return allScheduling;
   }
 }
