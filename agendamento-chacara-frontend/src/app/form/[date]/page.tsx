@@ -11,9 +11,18 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import { Header } from "@/components/Header/Header";
 import { IoIosArrowBack } from "react-icons/io";
+import { Scheduling } from "@/app/models/Scheduling";
+import MaskedInput from "react-text-mask";
 
 const isNumbers = (str: any) => /^[0-9]*$/.test(str);
 const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
+
+interface IValidInput {
+  firstNameIsValid: boolean;
+  lastNameIsValid: boolean;
+  cpfIsValid: boolean;
+  phoneNumberIsValid: boolean;
+}
 
 const Form = () => {
   const params = useParams<{ date: string }>();
@@ -23,6 +32,13 @@ const Form = () => {
   const [phoneNumberValue, setPhoneNumberValue] = useState("");
   const [firstNameValue, setFirstNameValue] = useState("");
   const [lastNameValue, setLastNameValue] = useState("");
+  const [isValidInputValue, setIsValidInputValue] = useState<IValidInput>({
+    firstNameIsValid: true,
+    lastNameIsValid: true,
+    cpfIsValid: true,
+    phoneNumberIsValid: true,
+  });
+  const [isExistsScheduling, setIsExistsScheduling] = useState<boolean>(true);
 
   const stringToDateObj = (date: string) => {
     const dataFormatoOriginal = date;
@@ -85,7 +101,66 @@ const Form = () => {
     }
   };
 
-  
+  const handleClickButtonSubmit = async () => {
+    // Reset state
+    setIsValidInputValue({
+      firstNameIsValid: true,
+      lastNameIsValid: true,
+      cpfIsValid: true,
+      phoneNumberIsValid: true,
+    });
+
+    setIsExistsScheduling(true);
+
+    if (cpfValue.length == 0 || cpfValue.length < 11 || cpfValue.length > 14) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState,
+        cpfIsValid: false,
+      }));
+    }
+
+    if (firstNameValue.length == 0 || firstNameValue.length > 40) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState,
+        firstNameIsValid: false,
+      }));
+    }
+
+    if (lastNameValue.length == 0 || lastNameValue.length > 40) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState,
+        lastNameIsValid: false,
+      }));
+    }
+
+    if (phoneNumberValue.length == 0 || phoneNumberValue.length > 20) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState,
+        phoneNumberIsValid: false,
+      }));
+    }
+
+    if (
+      isValidInputValue.firstNameIsValid &&
+      isValidInputValue.lastNameIsValid &&
+      isValidInputValue.cpfIsValid &&
+      isValidInputValue.phoneNumberIsValid
+    ) {
+      const schedulingService = await new SchedulingService();
+      const newScheduling: Scheduling = {
+        clientName: firstNameValue,
+        cpf: cpfValue,
+        date: params.date,
+        phoneNumber: phoneNumberValue,
+        status: false,
+      };
+      try {
+        await schedulingService.createScheduling(newScheduling);
+      } catch (error) {
+        setIsExistsScheduling(false);
+      }
+    }
+  };
 
   return (
     <div className={styles.background}>
@@ -101,20 +176,30 @@ const Form = () => {
             Voltar
           </p>
         </div>
-        <TextField
-          label="Nome:"
-          value={firstNameValue}
-          onChange={onFirstNameInputChange}
-          type="text"
-          required
-        />
-        <TextField
-          label="Sobrenome:"
-          value={lastNameValue}
-          onChange={onLastNameInputChange}
-          type="text"
-          required
-        />
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <TextField
+            label="Nome:"
+            value={firstNameValue}
+            onChange={onFirstNameInputChange}
+            type="text"
+            required
+          />
+          {isValidInputValue.firstNameIsValid == false && (
+            <p className={styles.invalidValueLabel}>Nome inválido</p>
+          )}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <TextField
+            label="Sobrenome:"
+            value={lastNameValue}
+            onChange={onLastNameInputChange}
+            type="text"
+            required
+          />
+          {isValidInputValue.lastNameIsValid == false && (
+            <p className={styles.invalidValueLabel}>Sobrenome inválido</p>
+          )}
+        </div>
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
           {currentDate != null ? (
             <DatePicker
@@ -127,18 +212,42 @@ const Form = () => {
             ""
           )}
         </LocalizationProvider>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <TextField
+            label="Cpf:"
+            value={cpfValue}
+            onChange={onCpfInputChange}
+            required
+          ></TextField>
+          {isValidInputValue.cpfIsValid == false && (
+            <p className={styles.invalidValueLabel}>Cpf inválido</p>
+          )}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <TextField
+            label="Telefone:"
+            value={phoneNumberValue}
+            onChange={onPhoneNumberInputChange}
+            required
+          />
+          {isValidInputValue.phoneNumberIsValid == false && (
+            <p className={styles.invalidValueLabel}>Telefone inválido</p>
+          )}
+        </div>
 
-        <TextField label="Cpf:" value={cpfValue} onChange={onCpfInputChange} required/>
-
-        <TextField
-          label="Telefone:"
-          value={phoneNumberValue}
-          onChange={onPhoneNumberInputChange}
-          required
-        />
-        <Button className={styles.button} variant="contained">
+        <Button
+          onClick={handleClickButtonSubmit}
+          className={styles.button}
+          variant="contained"
+        >
           FINALIZAR
         </Button>
+        {isExistsScheduling == false && (
+          <p className={styles.invalidValueLabel}>
+            Desculpe, já há um agendamento para esta data utilizando o mesmo CPF
+            ou número de telefone
+          </p>
+        )}
       </div>
     </div>
   );

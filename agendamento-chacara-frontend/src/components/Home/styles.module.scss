@@ -162,19 +162,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    .closeIcon{
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 99999999999;
+        cursor: pointer;
+        color: rgba(150, 150, 150, 0.8);
+        height: 30px;
+        width: 30px;
+        margin-top: 0.5rem;
+        margin-right: 0.5rem;
+    }
         .modalContent {
         background-color: white;
         border-radius: 10px;
         width: 90%;
         height: 60%;
         padding: 1%;
-            .closeIcon{
-                position: fixed;
-                right: 0;
-                margin-right: 5px;
-                z-index: 9999999999;
-                cursor: pointer;
-            }
+
         @media(min-width: 1440px){
             height: 70%;
             width: 70%;

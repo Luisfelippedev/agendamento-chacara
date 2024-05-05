@@ -8,7 +8,7 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Map } from "@/components/Map/Map";
-import { IoCloseCircle } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 import { User } from "@/app/models/User";
 import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,6 @@ export const HomePage = () => {
   const handleCloseModal = () => {
     setShowModal(false);
   };
-
 
   // const handleClickButton = async () => {
   //   const userService = new UserService();
@@ -68,6 +67,12 @@ export const HomePage = () => {
 
       {showModal && (
         <div className={styles.modalBackground} onClick={handleCloseModal}>
+          <IoCloseOutline
+            className={styles.closeIcon}
+            onClick={handleCloseModal}
+            size={60}
+
+          />
           <motion.div
             initial={{
               scale: 0,
@@ -86,12 +91,6 @@ export const HomePage = () => {
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
           >
-            <IoCloseCircle
-              className={styles.closeIcon}
-              onClick={handleCloseModal}
-              size={30}
-              color="red"
-            />
             <Map />
           </motion.div>
         </div>
