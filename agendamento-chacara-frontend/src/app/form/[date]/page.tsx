@@ -9,11 +9,14 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
+import { Header } from "@/components/Header/Header";
+import { IoIosArrowBack } from "react-icons/io";
 
 const Form = () => {
   const params = useParams<{ date: string }>();
   const router = useRouter();
-  const [value, setValue]: any = useState();
+  const [value, setValue] = useState<string | null>(null);
+  const [currentDate, setCurrentDate] = useState<string | null>(null);
 
   const stringToDateObj = (date: string) => {
     const dataFormatoOriginal = date;
@@ -34,28 +37,47 @@ const Form = () => {
     });
   };
 
+  const handleClickBackButton = () => {
+    router.push("/reservation");
+  };
+
   useEffect(() => {
     if (params.date === "undefined") {
       router.push("/reservation");
+    } else {
+      setCurrentDate(params.date);
     }
     verifyDateStatus();
-    // stringToDateObj();
-  }),
-    [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.date]); // Executa o efeito quando params.date mudar
 
   return (
     <div className={styles.background}>
+      <Header page="formPage" />
+
       <div className={styles.formContainer}>
-        <span className={styles.titleForm}>Finalizar reserva:</span>
+        <p style={{ textAlign: "center" }} className={styles.titleForm}>
+          Dados pessoais
+        </p>
+        <div className={styles.backButton}>
+          <p onClick={handleClickBackButton} className={styles.textBackButton}>
+            <IoIosArrowBack size={15} />
+            Voltar
+          </p>
+        </div>
         <TextField id="outlined-basic" label="Nome:" variant="outlined" />
         <TextField id="outlined-basic" label="Sobrenome:" variant="outlined" />
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-          <DatePicker
-            disabled
-            label="Data"
-            // defaultValue={stringToDateObj()}
-            defaultValue={stringToDateObj(params.date)}
-          />
+          {currentDate != null ? (
+            <DatePicker
+              disabled
+              label="Data"
+              // defaultValue={stringToDateObj()}
+              defaultValue={stringToDateObj(currentDate)}
+            />
+          ) : (
+            ""
+          )}
         </LocalizationProvider>
         <TextField
           id="outlined-basic"
@@ -66,10 +88,9 @@ const Form = () => {
         />
         <TextField id="outlined-basic" label="Telefone:" variant="outlined" />
         <Button className={styles.button} variant="contained">
-          ENVIAR
+          FINALIZAR
         </Button>
       </div>
-      {/* <p>{params.date}</p>; */}
     </div>
   );
 };
