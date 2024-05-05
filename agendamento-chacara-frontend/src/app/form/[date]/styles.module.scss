@@ -9,7 +9,7 @@
     align-items: center;
     background-color: $primary-color;
     flex-direction: column;
-    gap: 3rem;
+    gap: 1.5rem;
     justify-content: flex-start;
     align-items: center;
 
@@ -37,6 +37,14 @@
         height: 100%;
         .titleForm{
             font-size: 1.5rem;
+        }
+
+        .invalidValueLabel{
+            color: red;
+            font-size: 1rem;
+            margin-top: 4px;
+            max-width: 350px;
+
         }
 
         // .mui-number-field {
