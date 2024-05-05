@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SchedulingService } from "@/services/SchedulingService";
 import styles from "./styles.module.scss";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Stack } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -12,11 +12,17 @@ import "dayjs/locale/pt-br";
 import { Header } from "@/components/Header/Header";
 import { IoIosArrowBack } from "react-icons/io";
 
+const isNumbers = (str: any) => /^[0-9]*$/.test(str);
+const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
+
 const Form = () => {
   const params = useParams<{ date: string }>();
   const router = useRouter();
-  const [value, setValue] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState<string | null>(null);
+  const [cpfValue, setCpfValue] = useState("");
+  const [phoneNumberValue, setPhoneNumberValue] = useState("");
+  const [firstNameValue, setFirstNameValue] = useState("");
+  const [lastNameValue, setLastNameValue] = useState("");
 
   const stringToDateObj = (date: string) => {
     const dataFormatoOriginal = date;
@@ -49,7 +55,37 @@ const Form = () => {
     }
     verifyDateStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.date]); // Executa o efeito quando params.date mudar
+  }, [params.date]);
+
+  const onCpfInputChange = (e: any) => {
+    const { value } = e.target;
+    if (isNumbers(value)) {
+      setCpfValue(value);
+    }
+  };
+
+  const onPhoneNumberInputChange = (e: any) => {
+    const { value } = e.target;
+    if (isNumbers(value)) {
+      setPhoneNumberValue(value);
+    }
+  };
+
+  const onFirstNameInputChange = (e: any) => {
+    const { value } = e.target;
+    if (isLetters(value)) {
+      setFirstNameValue(value);
+    }
+  };
+
+  const onLastNameInputChange = (e: any) => {
+    const { value } = e.target;
+    if (isLetters(value)) {
+      setLastNameValue(value);
+    }
+  };
+
+  
 
   return (
     <div className={styles.background}>
@@ -65,8 +101,20 @@ const Form = () => {
             Voltar
           </p>
         </div>
-        <TextField id="outlined-basic" label="Nome:" variant="outlined" />
-        <TextField id="outlined-basic" label="Sobrenome:" variant="outlined" />
+        <TextField
+          label="Nome:"
+          value={firstNameValue}
+          onChange={onFirstNameInputChange}
+          type="text"
+          required
+        />
+        <TextField
+          label="Sobrenome:"
+          value={lastNameValue}
+          onChange={onLastNameInputChange}
+          type="text"
+          required
+        />
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
           {currentDate != null ? (
             <DatePicker
@@ -79,14 +127,15 @@ const Form = () => {
             ""
           )}
         </LocalizationProvider>
+
+        <TextField label="Cpf:" value={cpfValue} onChange={onCpfInputChange} required/>
+
         <TextField
-          id="outlined-basic"
-          label="Cpf:"
-          variant="outlined"
-          type="tel"
-          className={styles["mui-number-field"]}
+          label="Telefone:"
+          value={phoneNumberValue}
+          onChange={onPhoneNumberInputChange}
+          required
         />
-        <TextField id="outlined-basic" label="Telefone:" variant="outlined" />
         <Button className={styles.button} variant="contained">
           FINALIZAR
         </Button>
