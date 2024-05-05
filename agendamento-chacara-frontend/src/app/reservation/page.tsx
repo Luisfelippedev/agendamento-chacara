@@ -85,7 +85,7 @@ const ReservationPage = () => {
   };
   useEffect(() => {
     searchOcuppiedDays();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClickDayButton = async (dateValue: any) => {
@@ -189,7 +189,6 @@ const ReservationPage = () => {
                 maxDate={nextYear}
                 autoFocus={true}
                 slots={{
-                  
                   day: customCalendarDay,
                 }}
               />
@@ -204,7 +203,10 @@ const ReservationPage = () => {
           </p>
           {schedulingStatus === true ? (
             <div
-              style={{ color: "red", borderColor: "red" }}
+              style={{
+                color: "rgb(253, 64, 64)",
+                borderColor: "rgb(253, 64, 64)",
+              }}
               className={styles.statusLabel}
             >
               Reservado

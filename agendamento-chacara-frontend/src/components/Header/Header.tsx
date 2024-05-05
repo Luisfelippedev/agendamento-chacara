@@ -41,7 +41,14 @@ export const Header = ({ page }: Props) => {
       </div>
       <div className={styles.headerMobile}>
         <div className={styles.midContainer}>
-          <p className={styles.textHeaderMobile}>Selecione um horário</p>
+          <p
+            style={page === "formPage" ? { marginLeft: 22 } : {}}
+            className={styles.textHeaderMobile}
+          >
+            {page == "reservationPage"
+              ? "Selecione um horário"
+              : "Preencha os dados"}
+          </p>
         </div>
       </div>
     </>
