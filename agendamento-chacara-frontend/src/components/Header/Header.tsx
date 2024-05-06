@@ -52,7 +52,8 @@ export const Header = ({ page }: Props) => {
             style={page === "formPage" ? { marginLeft: 22 } : {}}
             className={styles.textHeaderMobile}
           >
-            {page == "reservationPage" && "Preencha os dados"}
+            {page == "reservationPage" && "Selecione um horário:"}
+            {page == "formPage" && "Preencha os dados:"}
             {page == "alertPage" && "Fale no whatsapp"}
           </p>
         </div>

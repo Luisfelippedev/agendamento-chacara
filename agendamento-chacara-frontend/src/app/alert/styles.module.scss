@@ -11,7 +11,13 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 1.5rem;
+    object-fit: cover;
+    z-index: -1;
 
+    .lottieBg{
+        position: absolute;
+        flex: 1;
+    }
     .container{
         display: flex;
         flex-direction: column;
@@ -52,7 +58,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            gap: 2rem;
+            gap: 1.5rem;
             padding: 0 2%;
 
             .subTitle{
@@ -94,6 +100,8 @@
                 font-size: 1rem;
                 font-weight: 600;
                 color: $secondary-text-color;
+                text-align: center;
+                margin-top: 5px;
             }
 
             .button {
@@ -114,7 +122,9 @@
                     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.12); /* Altera a box-shadow no hover */
                   }
               }
-              
+              @media(min-width: 375px){
+                padding: 0 5%;
+              }
               @media(min-width: 425px){
                 .subTitle{
                     font-size: 1.8rem;
@@ -129,6 +139,7 @@
               }
 
               @media(min-width: 768px){
+                padding: 0 5%;
                 .subTitle{
                     font-size: 2rem;
                 }

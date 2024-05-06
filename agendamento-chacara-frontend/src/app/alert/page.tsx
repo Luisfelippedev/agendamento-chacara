@@ -5,11 +5,17 @@ import Lottie from "lottie-react";
 import talkAnimation from "../../../public/talk-animation.json";
 import whatsappAnimation from "../../../public/whatsapp-animation.json";
 import whatsappTwoAnimation from "../../../public/whatsapptwo-animation.json";
+import fireWorksAnimation from "../../../public/fireworks.json";
 import { Button } from "@mui/material";
 
 const AlertPage = () => {
   return (
     <div className={styles.background}>
+      <Lottie
+        animationData={fireWorksAnimation}
+        loop={false}
+        className={styles.lottieBg}
+      />
       <Header page="alertPage" />
       <div className={styles.container}>
         <div className={styles.firstBox}>
@@ -21,17 +27,17 @@ const AlertPage = () => {
           />
         </div>
         <div className={styles.lastBox}>
-          <p className={styles.subTitle}>
+          <div className={styles.subTitle}>
             Você foi redirecionado para o
-            <p  className={styles.subTitleTwo}>
+            <div className={styles.subTitleTwo}>
               whatsapp...
               <Lottie
                 className={styles.whatsappAnimation}
                 animationData={whatsappAnimation}
                 loop={true}
               />
-            </p>
-          </p>
+            </div>
+          </div>
           <p className={styles.description}>
             Confirme sua reserva no whatsapp, é necessário para conversamos
             sobre contrato e informações adicionais.

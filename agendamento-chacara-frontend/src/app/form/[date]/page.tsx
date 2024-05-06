@@ -69,7 +69,7 @@ const Form = () => {
   };
 
   useEffect(() => {
-    if (params.date === "undefined") {
+    if (!params.date || !/^\d{2}-\d{2}-\d{4}$/.test(params.date)) {
       router.push("/reservation");
     } else {
       setCurrentDate(params.date);
@@ -264,7 +264,7 @@ const Form = () => {
 
         <Button
           onClick={handleClickButtonSubmit}
-          className={styles.button}
+          className={styles.submitButton}
           variant="contained"
           disabled={
             isComponentLoaded ||
