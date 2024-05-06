@@ -219,9 +219,6 @@ const Form = () => {
             type="text"
             required
           />
-          {isValidInputValue.firstNameIsValid == false && (
-            <p className={styles.invalidValueLabel}>Nome inválido</p>
-          )}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <TextField
@@ -231,9 +228,6 @@ const Form = () => {
             type="text"
             required
           />
-          {isValidInputValue.lastNameIsValid == false && (
-            <p className={styles.invalidValueLabel}>Sobrenome inválido</p>
-          )}
         </div>
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
           {currentDate != null ? (
@@ -256,9 +250,6 @@ const Form = () => {
             customInput={TextField}
             className={styles["input-phone"]}
           />
-          {isValidInputValue.cpfIsValid == false && (
-            <p className={styles.invalidValueLabel}>Cpf inválido</p>
-          )}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <PatternFormat
@@ -269,9 +260,6 @@ const Form = () => {
             value={phoneNumberValue}
             customInput={TextField}
           />
-          {isValidInputValue.phoneNumberIsValid == false && (
-            <p className={styles.invalidValueLabel}>Telefone inválido</p>
-          )}
         </div>
 
         <Button
