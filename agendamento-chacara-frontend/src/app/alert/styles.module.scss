@@ -1,0 +1,158 @@
+@import "../../themes/theme.scss";
+
+.background{
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;  
+    align-items: center;
+    background-color: $primary-color;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1.5rem;
+
+    .container{
+        display: flex;
+        flex-direction: column;
+        // justify-content: center;
+        flex: 1;
+
+        .firstBox{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            .title{
+                font-size: 1.4rem;
+                color: $secondary-text-color;
+                
+            }
+            .talkAnimation{
+                height: 250px;
+            }
+
+            @media(min-width: 425px){
+                .title{
+                    font-size: 1.5rem;
+                }
+              }
+            @media(min-width: 768px){
+                .title{
+                    font-size: 1.6rem;
+                }
+              }
+
+
+
+        }
+
+        .lastBox{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 0 2%;
+
+            .subTitle{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #008100;
+                font-weight: 800;
+                font-size: 1.5rem;
+                width: auto;
+                text-align: justify;
+        
+            }
+
+            .subTitleTwo{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                color: #008100;
+                font-weight: 800;
+                font-size: 1.5rem;
+                width: auto;
+                text-align: justify;
+                .whatsappAnimation{
+                    height: 40px;
+                    width: auto;
+                }
+            }
+
+            .description{
+                font-size: 1rem;
+                text-align: justify;
+                color:  rgb(70, 70, 70);
+                font-weight: 400;
+            }
+            .lastText{
+                font-size: 1rem;
+                font-weight: 600;
+                color: $secondary-text-color;
+            }
+
+            .button {
+                border-radius: 10px;
+                min-width: 9rem;
+                gap: 0.3rem;
+                color: #fff;
+                font-weight: 800;
+                border: none;
+                background-color: #25d366; /* verde característico do WhatsApp */
+                padding: 0.5rem 1rem;
+                text-align: center;
+                text-decoration: none;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Adiciona uma linda box-shadow */
+                transition: all 0.3s ease;
+                &:hover {
+                    background-color: #128c7e; /* Altera a cor de fundo no hover */
+                    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.12); /* Altera a box-shadow no hover */
+                  }
+              }
+              
+              @media(min-width: 425px){
+                .subTitle{
+                    font-size: 1.8rem;
+                }
+                .subTitleTwo{
+                    font-size: 1.8rem;
+                }
+                .lastText{
+                    font-size: 1.2rem;
+                    text-align: center;
+                }
+              }
+
+              @media(min-width: 768px){
+                .subTitle{
+                    font-size: 2rem;
+                }
+                .subTitleTwo{
+                    font-size: 2rem;
+                }
+              }
+
+              @media(min-width: 1024px){
+                .subTitle{
+                    font-size: 2rem;
+                    flex-direction: row;
+                }
+                .subTitleTwo{
+                    font-size: 2rem;
+                    margin-left: 5px;
+                    .whatsappAnimation{
+                        height: 55px;
+                    }
+                }
+
+              }
+              
+              
+        }
+    }
+}
