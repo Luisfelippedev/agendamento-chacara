@@ -12,8 +12,8 @@ import "dayjs/locale/pt-br";
 import { Header } from "@/components/Header/Header";
 import { IoIosArrowBack } from "react-icons/io";
 import { Scheduling } from "@/app/models/Scheduling";
+import { PatternFormat } from "react-number-format";
 
-const isNumbers = (str: any) => /^[0-9]*$/.test(str);
 const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
 
 interface IValidInput {
@@ -32,7 +32,6 @@ const Form = () => {
   const [firstNameValue, setFirstNameValue] = useState("");
   const [lastNameValue, setLastNameValue] = useState("");
   const [isComponentLoaded, setIsComponentLoaded] = useState(true);
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
   useEffect(() => {
     setIsComponentLoaded(false);
@@ -79,26 +78,22 @@ const Form = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.date]);
 
-  const onCpfInputChange = (e: any) => {
-    const { value } = e.target;
-    if (isNumbers(value)) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState, // Mantém os valores anteriores dos outros campos
-        cpfIsValid: true, // Altera apenas o campo firstNameIsValid para true
-      }));
-      setCpfValue(value);
-    }
+  const onCpfInputChange = (value: any) => {
+    setIsValidInputValue((prevState) => ({
+      ...prevState, // Mantém os valores anteriores dos outros campos
+      cpfIsValid: true, // Altera apenas o campo firstNameIsValid para true
+    }));
+    setCpfValue(value);
+    console.log(cpfValue);
   };
 
-  const onPhoneNumberInputChange = (e: any) => {
-    const { value } = e.target;
-    if (isNumbers(value)) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState, // Mantém os valores anteriores dos outros campos
-        phoneNumberIsValid: true, // Altera apenas o campo firstNameIsValid para true
-      }));
-      setPhoneNumberValue(value);
-    }
+  const onPhoneNumberInputChange = (value: any) => {
+    setIsValidInputValue((prevState) => ({
+      ...prevState, // Mantém os valores anteriores dos outros campos
+      phoneNumberIsValid: true, // Altera apenas o campo firstNameIsValid para true
+    }));
+    setPhoneNumberValue(value);
+    console.log(phoneNumberValue);
   };
 
   const onFirstNameInputChange = (e: any) => {
@@ -124,21 +119,18 @@ const Form = () => {
   };
 
   const handleClickButtonSubmit = async () => {
-    // Reset state
-    setIsValidInputValue({
-      firstNameIsValid: true,
-      lastNameIsValid: true,
-      cpfIsValid: true,
-      phoneNumberIsValid: true,
-    });
-    setFormSubmitted(true);
     setIsExistsScheduling(false);
+    let isValid = true;
 
-    if (cpfValue.length == 0 || cpfValue.length < 11 || cpfValue.length > 14) {
+    const filteredCpf = cpfValue.replace(/\D/g, "");
+    console.log(filteredCpf);
+
+    if (filteredCpf.length == 0 || cpfValue.length < 10) {
       setIsValidInputValue((prevState) => ({
         ...prevState,
         cpfIsValid: false,
       }));
+      isValid = false;
     }
 
     if (
@@ -150,46 +142,58 @@ const Form = () => {
         ...prevState,
         firstNameIsValid: false,
       }));
+      isValid = false;
     }
 
     if (
       lastNameValue.length == 0 ||
-      firstNameValue.length < 2 ||
+      lastNameValue.length < 2 ||
       lastNameValue.length > 40
     ) {
       setIsValidInputValue((prevState) => ({
         ...prevState,
         lastNameIsValid: false,
       }));
+      isValid = false;
     }
 
-    if (phoneNumberValue.length == 0 || phoneNumberValue.length > 20) {
+    const filteredNumber = phoneNumberValue
+      .replace(/\D/g, "")
+      .replace(/^55/, "")
+      .trim();
+
+    if (filteredNumber.length < 11) {
       setIsValidInputValue((prevState) => ({
         ...prevState,
         phoneNumberIsValid: false,
       }));
+      isValid = false;
     }
-    if (formSubmitted) {
-      if (
-        isValidInputValue.firstNameIsValid &&
-        isValidInputValue.lastNameIsValid &&
-        isValidInputValue.cpfIsValid &&
-        isValidInputValue.phoneNumberIsValid
-      ) {
-        const schedulingService = new SchedulingService();
-        const newScheduling: Scheduling = {
-          clientName: firstNameValue,
-          cpf: cpfValue,
-          date: params.date,
-          phoneNumber: phoneNumberValue,
-          status: false,
-        };
-        try {
-          await schedulingService.createScheduling(newScheduling);
-        } catch (error) {
-          setIsExistsScheduling(true);
-        }
-      }
+
+    if (isValid) {
+      createScheduling();
+    }
+  };
+
+  const createScheduling = async () => {
+    const schedulingService = new SchedulingService();
+    const filteredNumber = phoneNumberValue
+      .replace(/\D/g, "")
+      .replace(/^55/, "")
+      .trim();
+    const newScheduling: Scheduling = {
+      clientName: firstNameValue,
+      cpf: cpfValue,
+      date: params.date,
+      phoneNumber: filteredNumber,
+      status: false,
+    };
+    try {
+      await schedulingService.createScheduling(newScheduling);
+      console.log("chegou");
+      router.push("/alert");
+    } catch (error) {
+      setIsExistsScheduling(true);
     }
   };
 
@@ -236,7 +240,6 @@ const Form = () => {
             <DatePicker
               disabled
               label="Data"
-              // defaultValue={stringToDateObj()}
               defaultValue={stringToDateObj(currentDate)}
             />
           ) : (
@@ -244,22 +247,27 @@ const Form = () => {
           )}
         </LocalizationProvider>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <TextField
-            label="Cpf:"
+          <PatternFormat
+            format={"###.###.###-##"}
+            mask="_"
+            label={"Cpf:"}
+            onChange={(e) => onCpfInputChange(e.target.value)}
             value={cpfValue}
-            onChange={onCpfInputChange}
-            required
-          ></TextField>
+            customInput={TextField}
+            className={styles["input-phone"]}
+          />
           {isValidInputValue.cpfIsValid == false && (
             <p className={styles.invalidValueLabel}>Cpf inválido</p>
           )}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <TextField
-            label="Telefone:"
+          <PatternFormat
+            format="+55 (##) #####-####"
+            label={"Telefone:"}
+            mask="_"
+            onChange={(e) => onPhoneNumberInputChange(e.target.value)}
             value={phoneNumberValue}
-            onChange={onPhoneNumberInputChange}
-            required
+            customInput={TextField}
           />
           {isValidInputValue.phoneNumberIsValid == false && (
             <p className={styles.invalidValueLabel}>Telefone inválido</p>
@@ -270,7 +278,14 @@ const Form = () => {
           onClick={handleClickButtonSubmit}
           className={styles.button}
           variant="contained"
-          disabled={isComponentLoaded}
+          disabled={
+            isComponentLoaded ||
+            firstNameValue.length == 0 ||
+            lastNameValue.length == 0 ||
+            cpfValue.replace(/\D/g, "").length < 11 ||
+            phoneNumberValue.replace(/\D/g, "").replace(/^55/, "").trim()
+              .length < 11
+          }
         >
           FINALIZAR
         </Button>
