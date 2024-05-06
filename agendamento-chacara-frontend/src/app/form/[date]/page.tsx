@@ -12,7 +12,6 @@ import "dayjs/locale/pt-br";
 import { Header } from "@/components/Header/Header";
 import { IoIosArrowBack } from "react-icons/io";
 import { Scheduling } from "@/app/models/Scheduling";
-import MaskedInput from "react-text-mask";
 
 const isNumbers = (str: any) => /^[0-9]*$/.test(str);
 const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
@@ -32,13 +31,20 @@ const Form = () => {
   const [phoneNumberValue, setPhoneNumberValue] = useState("");
   const [firstNameValue, setFirstNameValue] = useState("");
   const [lastNameValue, setLastNameValue] = useState("");
+  const [isComponentLoaded, setIsComponentLoaded] = useState(true);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  useEffect(() => {
+    setIsComponentLoaded(false);
+  }, []);
+
   const [isValidInputValue, setIsValidInputValue] = useState<IValidInput>({
     firstNameIsValid: true,
     lastNameIsValid: true,
     cpfIsValid: true,
     phoneNumberIsValid: true,
   });
-  const [isExistsScheduling, setIsExistsScheduling] = useState<boolean>(true);
+  const [isExistsScheduling, setIsExistsScheduling] = useState<boolean>(false);
 
   const stringToDateObj = (date: string) => {
     const dataFormatoOriginal = date;
@@ -76,6 +82,10 @@ const Form = () => {
   const onCpfInputChange = (e: any) => {
     const { value } = e.target;
     if (isNumbers(value)) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState, // Mantém os valores anteriores dos outros campos
+        cpfIsValid: true, // Altera apenas o campo firstNameIsValid para true
+      }));
       setCpfValue(value);
     }
   };
@@ -83,6 +93,10 @@ const Form = () => {
   const onPhoneNumberInputChange = (e: any) => {
     const { value } = e.target;
     if (isNumbers(value)) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState, // Mantém os valores anteriores dos outros campos
+        phoneNumberIsValid: true, // Altera apenas o campo firstNameIsValid para true
+      }));
       setPhoneNumberValue(value);
     }
   };
@@ -90,6 +104,10 @@ const Form = () => {
   const onFirstNameInputChange = (e: any) => {
     const { value } = e.target;
     if (isLetters(value)) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState, // Mantém os valores anteriores dos outros campos
+        firstNameIsValid: true, // Altera apenas o campo firstNameIsValid para true
+      }));
       setFirstNameValue(value);
     }
   };
@@ -97,6 +115,10 @@ const Form = () => {
   const onLastNameInputChange = (e: any) => {
     const { value } = e.target;
     if (isLetters(value)) {
+      setIsValidInputValue((prevState) => ({
+        ...prevState, // Mantém os valores anteriores dos outros campos
+        lastNameIsValid: true, // Altera apenas o campo firstNameIsValid para true
+      }));
       setLastNameValue(value);
     }
   };
@@ -109,8 +131,8 @@ const Form = () => {
       cpfIsValid: true,
       phoneNumberIsValid: true,
     });
-
-    setIsExistsScheduling(true);
+    setFormSubmitted(true);
+    setIsExistsScheduling(false);
 
     if (cpfValue.length == 0 || cpfValue.length < 11 || cpfValue.length > 14) {
       setIsValidInputValue((prevState) => ({
@@ -119,14 +141,22 @@ const Form = () => {
       }));
     }
 
-    if (firstNameValue.length == 0 || firstNameValue.length > 40) {
+    if (
+      firstNameValue.length == 0 ||
+      firstNameValue.length < 2 ||
+      firstNameValue.length > 40
+    ) {
       setIsValidInputValue((prevState) => ({
         ...prevState,
         firstNameIsValid: false,
       }));
     }
 
-    if (lastNameValue.length == 0 || lastNameValue.length > 40) {
+    if (
+      lastNameValue.length == 0 ||
+      firstNameValue.length < 2 ||
+      lastNameValue.length > 40
+    ) {
       setIsValidInputValue((prevState) => ({
         ...prevState,
         lastNameIsValid: false,
@@ -139,25 +169,26 @@ const Form = () => {
         phoneNumberIsValid: false,
       }));
     }
-
-    if (
-      isValidInputValue.firstNameIsValid &&
-      isValidInputValue.lastNameIsValid &&
-      isValidInputValue.cpfIsValid &&
-      isValidInputValue.phoneNumberIsValid
-    ) {
-      const schedulingService = await new SchedulingService();
-      const newScheduling: Scheduling = {
-        clientName: firstNameValue,
-        cpf: cpfValue,
-        date: params.date,
-        phoneNumber: phoneNumberValue,
-        status: false,
-      };
-      try {
-        await schedulingService.createScheduling(newScheduling);
-      } catch (error) {
-        setIsExistsScheduling(false);
+    if (formSubmitted) {
+      if (
+        isValidInputValue.firstNameIsValid &&
+        isValidInputValue.lastNameIsValid &&
+        isValidInputValue.cpfIsValid &&
+        isValidInputValue.phoneNumberIsValid
+      ) {
+        const schedulingService = new SchedulingService();
+        const newScheduling: Scheduling = {
+          clientName: firstNameValue,
+          cpf: cpfValue,
+          date: params.date,
+          phoneNumber: phoneNumberValue,
+          status: false,
+        };
+        try {
+          await schedulingService.createScheduling(newScheduling);
+        } catch (error) {
+          setIsExistsScheduling(true);
+        }
       }
     }
   };
@@ -239,13 +270,17 @@ const Form = () => {
           onClick={handleClickButtonSubmit}
           className={styles.button}
           variant="contained"
+          disabled={isComponentLoaded}
         >
           FINALIZAR
         </Button>
-        {isExistsScheduling == false && (
-          <p className={styles.invalidValueLabel}>
-            Desculpe, já há um agendamento para esta data utilizando o mesmo CPF
-            ou número de telefone
+
+        {isExistsScheduling == true && (
+          <p
+            style={{ textAlign: "center" }}
+            className={styles.invalidValueLabel}
+          >
+            Desculpe, já existe um agendamento para esta data com esse Cpf
           </p>
         )}
       </div>

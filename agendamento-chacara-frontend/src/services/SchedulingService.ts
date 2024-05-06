@@ -16,9 +16,6 @@ export class SchedulingService {
         if (item.cpf == cpf) {
           throw new Error("Cpf already exists");
         }
-        if (item.phoneNumber == phoneNumber) {
-          throw new Error("Phone number already exists");
-        }
         if (item.date === date) {
           if (item.status === true) {
             throw new Error("Date occupied");
@@ -33,6 +30,11 @@ export class SchedulingService {
       phoneNumber: phoneNumber,
       status: false,
     };
+
+    if (!objScheduling.clientName || !objScheduling.cpf || !objScheduling.date || !objScheduling.phoneNumber) {
+      throw new Error("Empty input value")
+    }
+
 
     const newScheduling = await this.schedulingRepository.create(objScheduling);
 

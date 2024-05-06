@@ -35,6 +35,10 @@
         flex-direction: column;
         gap: 1rem;
         height: 100%;
+        max-width: 380px;
+        @media(min-width: 768px){
+            min-width: 420px;
+        }
         .titleForm{
             font-size: 1.5rem;
         }
@@ -43,7 +47,6 @@
             color: red;
             font-size: 1rem;
             margin-top: 4px;
-            max-width: 350px;
 
         }
 
