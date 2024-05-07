@@ -95,6 +95,7 @@ const Form = () => {
   };
 
   const handleClickButtonSubmit = async () => {
+    setIsComponentLoaded(true)
     setIsExistsScheduling(false);
     let isValid = true;
 
