@@ -11,8 +11,6 @@ const firebaseConfig = {
   appId: process.env.APP_ID,
 };
 
-console.log(process.env.API_KEY);// Here undefined
-
 const firestore = getFirestore(initializeApp(firebaseConfig));
 
 export { firestore };

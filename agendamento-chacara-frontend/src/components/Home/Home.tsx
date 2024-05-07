@@ -7,7 +7,6 @@ import { FaBusinessTime } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-// import { Map } from "@/components/Map/Map";
 import { IoCloseOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
