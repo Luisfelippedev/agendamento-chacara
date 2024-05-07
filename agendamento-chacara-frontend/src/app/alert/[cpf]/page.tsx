@@ -19,6 +19,7 @@ const AlertPage = () => {
   const schedulingExists = async () => {
     const schedulingService = new SchedulingService();
     const filteredCpf = params.cpf.replace(/\D/g, "");
+    console.log(filteredCpf);
     try {
       await schedulingService.getByCpf(filteredCpf);
       const newTab = window.open(
@@ -35,7 +36,7 @@ const AlertPage = () => {
 
   useEffect(() => {
     schedulingExists();
-    // logica de se o usário fez o agendamento
+
   });
 
   return (

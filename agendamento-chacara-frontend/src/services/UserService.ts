@@ -4,6 +4,7 @@ import { UserRepository } from "@/repositories/UserRespository";
 import axios from "axios";
 import { setCookie } from "cookies-next";
 
+
 export class UserService {
   private userRepository: UserRepository;
 

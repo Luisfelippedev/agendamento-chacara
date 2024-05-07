@@ -1,6 +1,7 @@
 import { Scheduling } from "@/app/models/Scheduling";
 import { SchedulingRepository } from "@/repositories/SchedulingRepository";
 
+
 export class SchedulingService {
   private schedulingRepository: SchedulingRepository;
 

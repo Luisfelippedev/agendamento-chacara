@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 import { UserService } from "./services/UserService";
 
 export const config = {
