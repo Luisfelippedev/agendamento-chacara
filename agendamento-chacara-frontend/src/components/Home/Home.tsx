@@ -5,14 +5,24 @@ import { Button } from "@mui/material";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { FaBusinessTime } from "react-icons/fa";
 import { FaMapLocationDot } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Map } from "@/components/Map/Map";
+// import { Map } from "@/components/Map/Map";
 import { IoCloseOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const Map = dynamic<{ inline?: boolean }>(() =>
+  import("../Map/Map").then((mod) => mod.Map)
+);
 
 export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const router = useRouter();
 
@@ -89,10 +99,15 @@ export const HomePage = () => {
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
           >
-            <Map />
+            {isMounted && <Map />}
           </motion.div>
         </div>
       )}
     </div>
   );
 };
+
+
+
+
+
