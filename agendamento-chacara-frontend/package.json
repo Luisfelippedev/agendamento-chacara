@@ -19,6 +19,7 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
+    "dotenv": "^16.4.5",
     "firebase": "^10.11.1",
     "framer-motion": "^11.1.7",
     "jsonwebtoken": "^9.0.2",
