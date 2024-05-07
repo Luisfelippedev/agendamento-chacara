@@ -37,12 +37,6 @@ const Form = () => {
     setIsComponentLoaded(false);
   }, []);
 
-  const [isValidInputValue, setIsValidInputValue] = useState<IValidInput>({
-    firstNameIsValid: true,
-    lastNameIsValid: true,
-    cpfIsValid: true,
-    phoneNumberIsValid: true,
-  });
   const [isExistsScheduling, setIsExistsScheduling] = useState<boolean>(false);
 
   const stringToDateObj = (date: string) => {
@@ -79,28 +73,16 @@ const Form = () => {
   }, [params.date]);
 
   const onCpfInputChange = (value: any) => {
-    setIsValidInputValue((prevState) => ({
-      ...prevState, // Mantém os valores anteriores dos outros campos
-      cpfIsValid: true, // Altera apenas o campo firstNameIsValid para true
-    }));
     setCpfValue(value);
   };
 
   const onPhoneNumberInputChange = (value: any) => {
-    setIsValidInputValue((prevState) => ({
-      ...prevState, // Mantém os valores anteriores dos outros campos
-      phoneNumberIsValid: true, // Altera apenas o campo firstNameIsValid para true
-    }));
     setPhoneNumberValue(value);
   };
 
   const onFirstNameInputChange = (e: any) => {
     const { value } = e.target;
     if (isLetters(value)) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState, // Mantém os valores anteriores dos outros campos
-        firstNameIsValid: true, // Altera apenas o campo firstNameIsValid para true
-      }));
       setFirstNameValue(value);
     }
   };
@@ -108,10 +90,6 @@ const Form = () => {
   const onLastNameInputChange = (e: any) => {
     const { value } = e.target;
     if (isLetters(value)) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState, // Mantém os valores anteriores dos outros campos
-        lastNameIsValid: true, // Altera apenas o campo firstNameIsValid para true
-      }));
       setLastNameValue(value);
     }
   };
@@ -123,10 +101,6 @@ const Form = () => {
     const filteredCpf = cpfValue.replace(/\D/g, "");
 
     if (filteredCpf.length == 0 || cpfValue.length < 10) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState,
-        cpfIsValid: false,
-      }));
       isValid = false;
     }
 
@@ -135,10 +109,6 @@ const Form = () => {
       firstNameValue.length < 2 ||
       firstNameValue.length > 40
     ) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState,
-        firstNameIsValid: false,
-      }));
       isValid = false;
     }
 
@@ -147,10 +117,6 @@ const Form = () => {
       lastNameValue.length < 2 ||
       lastNameValue.length > 40
     ) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState,
-        lastNameIsValid: false,
-      }));
       isValid = false;
     }
 
@@ -160,10 +126,6 @@ const Form = () => {
       .trim();
 
     if (filteredNumber.length < 11) {
-      setIsValidInputValue((prevState) => ({
-        ...prevState,
-        phoneNumberIsValid: false,
-      }));
       isValid = false;
     }
 
@@ -178,7 +140,7 @@ const Form = () => {
       .replace(/\D/g, "")
       .replace(/^55/, "")
       .trim();
-      const filteredCpf = cpfValue.replace(/\D/g, "");
+    const filteredCpf = cpfValue.replace(/\D/g, "");
     const newScheduling: Scheduling = {
       clientName: firstNameValue,
       cpf: filteredCpf,
