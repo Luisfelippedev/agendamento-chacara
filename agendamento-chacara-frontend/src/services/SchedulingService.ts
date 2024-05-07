@@ -31,10 +31,14 @@ export class SchedulingService {
       status: false,
     };
 
-    if (!objScheduling.clientName || !objScheduling.cpf || !objScheduling.date || !objScheduling.phoneNumber) {
-      throw new Error("Empty input value")
+    if (
+      !objScheduling.clientName ||
+      !objScheduling.cpf ||
+      !objScheduling.date ||
+      !objScheduling.phoneNumber
+    ) {
+      throw new Error("Empty input value");
     }
-
 
     const newScheduling = await this.schedulingRepository.create(objScheduling);
 
@@ -45,6 +49,15 @@ export class SchedulingService {
     const scheduling = await this.schedulingRepository.findByDate(date);
 
     if (scheduling == null) {
+      throw new Error("Scheduling not found");
+    }
+    return scheduling;
+  }
+
+  public async getByCpf(cpf: string) {
+    const scheduling = await this.schedulingRepository.findByCpf(cpf);
+
+    if (scheduling.length < 1) {
       throw new Error("Scheduling not found");
     }
     return scheduling;

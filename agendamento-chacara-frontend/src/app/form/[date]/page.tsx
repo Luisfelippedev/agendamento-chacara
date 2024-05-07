@@ -181,9 +181,10 @@ const Form = () => {
       .replace(/\D/g, "")
       .replace(/^55/, "")
       .trim();
+      const filteredCpf = cpfValue.replace(/\D/g, "");
     const newScheduling: Scheduling = {
       clientName: firstNameValue,
-      cpf: cpfValue,
+      cpf: filteredCpf,
       date: params.date,
       phoneNumber: filteredNumber,
       status: false,
@@ -191,7 +192,7 @@ const Form = () => {
     try {
       await schedulingService.createScheduling(newScheduling);
       console.log("chegou");
-      router.push("/alert");
+      router.push(`/alert/${cpfValue}`);
     } catch (error) {
       setIsExistsScheduling(true);
     }
