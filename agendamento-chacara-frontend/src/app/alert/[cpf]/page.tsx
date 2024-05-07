@@ -6,7 +6,6 @@ import Lottie from "lottie-react";
 import talkAnimation from "../../../../public/talk-animation.json";
 import whatsappAnimation from "../../../../public/whatsapp-animation.json";
 import whatsappTwoAnimation from "../../../../public/whatsapptwo-animation.json";
-import fireWorksAnimation from "../../../../public/fireworks.json";
 import { Button } from "@mui/material";
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -19,16 +18,12 @@ const AlertPage = () => {
   const schedulingExists = async () => {
     const schedulingService = new SchedulingService();
     const filteredCpf = params.cpf.replace(/\D/g, "");
-    console.log(filteredCpf);
     try {
       await schedulingService.getByCpf(filteredCpf);
-      const newTab = window.open(
+      window.open(
         "https://wa.me/5583993190450?text=Ol%C3%A1,%20solicitei%20uma%20reserva%20para%20o%20dia%20xx/xx/xxxx",
         "_blank"
       );
-      if (newTab) {
-        newTab.focus(); // Focar na nova aba se ela foi aberta com sucesso
-      }
     } catch (error) {
       router.push("/reservation");
     }
@@ -36,16 +31,10 @@ const AlertPage = () => {
 
   useEffect(() => {
     schedulingExists();
-
   });
 
   return (
     <div className={styles.background}>
-      <Lottie
-        animationData={fireWorksAnimation}
-        loop={false}
-        className={styles.lottieBg}
-      />
       <Header page="alertPage" />
       <div className={styles.container}>
         <div className={styles.firstBox}>
@@ -78,6 +67,7 @@ const AlertPage = () => {
           </p>
           <Button
             href="https://wa.me/5583993190450?text=Ol%C3%A1,%20solicitei%20uma%20reserva%20para%20o%20dia%20xx/xx/xxxx."
+            target="_blank"
             className={styles.button}
             variant="outlined"
           >
