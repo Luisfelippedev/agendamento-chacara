@@ -84,7 +84,6 @@ const Form = () => {
       cpfIsValid: true, // Altera apenas o campo firstNameIsValid para true
     }));
     setCpfValue(value);
-    console.log(cpfValue);
   };
 
   const onPhoneNumberInputChange = (value: any) => {
@@ -93,7 +92,6 @@ const Form = () => {
       phoneNumberIsValid: true, // Altera apenas o campo firstNameIsValid para true
     }));
     setPhoneNumberValue(value);
-    console.log(phoneNumberValue);
   };
 
   const onFirstNameInputChange = (e: any) => {
@@ -123,7 +121,6 @@ const Form = () => {
     let isValid = true;
 
     const filteredCpf = cpfValue.replace(/\D/g, "");
-    console.log(filteredCpf);
 
     if (filteredCpf.length == 0 || cpfValue.length < 10) {
       setIsValidInputValue((prevState) => ({
@@ -191,7 +188,6 @@ const Form = () => {
     };
     try {
       await schedulingService.createScheduling(newScheduling);
-      console.log("chegou");
       router.push(`/alert/${cpfValue}`);
     } catch (error) {
       setIsExistsScheduling(true);
