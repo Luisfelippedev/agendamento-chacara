@@ -48,7 +48,7 @@ export class SchedulingRepository {
     );
     const querySnapshot = await getDocs(newQuery);
     const schedulings: Scheduling[] = [];
-  
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       schedulings.push({
@@ -57,10 +57,33 @@ export class SchedulingRepository {
         clientName: data.clientName,
         date: data.date,
         phoneNumber: data.phoneNumber,
-        status: data.status
+        status: data.status,
       });
     });
-  
+
+    return schedulings;
+  }
+
+  public async findByCpf(cpf: string): Promise<Scheduling[]> {
+    const newQuery = query(
+      collection(firestore, "Scheduling"),
+      where("cpf", "==", cpf)
+    );
+    const querySnapshot = await getDocs(newQuery);
+    const schedulings: Scheduling[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      schedulings.push({
+        id: doc.id,
+        cpf: data.cpf,
+        clientName: data.clientName,
+        date: data.date,
+        phoneNumber: data.phoneNumber,
+        status: data.status,
+      });
+    });
+
     return schedulings;
   }
 }
