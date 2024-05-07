@@ -9,10 +9,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Map } from "@/components/Map/Map";
 import { IoCloseOutline } from "react-icons/io5";
-import { User } from "@/app/models/User";
-import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -27,10 +24,9 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
-  // const handleClickButton = async () => {
-  //   const userService = new UserService();
-  //   userService.login("123456789", "123abc");
-  // };
+  const handleClickContinueButton = () => {
+    router.push("/reservation");
+  };
 
   return (
     <div className={styles.background}>
@@ -38,11 +34,14 @@ export const HomePage = () => {
       <div className={styles.midContainer}>
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>
-        <Link href={"/reservation"}>
-          <Button className={styles.button} variant="contained" href="#">
-            RESERVAR
-          </Button>
-        </Link>
+        <Button
+          onClick={handleClickContinueButton}
+          className={styles.button}
+          variant="contained"
+          href="#"
+        >
+          RESERVAR
+        </Button>
       </div>
 
       <div className={styles.footerContainer}>
@@ -71,7 +70,6 @@ export const HomePage = () => {
             className={styles.closeIcon}
             onClick={handleCloseModal}
             size={60}
-
           />
           <motion.div
             initial={{
