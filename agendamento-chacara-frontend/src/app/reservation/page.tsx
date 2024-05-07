@@ -2,16 +2,13 @@
 import styles from "./styles.module.scss";
 import {
   DateCalendar,
-  DateCalendarProps,
-  DateField,
   LocalizationProvider,
   PickersDay,
-  PickersDayProps,
 } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Locale, format, addYears, parse } from "date-fns";
-import { oc, ptBR } from "date-fns/locale";
+import { ptBR } from "date-fns/locale";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { Header } from "@/components/Header/Header";
 import { Button } from "@mui/material";
@@ -21,7 +18,6 @@ import { useEffect, useState } from "react";
 import "dayjs/locale/pt-br"; // Importe o locale desejado, neste caso, português do Brasil
 import localizedFormat from "dayjs/plugin/localizedFormat"; //
 import { SchedulingService } from "@/services/SchedulingService";
-import { styled } from "@mui/material/styles";
 
 const ReservationPage = () => {
   dayjs.extend(localizedFormat); // Adicione o plugin de localização ao dayjs
@@ -29,7 +25,6 @@ const ReservationPage = () => {
     ...ptBR,
     options: {
       ...ptBR.options,
-      // Sunday = 0, Monday = 1.
       weekStartsOn: 1,
     },
   };
@@ -117,18 +112,6 @@ const ReservationPage = () => {
     if (dateFromBd) {
       router.push(`/form/${dateFromBd}`);
     }
-    // const schedulingService = new SchedulingService();
-    // const objScheduling: Scheduling = {
-    //   clientName: "asdads",
-    //   cpf: "1234567734978",
-    //   date: "25-04-2024",
-    //   phoneNumber: "123445674899",
-    //   status: false,
-    // };
-    // await schedulingService.createScheduling(objScheduling);
-    // salvar data no contexto
-    // redirecionar o usuário para a outra aba
-    // na outra aba confiro se há um valor no context, caso não tenha, o useEffect de la irá retornar o usuário para essa página novamente
   };
 
   const customCalendarDay = (props: any): any => {
