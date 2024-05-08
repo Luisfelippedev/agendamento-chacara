@@ -33,7 +33,7 @@ export const HomePage = () => {
     setShowModal(false);
   };
 
-  const handleClickContinueButton = () => {
+  const handleClickContinueButton = async () => {
     router.push("/reservation");
   };
 
@@ -105,8 +105,3 @@ export const HomePage = () => {
     </div>
   );
 };
-
-
-
-
-

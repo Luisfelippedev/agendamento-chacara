@@ -1,9 +1,8 @@
 import { User } from "@/app/models/User";
 import CryptoJS from "crypto-js";
 import { UserRepository } from "@/repositories/UserRespository";
-import axios from "axios";
+  import axios from "axios";
 import { setCookie } from "cookies-next";
-
 
 export class UserService {
   private userRepository: UserRepository;
@@ -84,5 +83,4 @@ export class UserService {
       throw new Error("User unauthenticated");
     }
   }
-
 }
