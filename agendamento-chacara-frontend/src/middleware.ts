@@ -6,7 +6,7 @@ export const config = {
 };
 
 export async function middleware(req: NextRequest) {
-  const userService = new UserService();
+  const userService = new UserService(); // Error nesta linha
   const token = req.cookies.get("token") as unknown as any;
 
   if (token) {
