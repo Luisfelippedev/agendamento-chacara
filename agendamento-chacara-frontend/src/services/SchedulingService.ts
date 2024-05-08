@@ -73,4 +73,13 @@ export class SchedulingService {
 
     return allScheduling;
   }
+
+  public async deleteById (id: string){
+    const schedulingExists = this.schedulingRepository.findById(id)
+    if(!schedulingExists){
+      throw new Error('Scheduling not found')
+    }
+    await this.schedulingRepository.deleteById(id)
+  }
+
 }

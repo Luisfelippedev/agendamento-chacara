@@ -7,10 +7,10 @@ import {
   setDoc,
   where,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { Scheduling } from "../app/models/Scheduling";
-
 
 export class SchedulingRepository {
   constructor() {}
@@ -86,5 +86,33 @@ export class SchedulingRepository {
     });
 
     return schedulings;
+  }
+
+  public async findById(id: string): Promise<Scheduling[]> {
+    const newQuery = query(
+      collection(firestore, "Scheduling"),
+      where("id", "==", id)
+    );
+    const querySnapshot = await getDocs(newQuery);
+    const schedulings: Scheduling[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      schedulings.push({
+        id: doc.id,
+        cpf: data.cpf,
+        clientName: data.clientName,
+        date: data.date,
+        phoneNumber: data.phoneNumber,
+        status: data.status,
+      });
+    });
+
+    return schedulings;
+  }
+
+  public async deleteById (id: string) {
+    const userDocRef = doc(firestore, 'Scheduling', id);
+      await deleteDoc(userDocRef);
   }
 }
