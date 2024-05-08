@@ -10,13 +10,14 @@ import { Button } from "@mui/material";
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { SchedulingService } from "@/services/SchedulingService";
+import { isBefore, parse, startOfDay } from "date-fns";
 
 const AlertPage = () => {
   const params = useParams<{ cpf: string }>();
   const router = useRouter();
+  const schedulingService = new SchedulingService();
 
   const schedulingExists = async () => {
-    const schedulingService = new SchedulingService();
     const filteredCpf = params.cpf.replace(/\D/g, "");
     try {
       await schedulingService.getByCpf(filteredCpf);
@@ -29,8 +30,37 @@ const AlertPage = () => {
     }
   };
 
+  // function isPastDate(dataString: string) {
+  //   const partes = dataString.split("-");
+  //   const dia = parseInt(partes[0], 10);
+  //   const mes = parseInt(partes[1], 10) - 1; // O mês em JavaScript começa em 0 (janeiro = 0)
+  //   const ano = parseInt(partes[2], 10);
+  //   const dataFornecida = new Date(ano, mes, dia);
+  //   const dataAtual = new Date();
+
+  //   return dataFornecida < dataAtual;
+  // }
+
+  function isPastDate(dataString: string) {
+    const dataFornecida = parse(dataString, 'dd-MM-yyyy', new Date());
+    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
+    
+    return isBefore(dataFornecida, dataAtual);
+  }
+
+  const deleteOldScheduling = async () => {
+    const allScheduling = await schedulingService.getAll();
+    allScheduling.forEach((scheduling) => {
+      const isPast = isPastDate(scheduling.date);
+      if(isPast){
+        schedulingService.deleteById(scheduling.id)
+      }
+    });
+  };
+
   useEffect(() => {
     schedulingExists();
+    deleteOldScheduling();
   });
 
   return (

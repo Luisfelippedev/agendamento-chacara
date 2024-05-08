@@ -13,6 +13,7 @@ import { Header } from "@/components/Header/Header";
 import { IoIosArrowBack } from "react-icons/io";
 import { Scheduling } from "@/app/models/Scheduling";
 import { PatternFormat } from "react-number-format";
+import { isBefore, parse, startOfDay } from "date-fns";
 
 const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
 
@@ -62,8 +63,17 @@ const Form = () => {
     router.push("/reservation");
   };
 
+  function isPastDate(dataString: string) {
+    const dataFornecida = parse(dataString, "dd-MM-yyyy", new Date());
+    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
+
+    return isBefore(dataFornecida, dataAtual);
+  }
+
   useEffect(() => {
     if (!params.date || !/^\d{2}-\d{2}-\d{4}$/.test(params.date)) {
+      router.push("/reservation");
+    } else if (isPastDate(params.date)) {
       router.push("/reservation");
     } else {
       setCurrentDate(params.date);
@@ -95,7 +105,7 @@ const Form = () => {
   };
 
   const handleClickButtonSubmit = async () => {
-    setIsComponentLoaded(true)
+    setIsComponentLoaded(true);
     setIsExistsScheduling(false);
     let isValid = true;
 
