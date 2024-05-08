@@ -1,7 +1,7 @@
 import { User } from "@/app/models/User";
 import CryptoJS from "crypto-js";
 import { UserRepository } from "@/repositories/UserRespository";
-  import axios from "axios";
+import axios from "axios";
 import { setCookie } from "cookies-next";
 
 export class UserService {
@@ -59,7 +59,7 @@ export class UserService {
     const token = (await axios.post("/api/auth", { id: userExists.id })).data
       .token;
     const expirationTime = new Date();
-    expirationTime.setTime(expirationTime.getTime() + 24 * 60 * 60 * 1000);
+    expirationTime.setTime(expirationTime.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 dias para expirar
     // Seto o token para o cookie, e quando eu precisar do id do user que está logado, posso pegar no payload do token por exemplo
     setCookie("token", token, {
       expires: expirationTime,
