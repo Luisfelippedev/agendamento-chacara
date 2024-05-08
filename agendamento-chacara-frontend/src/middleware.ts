@@ -10,15 +10,17 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token") as unknown as any;
 
   if (token) {
-    const userExists = await userService.getProfile(token.value);
+    try {
+      const userExists = await userService.getProfile(token.value);
 
-    if (userExists) {
-      if (req.nextUrl.pathname === "/login") {
-        return NextResponse.rewrite(new URL("/dashboard", req.url));
-      } else {
-        return NextResponse.next();
+      if (userExists) {
+        if (req.nextUrl.pathname === "/login") {
+          return NextResponse.rewrite(new URL("/dashboard", req.url));
+        } else {
+          return NextResponse.next();
+        }
       }
-    } else {
+    } catch (error) {
       req.cookies.clear();
       return NextResponse.rewrite(new URL("/login", req.url));
     }
