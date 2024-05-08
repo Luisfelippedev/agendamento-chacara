@@ -11,7 +11,6 @@ const Login = () => {
   const [cpfValue, setCpfValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [isInvalidLogin, setIsInvalidLogin] = useState(false);
-  const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   const handleClickButtonSubmit = async () => {
     let isLogin = false;
@@ -20,7 +19,6 @@ const Login = () => {
     try {
       await userService.login(filteredCpf, passwordValue);
       isLogin = true;
-      //   setIsLoginLoading(true);
       if (isLogin) {
         router.push("/dashboard");
       }
@@ -59,7 +57,6 @@ const Login = () => {
           onClick={handleClickButtonSubmit}
           className={styles.submitButton}
           variant="contained"
-          disabled={isLoginLoading}
         >
           FAZER LOGIN
         </Button>
