@@ -2,6 +2,8 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  matcher: ["/about/:path*", "/dashboard/:path*"],
+
   /* config options here */
   env: {
     API_KEY: process.env.API_KEY,
