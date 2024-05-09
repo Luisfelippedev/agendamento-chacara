@@ -1,0 +1,11 @@
+{
+    "routes": [
+      {
+        "source": "/login",
+        "destination": "/dashboard"
+      },
+      {
+        "source": "/dashboard/:page*"
+      }
+    ]
+  }
