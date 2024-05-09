@@ -1,3 +1,12 @@
 {
-  "rewrites": [{ "source": "/", "destination": "/login" }, {"source": "/login", "destination": "/dashboard"}]
-}
+    "rewrites": [
+      {
+        "source": "/api/:form*",
+        "destination": "https://api.example.com/:login*"
+      },
+      {
+        "source": "/api/:dashboard*",
+        "destination": "https://api.example.com/:dashboard*"
+      }
+    ]
+  } 
