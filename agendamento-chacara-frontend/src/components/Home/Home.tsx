@@ -19,6 +19,9 @@ export const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  try {
+  } catch (error) {}
+
   useEffect(() => {
     setIsMounted(true);
   }, []);

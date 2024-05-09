@@ -1,0 +1,51 @@
+@import "../../themes/theme.scss";
+
+.background{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: $primary-color;
+    width: 100dvw;
+    height: 100dvh;
+    max-width: 100dvw;
+    max-height: 100dvh;  
+    flex-direction: column;
+    background-color: $primary-color;
+    .header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2% 2% 3% 1%;
+        width: 100%;
+
+
+            .logoImage{
+                width: 4rem;
+                height: 4rem;
+            }
+            .userAvatar{
+                height: 40px;
+                width: 40px;
+            }
+        
+
+
+        @media(min-width: 768px){
+            padding: 1% 2% 1% 2%;
+            .logoImage{
+                width: 5rem;
+                height: 5rem;
+            }
+            .userAvatar{
+                height: 50px;
+                width: 50px;
+            }
+        }
+        @media(min-width: 1440px){
+            .userAvatar{
+                height: 50px;
+                width: 50px;
+            }
+        }
+    }
+}
