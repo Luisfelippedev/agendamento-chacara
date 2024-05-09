@@ -71,7 +71,7 @@ export class UserService {
 
   public async getProfile(token: string) {
     try {
-  const response = await fetch("http://agendamento-chacara.vercel.app/api/getprofile", {
+  const response = await fetch("/api/getprofile", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
