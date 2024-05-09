@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UserService } from "./services/UserService";
-import next from "next";
 
 export const config = {
   matcher: ["/dashboard/:page*", "/login"],
