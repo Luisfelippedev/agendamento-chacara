@@ -161,6 +161,7 @@ const Form = () => {
     };
     try {
       await schedulingService.createScheduling(newScheduling);
+      setIsComponentLoaded(true);
       router.push(`/alert/${cpfValue}`);
     } catch (error) {
       setIsExistsScheduling(true);

@@ -1,7 +1,7 @@
 "use client";
 import { Button, TextField } from "@mui/material";
 import styles from "./styles.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PatternFormat } from "react-number-format";
 import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
@@ -11,10 +11,11 @@ const Login = () => {
   const [cpfValue, setCpfValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [isInvalidLogin, setIsInvalidLogin] = useState(false);
+  const userService = new UserService();
 
   const handleClickButtonSubmit = async () => {
     let isLogin = false;
-    const userService = new UserService();
+
     const filteredCpf = cpfValue.replace(/\D/g, "");
     try {
       await userService.login(filteredCpf, passwordValue);
@@ -28,6 +29,27 @@ const Login = () => {
       setIsInvalidLogin(true);
     }
   };
+
+  // const userIsLogged = async () => {
+  //   const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
+  //   const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+
+  //   if (tokenCookie) {
+  //     const token = tokenCookie.split("=")[1];
+  //     try {
+  //       const userExists = await userService.getProfile(token);
+  //       // if(userExists){
+  //       //   router.push("/dashboard");
+  //       // }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   userIsLogged();
+  // });
 
   return (
     <div className={styles.background}>

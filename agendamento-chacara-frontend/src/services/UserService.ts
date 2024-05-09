@@ -68,16 +68,21 @@ export class UserService {
     });
   }
 
+  // const response = await fetch("http://localhost:3000/api/getprofile", {
   public async getProfile(token: string) {
     try {
-      const response = await fetch("http://localhost:3000/api/getprofile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: token }),
-      });
+      const response = await fetch(
+        "https://agendamento-chacara.vercel.app/api/getprofile",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: token }),
+        }
+      );
       const userExists = await response.json();
+      console.log(userExists);
       return userExists;
     } catch (error) {
       throw new Error("User unauthenticated");
