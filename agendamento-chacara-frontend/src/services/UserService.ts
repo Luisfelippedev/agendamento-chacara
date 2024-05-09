@@ -68,12 +68,10 @@ export class UserService {
     });
   }
 
-  // const response = await fetch("http://localhost:3000/api/getprofile", {
+
   public async getProfile(token: string) {
     try {
-      const response = await fetch(
-        `https://${process.env.VERCEL_URL}/api/getprofile`,
-        {
+  const response = await fetch("http://localhost:3000/api/getprofile", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
