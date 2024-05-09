@@ -1,11 +1,17 @@
 {
     "routes": [
       {
-        "source": "/login",
+        "path": "/login",
+        "conditions": {
+          "cookie": {
+            "name": "token",
+            "exists": true
+          }
+        },
         "destination": "/dashboard"
       },
       {
-        "source": "/dashboard/:page*"
+        "path": "/dashboard/:page*"
       }
     ]
   }
