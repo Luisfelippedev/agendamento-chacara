@@ -72,7 +72,7 @@ export class UserService {
   public async getProfile(token: string) {
     try {
       const response = await fetch(
-        `${process.env.HOST}/api/getprofile`,
+        `https://${process.env.VERCEL_URL}/api/getprofile`,
         {
           method: "POST",
           headers: {
@@ -81,6 +81,7 @@ export class UserService {
           body: JSON.stringify({ token: token }),
         }
       );
+
       const userExists = await response.json();
       console.log(userExists);
       return userExists;
