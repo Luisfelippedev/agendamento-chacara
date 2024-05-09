@@ -16,6 +16,7 @@ const nextConfig = {
     USER_FULLNAME: process.env.USER_FULLNAME,
     USER_PASSWORD: process.env.USER_PASSWORD,
     USER_PHONENUMBER: process.env.USER_PHONENUMBER,
+    HOST: process.env.HOST
   },
 };
 

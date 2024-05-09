@@ -72,7 +72,7 @@ export class UserService {
   public async getProfile(token: string) {
     try {
       const response = await fetch(
-        "https://agendamento-chacara.vercel.app/api/getprofile",
+        `${process.env.HOST}/api/getprofile`,
         {
           method: "POST",
           headers: {
