@@ -1,8 +1,22 @@
 // @ts-check
 
-/** @type {import('next').NextConfig} */
+// /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
+  async rewrites() {
+    return {
+      fallback: [
+        {
+          source: "/login",
+          destination: "https://agendamento-chacara.vercel.app/login",
+        },
+        {
+          source: "/checkout/:path*",
+          destination: "https://agendamento-chacara.vercel.app/dashboard/:page**",
+        },
+      ],
+    };
+  },
   env: {
     API_KEY: process.env.API_KEY,
     AUTH_DOMAIN: process.env.AUTH_DOMAIN,
