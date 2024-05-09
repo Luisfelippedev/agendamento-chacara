@@ -30,26 +30,24 @@ const Login = () => {
     }
   };
 
-  // const userIsLogged = async () => {
-  //   const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
-  //   const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+  const userIsLogged = async () => {
+    const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
 
-  //   if (tokenCookie) {
-  //     const token = tokenCookie.split("=")[1];
-  //     try {
-  //       const userExists = await userService.getProfile(token);
-  //       // if(userExists){
-  //       //   router.push("/dashboard");
-  //       // }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
+    if (tokenCookie) {
+      const token = tokenCookie.split("=")[1];
+      try {
+        await userService.getProfile(token);
+        router.push("/dashboard");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
-  // useEffect(() => {
-  //   userIsLogged();
-  // });
+  useEffect(() => {
+    userIsLogged();
+  });
 
   return (
     <div className={styles.background}>
