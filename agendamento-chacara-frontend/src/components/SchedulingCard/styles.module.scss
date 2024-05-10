@@ -11,7 +11,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
     cursor: pointer;
     transition: transform 0.2s ease-in-out; /* Adiciona uma transição suave no efeito de transformação */
-
+    
     &:hover{
         transform: scale(1.05);
     }
@@ -23,7 +23,7 @@
         justify-content: center;
         border-radius: 10px;
         background-color: rgb(0, 104, 240);
-        padding: 0 6%;
+        padding: 0 27px;
         height: 80px;
         .dayText{
             font-size: 1.5rem;
@@ -40,7 +40,8 @@
         box-sizing: border-box; 
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 7px;
+        width: 60%;
         .fullNameText{
             font-size: 1rem;
             width: 90%;

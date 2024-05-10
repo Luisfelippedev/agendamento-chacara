@@ -50,13 +50,17 @@ const Form = () => {
 
   const verifyDateStatus = async () => {
     const schedulingService = new SchedulingService();
-    const schedulingExists = await schedulingService.getByDate(params.date);
-    schedulingExists.forEach((scheduling) => {
-      if (scheduling.status === true) {
-        router.push("/reservation");
-      }
+    try {
+      const schedulingExists = await schedulingService.getByDate(params.date);
+      schedulingExists.forEach((scheduling) => {
+        if (scheduling.status === true) {
+          router.push("/reservation");
+        }
+        return;
+      });
+    } catch (error) {
       return;
-    });
+    }
   };
 
   const handleClickBackButton = () => {
@@ -105,7 +109,7 @@ const Form = () => {
   };
 
   const handleClickButtonSubmit = async () => {
-    setIsComponentLoaded(true);
+    // setIsComponentLoaded(true);
     setIsExistsScheduling(false);
     let isValid = true;
 
@@ -153,7 +157,7 @@ const Form = () => {
       .trim();
     const filteredCpf = cpfValue.replace(/\D/g, "");
     const newScheduling: Scheduling = {
-      clientName: firstNameValue,
+      clientName: `${firstNameValue} ${lastNameValue}`,
       cpf: filteredCpf,
       date: params.date,
       phoneNumber: filteredNumber,
