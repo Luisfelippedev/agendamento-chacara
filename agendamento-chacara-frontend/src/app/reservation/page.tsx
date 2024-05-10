@@ -204,7 +204,7 @@ const ReservationPage = () => {
           <div className={styles.buttonContainer}>
             <Button
               disabled={
-                schedulingStatus === "loading" || schedulingStatus === true
+                schedulingStatus === "loading" || schedulingStatus === true 
               }
               onClick={handleClickConfirmButton}
               className={styles.button}

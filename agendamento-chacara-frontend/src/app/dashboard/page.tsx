@@ -44,6 +44,7 @@ const DashboardPage = () => {
   const [numberOfSchedulings, setNumberOfSchedulings]: any = useState(null);
   const [currentPage, setCurrentPage]: any = useState("schedule");
   const [occupiedDays, setOccupiedDays]: any = useState([]);
+  const [isAllScheduling, setIsAllScheduling]: any = useState(true);
 
   const userService = new UserService();
 
@@ -68,20 +69,47 @@ const DashboardPage = () => {
   const searchOcuppiedDays = async () => {
     const schedulingService = new SchedulingService();
     try {
-      const occupiedDaysArr: any = [];
+      let occupiedDaysArr: Array<any> = [];
       const allSchedulings = await schedulingService.getAll();
 
       allSchedulings.forEach((scheduling) => {
         if (scheduling.status == true) {
-          const dateFormated = bdDateToDate(scheduling.date);
-          occupiedDaysArr.push({ date: dateFormated, status: "occupied" });
+          // const dateFormated = bdDateToDate(scheduling.date);
+          occupiedDaysArr.push({
+            date: scheduling.date,
+            status: "occupied",
+            fullName: scheduling.clientName,
+            cpf: scheduling.cpf,
+            id: scheduling.id,
+            phoneNumber: scheduling.phoneNumber,
+          });
         } else {
-          const dateFormated = bdDateToDate(scheduling.date);
-          occupiedDaysArr.push({ date: dateFormated, status: "waiting" });
+          // const dateFormated = bdDateToDate(scheduling.date);
+          occupiedDaysArr.push({
+            date: scheduling.date,
+            status: "waiting",
+            fullName: scheduling.clientName,
+            cpf: scheduling.cpf,
+            id: scheduling.id,
+            phoneNumber: scheduling.phoneNumber,
+          });
         }
       });
-      console.log(occupiedDaysArr);
-      setOccupiedDays(occupiedDaysArr);
+
+
+      const filteredOccupiedDaysArr = occupiedDaysArr.filter(
+        (item) =>
+          item.status !== "waiting" ||
+          !occupiedDaysArr.some(
+            (occupiedItem) =>
+              occupiedItem.status === "occupied" &&
+              occupiedItem.date === item.date
+          )
+      );
+
+      console.log(filteredOccupiedDaysArr);
+
+      setOccupiedDays(filteredOccupiedDaysArr);
       return;
     } catch (error) {
       setOccupiedDays([]);
@@ -164,10 +192,16 @@ const DashboardPage = () => {
   };
 
   const handleClickOderButton = () => {
+    setIsAllScheduling(true);
     setCurrentPage("order");
   };
 
+  const onClickButtonToView = () => {
+    setIsAllScheduling(false);
+  };
+
   useEffect(() => {
+    console.log("chegou");
     searchOcuppiedDays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -179,9 +213,11 @@ const DashboardPage = () => {
   const customCalendarDay = (props: any): any => {
     const { day, ...others } = props;
     let reservedDay: any;
+
     occupiedDays.forEach((element: any) => {
-      if (element.date == day.toString()) {
-        reservedDay = { date: element.date, status: element.status };
+      const dateFormated = bdDateToDate(element.date);
+      if (dateFormated== day.toString()) {
+        reservedDay = { date: dateFormated, status: element.status };
       }
     });
 
@@ -361,6 +397,7 @@ const DashboardPage = () => {
                     schedulingStatus === "free"
                   }
                   variant="contained"
+                  onClick={onClickButtonToView}
                 >
                   VISUALIZAR
                 </Button>
@@ -373,15 +410,29 @@ const DashboardPage = () => {
           <>
             <p className={styles.titleText}>Pedidos</p>
             <div className={styles.schedulingListContainer}>
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
-              <SchedulingCard />
+              {occupiedDays.length > 0 &&
+                isAllScheduling &&
+                occupiedDays.map((scheduling: any, index: any) => (
+                  <SchedulingCard
+                    key={index} // Certifique-se de usar uma chave única para cada item renderizado em um loop
+                    date={bdDateToDate(scheduling.date)} // Passe as propriedades necessárias para o componente SchedulingCard
+                    status={scheduling.status}
+                    fullName={scheduling.fullName}
+                    phoneNumber={scheduling.phoneNumber}
+                  />
+                ))}
+              {occupiedDays.length > 0 &&
+                isAllScheduling == false &&
+                occupiedDays.map((scheduling: any, index: any) => (
+                  // {scheduling.date == }
+                  <SchedulingCard
+                    key={index} // Certifique-se de usar uma chave única para cada item renderizado em um loop
+                    date={bdDateToDate(scheduling.date)} // Passe as propriedades necessárias para o componente SchedulingCard
+                    status={scheduling.status}
+                    fullName={scheduling.fullName}
+                    phoneNumber={scheduling.phoneNumber}
+                  />
+                ))}
             </div>
           </>
         )}
