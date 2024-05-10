@@ -5,7 +5,7 @@ import { UserService } from "@/services/UserService";
 import styles from "./styles.module.scss";
 import Image from "next/image";
 import logo from "../../../public/tridev-logo-black.png";
-import { HiMiniUserCircle } from "react-icons/hi2";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { IoLogOut } from "react-icons/io5";
 import { ptBR } from "date-fns/locale";
@@ -24,7 +24,11 @@ import {
   Tooltip,
 } from "@mui/material";
 import React from "react";
-import { DateCalendar, LocalizationProvider, PickersDay } from "@mui/x-date-pickers";
+import {
+  DateCalendar,
+  LocalizationProvider,
+  PickersDay,
+} from "@mui/x-date-pickers";
 import { SchedulingCard } from "@/components/SchedulingCard/SchedulingCard";
 import { SchedulingService } from "@/services/SchedulingService";
 
@@ -34,10 +38,14 @@ const DashboardPage = () => {
   const nextYear = addYears(date, 1);
   const [isLogged, setIsLogged] = useState(false);
   const [dateActualString, setDateActualString]: any = useState();
+  const [currentDateCalendar, setCurrentDateCalendar]: any = useState();
   const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
   const [dateFromBd, setDateFromBd]: any = useState();
   const [numberOfSchedulings, setNumberOfSchedulings]: any = useState(null);
   const [currentPage, setCurrentPage]: any = useState("schedule");
+  const [occupiedDays, setOccupiedDays]: any = useState([]);
+
+  const userService = new UserService();
 
   const customPtBrLocale: Locale = {
     ...ptBR,
@@ -47,7 +55,39 @@ const DashboardPage = () => {
     },
   };
 
-  const userService = new UserService();
+  const bdDateToDate = (dateString: string) => {
+    const [day, month, year] = dateString.split("-");
+    const formattedDate = parse(
+      `${year}-${month}-${day}`,
+      "yyyy-MM-dd",
+      new Date()
+    );
+    return formattedDate;
+  };
+
+  const searchOcuppiedDays = async () => {
+    const schedulingService = new SchedulingService();
+    try {
+      const occupiedDaysArr: any = [];
+      const allSchedulings = await schedulingService.getAll();
+
+      allSchedulings.forEach((scheduling) => {
+        if (scheduling.status == true) {
+          const dateFormated = bdDateToDate(scheduling.date);
+          occupiedDaysArr.push({ date: dateFormated, status: "occupied" });
+        } else {
+          const dateFormated = bdDateToDate(scheduling.date);
+          occupiedDaysArr.push({ date: dateFormated, status: "waiting" });
+        }
+      });
+      console.log(occupiedDaysArr);
+      setOccupiedDays(occupiedDaysArr);
+      return;
+    } catch (error) {
+      setOccupiedDays([]);
+      return;
+    }
+  };
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -90,11 +130,12 @@ const DashboardPage = () => {
   }
 
   const handleClickDayButton = async (dateValue: any) => {
+    setCurrentDateCalendar(dateValue);
     setNumberOfSchedulings(null);
-
     setSchedulingStatus("loading");
     const stringDateFormated = dateToString(dateValue);
     setDateActualString(stringDateFormated);
+
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
     setDateFromBd(simpleDateFormated);
     const schedulingService = new SchedulingService();
@@ -126,10 +167,57 @@ const DashboardPage = () => {
     setCurrentPage("order");
   };
 
+  useEffect(() => {
+    searchOcuppiedDays();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     userIsLogged();
   });
+
+  const customCalendarDay = (props: any): any => {
+    const { day, ...others } = props;
+    let reservedDay: any;
+    occupiedDays.forEach((element: any) => {
+      if (element.date == day.toString()) {
+        reservedDay = { date: element.date, status: element.status };
+      }
+    });
+
+    return (
+      <PickersDay
+        {...others}
+        style={{
+          color:
+            reservedDay && reservedDay.status === "occupied"
+              ? "green"
+              : reservedDay && reservedDay.status === "waiting"
+              ? "rgb(255, 128, 0)"
+              : "none",
+          fontWeight: reservedDay ? "bold" : "normal",
+        }}
+        day={day}
+        sx={{
+          ...(reservedDay && reservedDay.status === "occupied"
+            ? {
+                "&.Mui-selected": {
+                  backgroundColor: "green !important",
+                  color: "white !important",
+                },
+              }
+            : reservedDay && reservedDay.status === "waiting"
+            ? {
+                "&.Mui-selected": {
+                  backgroundColor: "rgb(255, 128, 0) !important",
+                  color: "white !important",
+                },
+              }
+            : {}),
+        }}
+      />
+    );
+  };
 
   if (!isLogged) {
     return null; // Não renderiza nada enquanto a verificação não estiver concluída
@@ -209,19 +297,27 @@ const DashboardPage = () => {
           <>
             <div className={styles.dateCalendarContainer}>
               <div className={styles.calendarHeader}>Agenda</div>
+
               <LocalizationProvider
                 dateAdapter={AdapterDateFns}
                 adapterLocale={customPtBrLocale}
               >
-                <DateCalendar
-                  value={dateActualString}
-                  onChange={(newValue) => {
-                    handleClickDayButton(newValue);
-                  }}
-                  minDate={date}
-                  maxDate={nextYear}
-                  autoFocus={true}
-                />
+                {occupiedDays ? (
+                  <DateCalendar
+                    value={currentDateCalendar}
+                    onChange={(newValue) => {
+                      handleClickDayButton(newValue);
+                    }}
+                    minDate={date}
+                    maxDate={nextYear}
+                    autoFocus={true}
+                    slots={{
+                      day: customCalendarDay,
+                    }}
+                  />
+                ) : (
+                  <DateCalendar disabled />
+                )}
               </LocalizationProvider>
             </div>
             <div className={styles.lastContainer}>
@@ -241,7 +337,7 @@ const DashboardPage = () => {
               )}
               {schedulingStatus == "occupied" && (
                 <span
-                  style={{ color: "red", borderColor: "red" }}
+                  style={{ color: "green", borderColor: "green" }}
                   className={styles.statusLabel}
                 >
                   Reservado
@@ -249,7 +345,10 @@ const DashboardPage = () => {
               )}
               {schedulingStatus == "waiting" && (
                 <span
-                  style={{ color: "orange", borderColor: "orange" }}
+                  style={{
+                    color: "rgb(255, 128, 0)",
+                    borderColor: "rgb(255, 128, 0)",
+                  }}
                   className={styles.statusLabel}
                 >
                   Esperando

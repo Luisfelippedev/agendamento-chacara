@@ -48,6 +48,7 @@ const ReservationPage = () => {
   const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
   const [dateFromBd, setDateFromBd]: any = useState();
   const [occupiedDays, setOccupiedDays]: any = useState();
+  const [currentDateCalendar, setCurrentDateCalendar]: any = useState();
 
   const bdDateToDate = (dateString: string) => {
     const [day, month, year] = dateString.split("-");
@@ -84,6 +85,7 @@ const ReservationPage = () => {
   }, []);
 
   const handleClickDayButton = async (dateValue: any) => {
+    setCurrentDateCalendar(dateValue)
     setSchedulingStatus(false);
     const stringDateFormated = dateToString(dateValue);
     setDateActualValue(stringDateFormated);
@@ -164,7 +166,7 @@ const ReservationPage = () => {
           >
             {occupiedDays ? (
               <DateCalendar
-                value={dateActualValue}
+                value={currentDateCalendar}
                 onChange={(newValue) => {
                   handleClickDayButton(newValue);
                 }}
