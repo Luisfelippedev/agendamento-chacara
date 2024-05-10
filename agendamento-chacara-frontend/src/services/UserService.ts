@@ -68,20 +68,17 @@ export class UserService {
     });
   }
 
-
   public async getProfile(token: string) {
     try {
-  const response = await fetch("/api/getprofile", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: token }),
-        }
-      );
+      const response = await fetch("/api/getprofile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: token }),
+      });
 
       const userExists = await response.json();
-      console.log(userExists);
       return userExists;
     } catch (error) {
       throw new Error("User unauthenticated");

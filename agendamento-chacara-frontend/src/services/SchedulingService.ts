@@ -1,7 +1,6 @@
 import { Scheduling } from "@/app/models/Scheduling";
 import { SchedulingRepository } from "@/repositories/SchedulingRepository";
 
-
 export class SchedulingService {
   private schedulingRepository: SchedulingRepository;
 
@@ -48,10 +47,13 @@ export class SchedulingService {
 
   public async getByDate(date: string) {
     const scheduling = await this.schedulingRepository.findByDate(date);
-
     if (scheduling == null) {
       throw new Error("Scheduling not found");
     }
+    if (scheduling.length < 1) {
+      throw new Error("Scheduling not found");
+    }
+
     return scheduling;
   }
 
@@ -74,12 +76,11 @@ export class SchedulingService {
     return allScheduling;
   }
 
-  public async deleteById (id: string){
-    const schedulingExists = this.schedulingRepository.findById(id)
-    if(!schedulingExists){
-      throw new Error('Scheduling not found')
+  public async deleteById(id: string) {
+    const schedulingExists = this.schedulingRepository.findById(id);
+    if (!schedulingExists) {
+      throw new Error("Scheduling not found");
     }
-    await this.schedulingRepository.deleteById(id)
+    await this.schedulingRepository.deleteById(id);
   }
-
 }

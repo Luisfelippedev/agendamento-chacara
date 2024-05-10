@@ -11,6 +11,7 @@ const Login = () => {
   const [cpfValue, setCpfValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [isInvalidLogin, setIsInvalidLogin] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
   const userService = new UserService();
 
   const handleClickButtonSubmit = async () => {
@@ -40,8 +41,10 @@ const Login = () => {
         await userService.getProfile(token);
         router.push("/dashboard");
       } catch (error) {
-        console.log(error);
+        setIsLogged(true);
       }
+    } else {
+      setIsLogged(true);
     }
   };
 
@@ -49,6 +52,9 @@ const Login = () => {
     userIsLogged();
   });
 
+  if (!isLogged) {
+    return null; // Não renderiza nada enquanto a verificação não estiver concluída
+  }
   return (
     <div className={styles.background}>
       <div className={styles.formContainer}>
