@@ -8,7 +8,7 @@ import logo from "../../../public/tridev-logo-black.png";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import Lottie from "lottie-react";
-import loadingAnimation from "../../../public/loading-animation.json"
+import loadingAnimation from "../../../public/loading-animation.json";
 import { IoLogOut } from "react-icons/io5";
 import { ptBR } from "date-fns/locale";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -230,6 +230,19 @@ const DashboardPage = () => {
     });
   };
 
+  const dateStringToWithBar = (dateString: any) => {
+    // Remova o dia da semana e a vírgula da string de data original
+    const cleanDateString = dateString.replace(/^.*, /, "");
+
+    // Parse da string de data limpa usando o formato padrão de exibição
+    const parsedDate = dayjs(cleanDateString, "MMMM D, YYYY");
+
+    // Formata a data no formato "dd/mm/yyyy"
+    const formattedDate = parsedDate.format("DD/MM/YYYY");
+
+    return formattedDate;
+  };
+
   useEffect(() => {
     searchOcuppiedDays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -369,7 +382,7 @@ const DashboardPage = () => {
         {currentPage == "schedule" && (
           <>
             <div className={styles.dateCalendarContainer}>
-              <div className={styles.calendarHeader}>Agenda</div>
+              <div className={styles.calendarHeader}>Selecione um dia</div>
 
               <LocalizationProvider
                 dateAdapter={AdapterDateFns}
@@ -445,8 +458,22 @@ const DashboardPage = () => {
 
         {currentPage == "order" && (
           <>
-            <p className={styles.titleText}>Pedidos</p>
             <div className={styles.schedulingListContainer}>
+              <div className={styles.titleBox}>
+                <span className={styles.titleText}>
+                  Agendamentos
+                  {dateActualString && (
+                    <p className={styles.dateTitleText}>
+                      ({dateStringToWithBar(dateActualString)})
+                    </p>
+                  )}
+                </span>
+              </div>
+              <div className={styles.clearFilterBox}>
+                <Button className={styles.buttonViewAll} variant="outlined">
+                  VER TODOS
+                </Button>
+              </div>
               {occupiedDays.length > 0 &&
                 isAllScheduling &&
                 occupiedDays.map((scheduling: any, index: any) => (
