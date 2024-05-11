@@ -7,6 +7,8 @@ import Image from "next/image";
 import logo from "../../../public/tridev-logo-black.png";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MdOutlineSupportAgent } from "react-icons/md";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../../public/loading-animation.json"
 import { IoLogOut } from "react-icons/io5";
 import { ptBR } from "date-fns/locale";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -69,10 +71,6 @@ const DashboardPage = () => {
     );
     return formattedDate;
   };
-
-  // useEffect(() => {
-  //   console.log(currentDateCalendar);
-  // }, [currentDateCalendar]);
 
   const searchOcuppiedDays = async () => {
     const schedulingService = new SchedulingService();
@@ -287,7 +285,15 @@ const DashboardPage = () => {
   };
 
   if (!isLogged) {
-    return null; // Não renderiza nada enquanto a verificação não estiver concluída
+    return (
+      <div className={styles.backgroundLoading}>
+        <Lottie
+          className={styles.loadingAnimation}
+          animationData={loadingAnimation}
+          loop={true}
+        />
+      </div>
+    ); // Não renderiza nada enquanto a verificação não estiver concluída
   }
   return (
     <div className={styles.background}>

@@ -1,5 +1,19 @@
 @import "../../themes//theme.scss";
 
+.backgroundLoading{
+    width: 100dvw;
+    height: 100dvh;
+    max-width: 100dvw;
+    max-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .loadingAnimation{
+        height: 250px;
+    }
+}
+
 .background{
     display: flex;
     justify-content: center;

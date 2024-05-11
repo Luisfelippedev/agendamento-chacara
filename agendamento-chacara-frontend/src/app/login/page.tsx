@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { PatternFormat } from "react-number-format";
 import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../../public/loading-animation.json"
 
 const Login = () => {
   const router = useRouter();
@@ -52,8 +54,17 @@ const Login = () => {
     userIsLogged();
   });
 
+
   if (!isLogged) {
-    return null; // Não renderiza nada enquanto a verificação não estiver concluída
+    return (
+      <div className={styles.backgroundLoading}>
+        <Lottie
+          className={styles.loadingAnimation}
+          animationData={loadingAnimation}
+          loop={true}
+        />
+      </div>
+    ); // Não renderiza nada enquanto a verificação não estiver concluída
   }
   return (
     <div className={styles.background}>
