@@ -40,13 +40,17 @@ const DashboardPage = () => {
   const [dateActualString, setDateActualString]: any = useState();
   const [currentDateCalendar, setCurrentDateCalendar]: any = useState();
   const [schedulingStatus, setSchedulingStatus]: any = useState("loading");
-  const [dateFromBd, setDateFromBd]: any = useState();
+  // const [dateFromBd, setDateFromBd]: any = useState();
   const [numberOfSchedulings, setNumberOfSchedulings]: any = useState(null);
   const [currentPage, setCurrentPage]: any = useState("schedule");
   const [occupiedDays, setOccupiedDays]: any = useState([]);
-  const [isAllScheduling, setIsAllScheduling]: any = useState(true);
+  const [occupiedDaysCurrentList, setOccupiedDaysCurrentList]: any = useState(
+    []
+  );
+  const [isAllScheduling, setIsAllScheduling]: any = useState(false);
 
   const userService = new UserService();
+  const schedulingService = new SchedulingService();
 
   const customPtBrLocale: Locale = {
     ...ptBR,
@@ -65,6 +69,10 @@ const DashboardPage = () => {
     );
     return formattedDate;
   };
+
+  // useEffect(() => {
+  //   console.log(currentDateCalendar);
+  // }, [currentDateCalendar]);
 
   const searchOcuppiedDays = async () => {
     const schedulingService = new SchedulingService();
@@ -96,7 +104,6 @@ const DashboardPage = () => {
         }
       });
 
-
       const filteredOccupiedDaysArr = occupiedDaysArr.filter(
         (item) =>
           item.status !== "waiting" ||
@@ -106,8 +113,6 @@ const DashboardPage = () => {
               occupiedItem.date === item.date
           )
       );
-
-      console.log(filteredOccupiedDaysArr);
 
       setOccupiedDays(filteredOccupiedDaysArr);
       return;
@@ -165,7 +170,7 @@ const DashboardPage = () => {
     setDateActualString(stringDateFormated);
 
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
-    setDateFromBd(simpleDateFormated);
+    // setDateFromBd(simpleDateFormated);
     const schedulingService = new SchedulingService();
     try {
       const schedulingExists = await schedulingService.getByDate(
@@ -189,6 +194,7 @@ const DashboardPage = () => {
 
   const handleClickScheduleButton = () => {
     setCurrentPage("schedule");
+    // searchOcuppiedDays();
   };
 
   const handleClickOderButton = () => {
@@ -198,10 +204,35 @@ const DashboardPage = () => {
 
   const onClickButtonToView = () => {
     setIsAllScheduling(false);
+    changeSchedulingsByDate();
+    setCurrentPage("order");
+  };
+
+  const changeSchedulingsByDate = async () => {
+    const dataObj = new Date(currentDateCalendar);
+    const dia = String(dataObj.getDate()).padStart(2, "0");
+    const mes = String(dataObj.getMonth() + 1).padStart(2, "0"); // Adiciona +1 porque os meses começam em 0
+    const ano = dataObj.getFullYear();
+    const dateFromDb = `${dia}-${mes}-${ano}`;
+
+    let occupiedDaysArr: Array<any> = [];
+
+    occupiedDays.forEach((item: any) => {
+      if (item.date == dateFromDb) {
+        if (item.status == "occupied") {
+          occupiedDaysArr.push(item);
+          setOccupiedDaysCurrentList(occupiedDaysArr);
+          return;
+        }
+        if (item.status == "waiting") {
+          occupiedDaysArr.push(item);
+          setOccupiedDaysCurrentList(occupiedDaysArr);
+        }
+      }
+    });
   };
 
   useEffect(() => {
-    console.log("chegou");
     searchOcuppiedDays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -216,7 +247,7 @@ const DashboardPage = () => {
 
     occupiedDays.forEach((element: any) => {
       const dateFormated = bdDateToDate(element.date);
-      if (dateFormated== day.toString()) {
+      if (dateFormated == day.toString()) {
         reservedDay = { date: dateFormated, status: element.status };
       }
     });
@@ -419,18 +450,21 @@ const DashboardPage = () => {
                     status={scheduling.status}
                     fullName={scheduling.fullName}
                     phoneNumber={scheduling.phoneNumber}
+                    id={scheduling.id}
+                    cpf={scheduling.cpf}
                   />
                 ))}
-              {occupiedDays.length > 0 &&
+              {occupiedDaysCurrentList.length > 0 &&
                 isAllScheduling == false &&
-                occupiedDays.map((scheduling: any, index: any) => (
-                  // {scheduling.date == }
+                occupiedDaysCurrentList.map((scheduling: any, index: any) => (
                   <SchedulingCard
                     key={index} // Certifique-se de usar uma chave única para cada item renderizado em um loop
                     date={bdDateToDate(scheduling.date)} // Passe as propriedades necessárias para o componente SchedulingCard
                     status={scheduling.status}
                     fullName={scheduling.fullName}
                     phoneNumber={scheduling.phoneNumber}
+                    id={scheduling.id}
+                    cpf={scheduling.cpf}
                   />
                 ))}
             </div>
