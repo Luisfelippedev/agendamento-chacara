@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
-import { format, parse } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import dayjs from "dayjs";
 
 export interface SchedulingCardProps {
@@ -9,6 +7,8 @@ export interface SchedulingCardProps {
   fullName: any;
   phoneNumber: any;
   status: any;
+  cpf: any;
+  id: any;
 }
 
 export const SchedulingCard = ({
@@ -16,6 +16,8 @@ export const SchedulingCard = ({
   fullName,
   phoneNumber,
   status,
+  cpf,
+  id,
 }: SchedulingCardProps) => {
   const [dateObj, setDateObj] = useState(dateToObj(date));
   const [phoneNumberFormated, setPhoneNumberFormated] = useState(
@@ -69,16 +71,19 @@ export const SchedulingCard = ({
     const formattedDate = data.format("DD-MM-YYYY"); // Formato desejado
     return formattedDate;
   }
- 
-  useEffect(() => {
-    console.log(dateObj);
-  }, []);
+
 
   return (
     <>
       {dateObj && phoneNumberFormated && dateString ? (
         <div className={styles.container}>
-          <div className={styles.firstBox}>
+          <div
+            style={{
+              backgroundColor:
+                status === "occupied" ? "green" : "rgb(255, 128, 0)",
+            }}
+            className={styles.firstBox}
+          >
             <p className={styles.dayText}>{dateObj.day}</p>
             <p className={styles.monthText}>{dateObj.month}</p>
           </div>
