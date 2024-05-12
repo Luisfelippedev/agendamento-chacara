@@ -6,7 +6,8 @@ import { PatternFormat } from "react-number-format";
 import { UserService } from "@/services/UserService";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
-import loadingAnimation from "../../../public/loading-animation.json"
+import loadingAnimation from "../../../public/loading-animation.json";
+import { NavBar } from "@/components/NavBar/NavBar";
 
 const Login = () => {
   const router = useRouter();
@@ -54,7 +55,6 @@ const Login = () => {
     userIsLogged();
   });
 
-
   if (!isLogged) {
     return (
       <div className={styles.backgroundLoading}>
@@ -68,38 +68,41 @@ const Login = () => {
   }
   return (
     <div className={styles.background}>
-      <div className={styles.formContainer}>
-        <p className={styles.titleForm}>Faça login:</p>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <PatternFormat
-            format={"###.###.###-##"}
-            mask="_"
-            label={"Cpf:"}
-            onChange={(e) => setCpfValue(e.target.value)}
-            value={cpfValue}
-            customInput={TextField}
-            className={styles["input-phone"]}
+      <NavBar />
+      <div className={styles.centerBox}>
+        <div className={styles.formContainer}>
+          <p className={styles.titleForm}>Faça login:</p>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <PatternFormat
+              format={"###.###.###-##"}
+              mask="_"
+              label={"Cpf:"}
+              onChange={(e) => setCpfValue(e.target.value)}
+              value={cpfValue}
+              customInput={TextField}
+              className={styles["input-phone"]}
+            />
+          </div>
+          <TextField
+            label="Senha:"
+            value={passwordValue}
+            onChange={(e) => {
+              setPasswordValue(e.target.value);
+            }}
+            type="password"
+            required
           />
+          <Button
+            onClick={handleClickButtonSubmit}
+            className={styles.submitButton}
+            variant="contained"
+          >
+            FAZER LOGIN
+          </Button>
+          {isInvalidLogin && (
+            <p className={styles.invalidLoginText}>Credenciais inválidas</p>
+          )}
         </div>
-        <TextField
-          label="Senha:"
-          value={passwordValue}
-          onChange={(e) => {
-            setPasswordValue(e.target.value);
-          }}
-          type="text"
-          required
-        />
-        <Button
-          onClick={handleClickButtonSubmit}
-          className={styles.submitButton}
-          variant="contained"
-        >
-          FAZER LOGIN
-        </Button>
-        {isInvalidLogin && (
-          <p className={styles.invalidLoginText}>Credenciais inválidas</p>
-        )}
       </div>
     </div>
   );

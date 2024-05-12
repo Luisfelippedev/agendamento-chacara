@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import dayjs from "dayjs";
 import { IoIosCloseCircle } from "react-icons/io";
-import { TextField } from "@mui/material";
+import { InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { PatternFormat } from "react-number-format";
 import "dayjs/locale/pt-br";
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
+import { FaDownload } from "react-icons/fa6";
+import { IoMdSend } from "react-icons/io";
+import { IoCheckmarkDone } from "react-icons/io5";
 
 export interface SchedulingCardProps {
   date: any;
@@ -31,17 +34,35 @@ export const SchedulingCard = ({
   const [phoneNumberFormated, setPhoneNumberFormated] = useState(
     formatPhoneNumber(phoneNumber)
   );
-  const [dateString, setDateString] = useState(dateToString(date));
-  const [showModal, setShowModal] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [fullNameClient, setFullNameClient] = useState(fullName);
   const [dateClient, setDateClient] = useState(date);
-  const [cpfClient, setCpfClient] = useState(cpf);
   const [entryTime, setEntryTime] = useState("");
   const [departureTime, setDepartureTime] = useState("");
+  const [dateString, setDateString] = useState(dateToString(date));
+  const [showModal, setShowModal] = useState(false);
+  const [showSubModal, setShowSubModal] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [fullNameClient, setFullNameClient] = useState(fullName);
+  const [cpfClient, setCpfClient] = useState(cpf);
+  const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(1);
 
   const handleOpenModal = () => {
     setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleOpenSubModal = () => {
+    setShowSubModal(true);
+  };
+
+  const handleCloseSubModal = () => {
+    setShowSubModal(false);
+  };
+
+  const handleClickConfirmScheduling = () => {
+    handleCloseSubModal();
   };
 
   function dateClientToString(dateValue: any) {
@@ -63,13 +84,10 @@ export const SchedulingCard = ({
   };
 
   useEffect(() => {
+    console.log(numberOfBusyDays);
     setIsMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
 
   const onChangeEntryTimeValue = (value: any) => {
     // Remove os dois pontos ":" da string
@@ -176,7 +194,11 @@ export const SchedulingCard = ({
                 <div className={styles.titleBox}>
                   <p>{dateToLongString(date)}</p>
                 </div>
-                <IoIosCloseCircle onClick={handleCloseModal} size={30} />
+                <IoIosCloseCircle
+                  className={styles.closeIcon}
+                  onClick={handleCloseModal}
+                  size={30}
+                />
               </div>
               <div className={styles.modalContentBox}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -218,6 +240,7 @@ export const SchedulingCard = ({
                   style={{ display: "flex", flexDirection: "row", gap: "15px" }}
                 >
                   <PatternFormat
+                    required
                     format={"##:##"}
                     label={"Início:"}
                     sx={{ width: "100px" }}
@@ -226,6 +249,7 @@ export const SchedulingCard = ({
                     onChange={(e) => onChangeEntryTimeValue(e.target.value)}
                   />
                   <PatternFormat
+                    required
                     format={"##:##"}
                     label={"Saída:"}
                     sx={{ width: "100px" }}
@@ -234,7 +258,85 @@ export const SchedulingCard = ({
                     onChange={(e) => onChangeDepartureTimeValue(e.target.value)}
                   />
                 </div>
+
+                <div>
+                  <InputLabel id="demo-simple-select-label">
+                    Dias ocupados:
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={numberOfBusyDays}
+                    onChange={(e) => setNumberOfBusyDays(e.target.value)}
+                  >
+                    {Array.from({ length: 30 }, (_, index) => index + 1).map(
+                      (value) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      )
+                    )}
+                    {/* <MenuItem value={1}>1</MenuItem> */}
+                  </Select>
+                </div>
+                <div className={styles.buttonsSubmitBox}>
+                  <div className={styles.downloadButtonsBox}>
+                    <button className={styles.downloadButton}>
+                      <p className={styles.textDownloadButton}>PDF</p>
+                      <FaDownload className={styles.downloadIcon} size={30} />
+                    </button>
+                    <button className={styles.sendButton}>
+                      <p className={styles.textSendButton}>ENVIAR</p>
+                      <IoMdSend className={styles.sendIcon} size={30} />
+                    </button>
+                  </div>
+                  <div className={styles.reserveButtonBox}>
+                    <button
+                      onClick={() => setShowSubModal(true)}
+                      className={styles.reserveButton}
+                    >
+                      RESERVAR
+                      <IoCheckmarkDone
+                        style={{ marginLeft: "2px" }}
+                        className={styles.sendIcon}
+                        size={30}
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
+              {showSubModal && (
+                <div
+                  onClick={() => setShowSubModal(false)}
+                  className={styles.subModalBackground}
+                >
+                  <div className={styles.subModalContent}>
+                    <div className={styles.textBox}>
+                      <p className={styles.textConfirmSubModal}>
+                        DESEJA RESERVAR ESSE PEDIDO?
+                      </p>
+                      <p className={styles.subTextConfirmSubModal}>
+                        Todos os demais pedidos para o mesmo dia serão
+                        excluídos.
+                      </p>
+                    </div>
+                    <div className={styles.buttonsBox}>
+                      <button
+                        className={styles.cancelButtonSubModal}
+                        onClick={handleCloseSubModal}
+                      >
+                        CANCELAR
+                      </button>
+                      <button
+                        className={styles.confirmButtonSubModal}
+                        onClick={handleClickConfirmScheduling}
+                      >
+                        CONFIRMAR
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

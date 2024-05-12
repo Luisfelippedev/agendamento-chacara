@@ -8,7 +8,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
     .loadingAnimation{
         height: 250px;
     }
@@ -16,15 +15,26 @@
 
 .background{
     display: flex;
-    justify-content: center;
     align-items: center;
-    background-color: $primary-color;
     width: 100dvw;
     height: 100dvh;
     max-width: 100dvw;
     max-height: 100dvh;  
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../../public/chacara-image.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    flex: 1;
+    flex-direction: column;
 
-    .formContainer{
+    .centerBox{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+        width: 100%;
+        margin-bottom: 10%;
+        .formContainer{
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -33,6 +43,7 @@
         padding: 5%;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra suave */
         border-radius: 10px;
+        background-color: $primary-color;
         @media(min-width: 768px){
             padding: 2%;
         }
@@ -41,6 +52,8 @@
             color: red;
             text-align: center;
         }
+        }
     }
+    
 }
 
