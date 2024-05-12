@@ -79,14 +79,17 @@
         height: 85%;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
-        overflow-x: hidden;
+        // overflow-y: auto;
+        // overflow-x: hidden;
         .closeModalBox{
-            box-sizing: border-box;
+            position: fixed; /* Deixa o elemento fixo */
+            background-color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0 5px 0 0;
+            width:calc(85%);
+
             .titleBox{
                 box-sizing: border-box;
                 padding: 20px 0 0 15px;
@@ -112,7 +115,9 @@
             flex-direction: column;
             padding: 15px;
             gap: 15px;
-            margin-top: 10px;
+            margin-top: 50px;
+        overflow-y: auto;
+        overflow-x: hidden;
             .dateText{
                 font-size: 0.9rem;
                 color: rgba(0, 0, 0, 0.6);
@@ -122,10 +127,13 @@
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
+                flex-direction: column;
+                gap: 20px;
                 .downloadButtonsBox{
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: flex-start;
                     gap: 15px;
+                   
 
                     .downloadButton {
                         display: inline-flex;
@@ -180,6 +188,8 @@
 
                 .reserveButtonBox{
                     display: flex;
+                    width: 100%;
+                    justify-content: flex-end;
                     .reserveButton{
                         display: flex;
                         align-items: center;
@@ -220,7 +230,7 @@
                 gap: 15px;
                 background-color: $primary-color;
                 width: 300px;
-                padding: 35px 10px;
+                padding: 30px 10px;
                 border-radius: 15px;
                 .textBox{
                     display: flex;
@@ -288,11 +298,14 @@
     @media(min-width: 768px){
         .modalBox{
             width: 50%;
+            .closeModalBox{
+                width:calc(85% - 35%);
+            }
         }
     }
     @media(min-width: 1024px){
         .modalBox{
-            width: 40%;
+            width: 50%;
         }
     }
   }
