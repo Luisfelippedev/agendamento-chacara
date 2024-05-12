@@ -150,6 +150,7 @@ const Form = () => {
   };
 
   const createScheduling = async () => {
+    setIsComponentLoaded(true);
     const schedulingService = new SchedulingService();
     const filteredNumber = phoneNumberValue
       .replace(/\D/g, "")
@@ -165,9 +166,9 @@ const Form = () => {
     };
     try {
       await schedulingService.createScheduling(newScheduling);
-      setIsComponentLoaded(true);
       router.push(`/alert/${cpfValue}`);
     } catch (error) {
+      setIsComponentLoaded(false);
       setIsExistsScheduling(true);
     }
   };

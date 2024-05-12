@@ -112,6 +112,12 @@ const DashboardPage = () => {
           )
       );
 
+      filteredOccupiedDaysArr.sort((a, b) => {
+        const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
+        const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
+        return dateA - dateB;
+      });
+
       setOccupiedDays(filteredOccupiedDaysArr);
       return;
     } catch (error) {
@@ -230,17 +236,16 @@ const DashboardPage = () => {
     });
   };
 
-  const dateStringToWithBar = (dateString: any) => {
-    // Remova o dia da semana e a vírgula da string de data original
-    const cleanDateString = dateString.replace(/^.*, /, "");
+  const onClickViewAllButton = () => {
+    setIsAllScheduling(true);
+  };
 
-    // Parse da string de data limpa usando o formato padrão de exibição
-    const parsedDate = dayjs(cleanDateString, "MMMM D, YYYY");
-
-    // Formata a data no formato "dd/mm/yyyy"
-    const formattedDate = parsedDate.format("DD/MM/YYYY");
-
-    return formattedDate;
+  const dateStringToWithBar = (dateString:any) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   useEffect(() => {
@@ -462,17 +467,23 @@ const DashboardPage = () => {
               <div className={styles.titleBox}>
                 <span className={styles.titleText}>
                   Agendamentos
-                  {dateActualString && (
+                  {dateActualString && !isAllScheduling && (
                     <p className={styles.dateTitleText}>
-                      ({dateStringToWithBar(dateActualString)})
+                      ({dateStringToWithBar(currentDateCalendar)})
                     </p>
                   )}
                 </span>
               </div>
               <div className={styles.clearFilterBox}>
-                <Button className={styles.buttonViewAll} variant="outlined">
-                  VER TODOS
-                </Button>
+                {!isAllScheduling && (
+                  <Button
+                    onClick={onClickViewAllButton}
+                    className={styles.buttonViewAll}
+                    variant="outlined"
+                  >
+                    VER TODOS
+                  </Button>
+                )}
               </div>
               {occupiedDays.length > 0 &&
                 isAllScheduling &&

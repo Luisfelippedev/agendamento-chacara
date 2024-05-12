@@ -75,8 +75,6 @@
         .buttonsContainer{
             display: flex;
             width: 300px;
-            position: relative;
-            bottom: 40px;
             z-index: 1;
             .scheduleButtonActive{
                 width: 100%;
@@ -132,7 +130,6 @@
             }
         }
         .dateCalendarContainer{
-            
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -140,6 +137,7 @@
             background-color: $secondary-color;
             border-radius: 1rem;
             min-width: 23%;
+            margin-top: 13px;
 
             .calendarHeader{
                 width: 100%;

@@ -71,6 +71,7 @@
     align-items: center;
     z-index: 2;
     .modalBox {
+        position: relative;
         background-color: #ffffff;
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
@@ -95,6 +96,15 @@
                     font-size: 1.3rem;
                 }
             }
+
+            .closeIcon{
+                color: #ff5252;
+                cursor: pointer;
+
+                &:hover{
+                    color: #ff0000;
+                }
+            }
         }
 
         .modalContentBox{
@@ -107,6 +117,182 @@
                 font-size: 0.9rem;
                 color: rgba(0, 0, 0, 0.6);
             }
+
+            .buttonsSubmitBox{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                .downloadButtonsBox{
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 15px;
+
+                    .downloadButton {
+                        display: inline-flex;
+                        align-items: center;
+                        padding: 8px 16px;
+                        border-radius: 8px;
+                        background-color: #d32f2f; /* Cor de fundo azul */
+                        color: #ffffff; /* Cor do texto branco */
+                        font-size: 0.9rem;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: #a72727; /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                      
+                        .downloadIcon {
+                            margin-left: 4px;
+                            color: #ffffff; /* Cor do ícone branco */
+                        }
+                      }
+
+                      .sendButton {
+                        display: inline-flex;
+                        align-items: center;
+                        padding: 8px 10px 8px 16px;
+                        border-radius: 8px;
+                        background-color: #007bff; /* Cor de fundo azul */
+                        color: #ffffff; /* Cor do texto branco */
+                        font-size: 0.9rem;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: #0056b3; /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                      
+                        .sendIcon {
+                            margin-left: 4px;
+                            color: #ffffff; /* Cor do ícone branco */
+                        }
+                      }
+                }
+
+                .reserveButtonBox{
+                    display: flex;
+                    .reserveButton{
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.9rem;
+                        padding: 8px 12px;
+                        color: white;
+                        font-weight: 600;
+                        background-color: rgb(197, 197, 197);
+                        border-radius: 8px;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: green; /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                    }
+                }
+            }
+        }
+
+        .subModalBackground{
+            position: absolute; /* Alterado para position: absolute; */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .subModalContent{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                background-color: $primary-color;
+                width: 300px;
+                padding: 35px 10px;
+                border-radius: 15px;
+                .textBox{
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    gap: 10px;
+                    .textConfirmSubModal{
+                        font-size: 1rem;
+                        font-weight: 600;
+                        text-align: center;
+                    }
+                    .subTextConfirmSubModal{
+                        font-size: 0.8rem;
+                        text-align: center;
+                        font-weight: 500;
+                        color: $light-text-color;
+                    }
+                }
+                .buttonsBox{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 15px;
+                    .cancelButtonSubModal{
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.9rem;
+                        padding: 8px 12px;
+                        color: white;
+                        font-weight: 600;
+                        background-color: rgb(129, 129, 129);
+                        border-radius: 8px;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: rgb(56, 56, 56); /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                    }
+                    .confirmButtonSubModal{
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.9rem;
+                        padding: 8px 12px;
+                        color: white;
+                        font-weight: 600;
+                        background-color: green;
+                        border-radius: 8px;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: rgb(5, 102, 5); /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media(min-width: 768px){
+        .modalBox{
+            width: 50%;
+        }
+    }
+    @media(min-width: 1024px){
+        .modalBox{
+            width: 40%;
         }
     }
   }
