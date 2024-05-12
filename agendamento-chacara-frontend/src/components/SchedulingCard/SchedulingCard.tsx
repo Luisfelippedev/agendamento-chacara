@@ -5,13 +5,16 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { PatternFormat } from "react-number-format";
+import { PatternFormat, NumericFormat } from "react-number-format";
 import "dayjs/locale/pt-br";
 import { ptBR } from "date-fns/locale";
 import { format } from "date-fns";
 import { FaDownload } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { IoCheckmarkDone } from "react-icons/io5";
+import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
+// import ReactPDF from "@react-pdf/renderer";
+// import dynamic from "next/dynamic";
 
 export interface SchedulingCardProps {
   date: any;
@@ -35,8 +38,8 @@ export const SchedulingCard = ({
     formatPhoneNumber(phoneNumber)
   );
   const [dateClient, setDateClient] = useState(date);
-  const [entryTime, setEntryTime] = useState("");
-  const [departureTime, setDepartureTime] = useState("");
+  const [entryTime, setEntryTime] = useState("00:00");
+  const [departureTime, setDepartureTime] = useState("00:00");
   const [dateString, setDateString] = useState(dateToString(date));
   const [showModal, setShowModal] = useState(false);
   const [showSubModal, setShowSubModal] = useState(false);
@@ -44,6 +47,8 @@ export const SchedulingCard = ({
   const [fullNameClient, setFullNameClient] = useState(fullName);
   const [cpfClient, setCpfClient] = useState(cpf);
   const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(1);
+  const [initialValue, setInitialValue]: any = useState("");
+  const [additionalValue, setAdditionalValue]: any = useState([]);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -147,13 +152,13 @@ export const SchedulingCard = ({
     };
   }
 
-  function formatPhoneNumber(phone: any) {
+  function formatPhoneNumber(phone: any): string {
     const cleaned = ("" + phone).replace(/\D/g, "");
     const match = cleaned.match(/^(0?(\d{2})(\d{5})(\d{4}))$/);
     if (match) {
       return `(${match[2]}) ${match[3]}-${match[4]}`;
     }
-    return null;
+    return "";
   }
 
   function dateToString(date: any) {
@@ -161,6 +166,27 @@ export const SchedulingCard = ({
     const formattedDate = data.format("DD-MM-YYYY"); // Formato desejado
     return formattedDate;
   }
+
+  const getDateToContractPdf = (): IContractTemplateProps => {
+    const dateProps: IContractTemplateProps = {
+      cpf: cpfClient,
+      fullName: fullName,
+      entryTime: entryTime,
+      departureTime: departureTime,
+      numberOfBusyDays: numberOfBusyDays,
+      phoneNumber: phoneNumberFormated,
+    };
+    return dateProps;
+  };
+
+  const onChangeInitialValue = (value: any) => {
+    // Remove o símbolo 'R$', vírgulas e pontos
+    const cleanValue = value.replace(/[^\d.]/g, "");
+
+    // Converte para número flutuante
+    const floatValue = parseFloat(cleanValue);
+    setInitialValue(floatValue);
+  };
 
   return (
     isMounted && (
@@ -212,6 +238,7 @@ export const SchedulingCard = ({
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <PatternFormat
+                    required
                     format="+55 (##) #####-####"
                     label={"Telefone:"}
                     mask="_"
@@ -222,6 +249,7 @@ export const SchedulingCard = ({
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <PatternFormat
+                    required
                     format={"###.###.###-##"}
                     mask="_"
                     label={"Cpf:"}
@@ -279,12 +307,44 @@ export const SchedulingCard = ({
                     {/* <MenuItem value={1}>1</MenuItem> */}
                   </Select>
                 </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Valor mínimo: *
+                  </InputLabel>
+
+                  <NumericFormat
+                    required
+                    customInput={TextField}
+                    thousandSeparator={true}
+                    prefix={"R$"}
+                    decimalScale={2}
+                    placeholder="R$"
+                    onChange={(e) => onChangeInitialValue(e.target.value)}
+                    value={initialValue}
+                    fixedDecimalScale
+                    sx={{ width: "200px" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  aqui
+                </div>
                 <div className={styles.buttonsSubmitBox}>
                   <div className={styles.downloadButtonsBox}>
-                    <button className={styles.downloadButton}>
-                      <p className={styles.textDownloadButton}>PDF</p>
-                      <FaDownload className={styles.downloadIcon} size={30} />
-                    </button>
+                    <ContractGenerator
+                      data={getDateToContractPdf()}
+                      childComponent={
+                        <button
+                          // onClick={handleClickDownloadPdfButton}
+                          className={styles.downloadButton}
+                        >
+                          <p className={styles.textDownloadButton}>PDF</p>
+                          <FaDownload
+                            className={styles.downloadIcon}
+                            size={30}
+                          />
+                        </button>
+                      }
+                    />
                     <button className={styles.sendButton}>
                       <p className={styles.textSendButton}>ENVIAR</p>
                       <IoMdSend className={styles.sendIcon} size={30} />

@@ -194,6 +194,9 @@ const Form = () => {
             onChange={onFirstNameInputChange}
             type="text"
             required
+            inputProps={{
+              maxLength: 50,
+            }}
           />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -203,6 +206,9 @@ const Form = () => {
             onChange={onLastNameInputChange}
             type="text"
             required
+            inputProps={{
+              maxLength: 50,
+            }}
           />
         </div>
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
