@@ -75,7 +75,7 @@
         background-color: #ffffff;
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        width: 85%;
+        width: 95%;
         height: 85%;
         display: flex;
         flex-direction: column;
@@ -83,12 +83,11 @@
         // overflow-x: hidden;
         .closeModalBox{
             position: fixed; /* Deixa o elemento fixo */
-            background-color: white;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
             display: flex;
             justify-content: space-between;
-            width:calc(85%);
+            width:calc(94%);
 
             .titleBox{
                 box-sizing: border-box;
@@ -116,11 +115,36 @@
             padding: 15px;
             gap: 15px;
             margin-top: 50px;
-        overflow-y: auto;
-        overflow-x: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             .dateText{
-                font-size: 0.9rem;
+                font-size: 1rem;
                 color: rgba(0, 0, 0, 0.6);
+            }
+
+            .additionalValueButton{
+                border-radius: 3px;
+                width: 170px;
+                display: flex;
+                padding: 10px 0 10px 0px;
+                justify-content: flex-start;
+                gap: 8px;
+                align-items: center;
+                cursor: pointer;
+                text-align: center;
+                // border: 1px solid black;
+                // border: 1px solid rgb(75, 192, 75);
+
+            }
+            .addServiceText{
+                font-size: 1.2rem;
+                // color: rgb(75, 192, 75);
+                color: $light-text-color;
+                margin-bottom: 3px;
+            }
+            .addedServiceIcon{
+                color: rgb(75, 192, 75);
+                text-align: center;
             }
 
             .buttonsSubmitBox{
@@ -129,6 +153,7 @@
                 justify-content: space-between;
                 flex-direction: column;
                 gap: 20px;
+                margin-top: 15px;
                 .downloadButtonsBox{
                     display: flex;
                     justify-content: flex-start;
@@ -229,7 +254,7 @@
                 justify-content: center;
                 gap: 15px;
                 background-color: $primary-color;
-                width: 300px;
+                width: 318px;
                 padding: 30px 10px;
                 border-radius: 15px;
                 .textBox{
@@ -240,7 +265,7 @@
                     width: 100%;
                     gap: 10px;
                     .textConfirmSubModal{
-                        font-size: 1rem;
+                        font-size: 1.3rem;
                         font-weight: 600;
                         text-align: center;
                     }
@@ -260,10 +285,10 @@
                         display: flex;
                         align-items: center;
                         font-size: 0.9rem;
-                        padding: 8px 12px;
+                        padding: 10px 16px;
                         color: white;
                         font-weight: 600;
-                        background-color: rgb(129, 129, 129);
+                        background-color: rgb(197, 197, 197);
                         border-radius: 8px;
                         transition: background-color 0.3s ease;
                         cursor: pointer;
@@ -277,7 +302,75 @@
                         display: flex;
                         align-items: center;
                         font-size: 0.9rem;
-                        padding: 8px 12px;
+                        padding: 10px 16px;
+                        color: white;
+                        font-weight: 600;
+                        background-color: green;
+                        border-radius: 8px;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: rgb(5, 102, 5); /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                    }
+                }
+            }
+        }
+        .newServiceBackgroundModal{
+            position: absolute; /* Alterado para position: absolute; */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .newServiceContentModal{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                background-color: $primary-color;
+                width: 318px;
+                padding: 30px 10px;
+                border-radius: 15px;
+                .titleNewServiceModal{
+                    font-size: 1.4rem;
+                    color: $secondary-text-color;
+                    font-weight: 600;
+                }
+                .buttonsBox{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 15px;
+                    .cancelButtonSubModal{
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.9rem;
+                        padding: 10px 16px;
+                        color: white;
+                        font-weight: 600;
+                        background-color: rgb(197, 197, 197);
+                        border-radius: 8px;
+                        transition: background-color 0.3s ease;
+                        cursor: pointer;
+                        border: none;
+                      
+                        &:hover {
+                          background-color: rgb(56, 56, 56); /* Cor de fundo azul mais escura ao passar o mouse */
+                        }
+                    }
+                    .confirmButtonSubModal{
+                        display: flex;
+                        align-items: center;
+                        font-size: 0.9rem;
+                        padding: 10px 16px;
                         color: white;
                         font-weight: 600;
                         background-color: green;

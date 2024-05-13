@@ -13,6 +13,7 @@ import { FaDownload } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { IoCheckmarkDone } from "react-icons/io5";
 import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
+import { VscDiffAdded } from "react-icons/vsc";
 // import ReactPDF from "@react-pdf/renderer";
 // import dynamic from "next/dynamic";
 
@@ -48,7 +49,10 @@ export const SchedulingCard = ({
   const [cpfClient, setCpfClient] = useState(cpf);
   const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(1);
   const [initialValue, setInitialValue]: any = useState("");
-  const [additionalValue, setAdditionalValue]: any = useState([]);
+  const [additionalServices, setAdditionalServices]: any = useState([]);
+  const [showNewServiceModal, setShowNewServiceModal] = useState(false);
+  const [newServiceName, setNewServiceName] = useState("");
+  const [newServiceValue, setNewServiceValue]: any = useState("");
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -58,9 +62,9 @@ export const SchedulingCard = ({
     setShowModal(false);
   };
 
-  const handleOpenSubModal = () => {
-    setShowSubModal(true);
-  };
+  // const handleOpenSubModal = () => {
+  //   setShowSubModal(true);
+  // };
 
   const handleCloseSubModal = () => {
     setShowSubModal(false);
@@ -188,6 +192,64 @@ export const SchedulingCard = ({
     setInitialValue(floatValue);
   };
 
+  const onChangeAdditionalValue = (value: any) => {
+    // Remove o símbolo 'R$', vírgulas e pontos
+    const cleanValue = value.replace(/[^\d.]/g, "");
+
+    // Converte para número flutuante
+    const floatValue = parseFloat(cleanValue);
+    setNewServiceValue(floatValue);
+  };
+
+  const handleAddedAdditionalServiceButton = () => {
+    const additionalServiceArr = additionalServices;
+
+    additionalServiceArr.push({
+      serviceName: newServiceName,
+      value: newServiceValue,
+    });
+    console.log(additionalServices);
+    setAdditionalServices(additionalServiceArr);
+
+    setNewServiceName("");
+    setNewServiceValue("");
+    setShowNewServiceModal(false);
+  };
+
+  const handleChangeServiceName = (index: any, newName: any) => {
+    // Cria uma cópia do array additionalServices para não modificar o estado diretamente
+    const updatedServices = [...additionalServices];
+
+    // Modifica o objeto específico dentro do array com o novo name
+    updatedServices[index] = {
+      ...updatedServices[index],
+      serviceName: newName,
+    };
+
+    // Define o novo array como o estado additionalServices
+    setAdditionalServices(updatedServices);
+  };
+
+  const handleChangeServiceValue = (index: any, newValue: any) => {
+    // Cria uma cópia do array additionalServices para não modificar o estado diretamente
+    const updatedServices = [...additionalServices];
+
+    // Remove o símbolo 'R$', vírgulas e pontos
+    const cleanValue = newValue.replace(/[^\d.]/g, "");
+
+    // Converte para número flutuante
+    const floatValue = parseFloat(cleanValue);
+    // Modifica o objeto específico dentro do array com o novo name
+    updatedServices[index] = { ...updatedServices[index], value: floatValue };
+
+    // Define o novo array como o estado additionalServices
+    setAdditionalServices(updatedServices);
+  };
+
+  useEffect(() => {
+    console.log(additionalServices);
+  }, [additionalServices]);
+
   return (
     isMounted && (
       <>
@@ -229,7 +291,7 @@ export const SchedulingCard = ({
               <div className={styles.modalContentBox}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <TextField
-                    label="Nome:"
+                    label="Nome completo:"
                     value={fullNameClient}
                     onChange={(e) => setFullNameClient(e.target.value)}
                     type="text"
@@ -325,8 +387,77 @@ export const SchedulingCard = ({
                     sx={{ width: "200px" }}
                   />
                 </div>
+                {additionalServices.length > 0 &&
+                  // Se sim, mapeia o array para renderizar um componente para cada item
+                  additionalServices.map((service: any, index: any) => (
+                    <div key={index}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "15px",
+                        }}
+                      >
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <InputLabel
+                            sx={{ color: "#161616" }}
+                            id={`demo-simple-select-label-${index}`}
+                          >
+                            #{1 + index} Serviço: *
+                          </InputLabel>
+                          <TextField
+                            value={service.serviceName}
+                            onChange={(e) =>
+                              handleChangeServiceName(index, e.target.value)
+                            }
+                            type="text"
+                            required
+                            sx={{ width: "200px" }}
+                          />
+                        </div>
+
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <InputLabel
+                            id={`demo-simple-select-label-value-${index}`}
+                            sx={{ color: "#161616" }}
+                          >
+                            #{1 + index} Valor: *
+                          </InputLabel>
+                          <NumericFormat
+                            required
+                            customInput={TextField}
+                            thousandSeparator={true}
+                            prefix={"R$"}
+                            decimalScale={2}
+                            placeholder="R$"
+                            onChange={(e) =>
+                              handleChangeServiceValue(index, e.target.value)
+                            }
+                            value={service.value}
+                            fixedDecimalScale
+                            sx={{ width: "200px" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  aqui
+                  <div
+                    onClick={() => setShowNewServiceModal(true)}
+                    className={styles.additionalValueButton}
+                  >
+                    <p className={styles.addServiceText}> novo serviço</p>
+
+                    <VscDiffAdded
+                      className={styles.addedServiceIcon}
+                      size={30}
+                    />
+                  </div>
                 </div>
                 <div className={styles.buttonsSubmitBox}>
                   <div className={styles.downloadButtonsBox}>
@@ -373,7 +504,7 @@ export const SchedulingCard = ({
                   <div className={styles.subModalContent}>
                     <div className={styles.textBox}>
                       <p className={styles.textConfirmSubModal}>
-                        DESEJA RESERVAR ESSE PEDIDO?
+                        Deseja reservar esse pedido?
                       </p>
                       <p className={styles.subTextConfirmSubModal}>
                         Todos os demais pedidos para o mesmo dia serão
@@ -391,7 +522,63 @@ export const SchedulingCard = ({
                         className={styles.confirmButtonSubModal}
                         onClick={handleClickConfirmScheduling}
                       >
-                        CONFIRMAR
+                        RESERVAR
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {showNewServiceModal && (
+                <div className={styles.newServiceBackgroundModal}>
+                  <div className={styles.newServiceContentModal}>
+                    <p className={styles.titleNewServiceModal}>Novo serviço:</p>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <TextField
+                        label="Nome:"
+                        value={newServiceName}
+                        onChange={(e) =>
+                          setNewServiceName(e.target.value.toLowerCase())
+                        }
+                        type="text"
+                        required
+                        inputProps={{
+                          maxLength: 30,
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <NumericFormat
+                        required
+                        customInput={TextField}
+                        thousandSeparator={true}
+                        prefix={"R$"}
+                        decimalScale={2}
+                        placeholder="R$"
+                        onChange={(e) =>
+                          onChangeAdditionalValue(e.target.value)
+                        }
+                        value={newServiceValue}
+                        fixedDecimalScale
+                      />
+                    </div>
+                    <div className={styles.buttonsBox}>
+                      <button
+                        className={styles.cancelButtonSubModal}
+                        onClick={() => {
+                          setNewServiceName("");
+                          setNewServiceValue("");
+                          setShowNewServiceModal(false);
+                        }}
+                      >
+                        CANCELAR
+                      </button>
+                      <button
+                        className={styles.confirmButtonSubModal}
+                        onClick={() => {
+                          handleAddedAdditionalServiceButton();
+                        }}
+                      >
+                        ADICIONAR
                       </button>
                     </div>
                   </div>
