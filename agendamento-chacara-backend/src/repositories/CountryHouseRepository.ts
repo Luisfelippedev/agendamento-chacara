@@ -14,13 +14,11 @@ export class CountryHouseRepository {
 
   public async createCountryHouse(
     name: string,
-    status: string,
     address: Address,
     owner: User
   ) {
     const newCountryHouse = this.countryHouseRepository.create({
       name,
-      status,
       address,
       owner,
     });
