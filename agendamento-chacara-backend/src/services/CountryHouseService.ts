@@ -14,7 +14,6 @@ export class CountryHouseService {
 
   public async create(
     name: string,
-    status: string,
     address: Address,
     userId: string
   ) {
@@ -31,7 +30,6 @@ export class CountryHouseService {
     const newCountryHouse =
       await this.countryHouseRepository.createCountryHouse(
         name,
-        status,
         address,
         user
       );

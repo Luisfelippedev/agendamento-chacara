@@ -12,7 +12,7 @@ export class CountryHouseController {
   public getCountryHouseById() {}
 
   public createCountryHouse = async (req: Request, res: Response) => {
-    const { name, status, city, street, number } = req.body;
+    const { name, city, street, number } = req.body;
 
     const userId = req.params.userId;
 
@@ -20,7 +20,6 @@ export class CountryHouseController {
 
     const newCountryHouse = await this.countryHouseService.create(
       name,
-      status,
       address,
       userId
     );
