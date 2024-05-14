@@ -13,7 +13,14 @@ import { IoLogOut } from "react-icons/io5";
 import { ptBR } from "date-fns/locale";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import dayjs from "dayjs";
-import { Locale, format, addYears, parse } from "date-fns";
+import {
+  Locale,
+  format,
+  addYears,
+  parse,
+  startOfDay,
+  isBefore,
+} from "date-fns";
 import "dayjs/locale/pt-br"; // Importe o locale desejado, neste caso, português do Brasil
 import {
   Avatar,
@@ -102,23 +109,44 @@ const DashboardPage = () => {
         }
       });
 
-      const filteredOccupiedDaysArr = occupiedDaysArr.filter(
-        (item) =>
-          item.status !== "waiting" ||
-          !occupiedDaysArr.some(
-            (occupiedItem) =>
-              occupiedItem.status === "occupied" &&
-              occupiedItem.date === item.date
-          )
-      );
+      // const filteredOccupiedDaysArr = occupiedDaysArr.filter(
+      //   (item) =>
+      //     item.status !== "waiting" ||
+      //     !occupiedDaysArr.some(
+      //       (occupiedItem) =>
+      //         occupiedItem.status === "occupied" &&
+      //         occupiedItem.date === item.date
+      //     )
+      // );
 
-      filteredOccupiedDaysArr.sort((a, b) => {
+      // filteredOccupiedDaysArr.sort((a, b) => {
+      //   const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
+      //   const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
+      //   return dateA - dateB;
+      // });
+
+      // occupiedDaysArr.sort((a, b) => {
+      //   const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
+      //   const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
+      //   return dateA - dateB;
+      // });
+
+      occupiedDaysArr.sort((a, b) => {
         const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
         const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
+
+        // Se as datas forem iguais, coloque os objetos com status "occupied" por último
+        if (dateA === dateB) {
+          if (a.status === "occupied") return 1;
+          if (b.status === "occupied") return -1;
+        }
+
         return dateA - dateB;
       });
 
-      setOccupiedDays(filteredOccupiedDaysArr);
+      console.log(occupiedDaysArr);
+
+      setOccupiedDays(occupiedDaysArr);
       return;
     } catch (error) {
       setOccupiedDays([]);
@@ -248,8 +276,26 @@ const DashboardPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  useEffect(() => {
+  function isPastDate(dataString: string) {
+    const dataFornecida = parse(dataString, "dd-MM-yyyy", new Date());
+    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
+
+    return isBefore(dataFornecida, dataAtual);
+  }
+
+  const deleteOldScheduling = async () => {
+    const allScheduling = await schedulingService.getAll();
+    allScheduling.forEach((scheduling) => {
+      const isPast = isPastDate(scheduling.date);
+      if (isPast) {
+        schedulingService.deleteById(scheduling.id);
+      }
+    });
     searchOcuppiedDays();
+  };
+
+  useEffect(() => {
+    deleteOldScheduling();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -495,21 +541,48 @@ const DashboardPage = () => {
                     phoneNumber={scheduling.phoneNumber}
                     id={scheduling.id}
                     cpf={scheduling.cpf}
+                    occupiedDays={occupiedDays}
                   />
                 ))}
-              {occupiedDaysCurrentList.length > 0 &&
-                isAllScheduling == false &&
-                occupiedDaysCurrentList.map((scheduling: any, index: any) => (
-                  <SchedulingCard
-                    key={index} // Certifique-se de usar uma chave única para cada item renderizado em um loop
-                    date={bdDateToDate(scheduling.date)} // Passe as propriedades necessárias para o componente SchedulingCard
-                    status={scheduling.status}
-                    fullName={scheduling.fullName}
-                    phoneNumber={scheduling.phoneNumber}
-                    id={scheduling.id}
-                    cpf={scheduling.cpf}
-                  />
-                ))}
+              {occupiedDaysCurrentList.length > 0 && !isAllScheduling && (
+                <>
+                  {/* Renderize primeiro os dias com status "occupied" */}
+                  {occupiedDaysCurrentList
+                    .filter(
+                      (scheduling: any) => scheduling.status === "occupied"
+                    )
+                    .map((scheduling: any, index: any) => (
+                      <SchedulingCard
+                        key={index}
+                        date={bdDateToDate(scheduling.date)}
+                        status={scheduling.status}
+                        fullName={scheduling.fullName}
+                        phoneNumber={scheduling.phoneNumber}
+                        id={scheduling.id}
+                        cpf={scheduling.cpf}
+                        occupiedDays={occupiedDays}
+                      />
+                    ))}
+
+                  {/* Renderize os dias com status "waiting" depois */}
+                  {occupiedDaysCurrentList
+                    .filter(
+                      (scheduling: any) => scheduling.status === "waiting"
+                    )
+                    .map((scheduling: any, index: any) => (
+                      <SchedulingCard
+                        key={index}
+                        date={bdDateToDate(scheduling.date)}
+                        status={scheduling.status}
+                        fullName={scheduling.fullName}
+                        phoneNumber={scheduling.phoneNumber}
+                        id={scheduling.id}
+                        cpf={scheduling.cpf}
+                        occupiedDays={occupiedDays}
+                      />
+                    ))}
+                </>
+              )}
             </div>
           </>
         )}

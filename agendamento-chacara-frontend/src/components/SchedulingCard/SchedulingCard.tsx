@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import dayjs from "dayjs";
 import { IoIosCloseCircle } from "react-icons/io";
-import { InputLabel, MenuItem, Select, TextField } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Button, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  DatePicker,
+  LocalizationProvider,
+  PickersDay,
+} from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { PatternFormat, NumericFormat } from "react-number-format";
 import "dayjs/locale/pt-br";
 import { ptBR } from "date-fns/locale";
-import { format } from "date-fns";
+import { Locale, addYears, format, parse } from "date-fns";
 import { FaDownload } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { IoCheckmarkDone } from "react-icons/io5";
 import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
 import { VscDiffAdded } from "react-icons/vsc";
+import { GiPadlock } from "react-icons/gi";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { SchedulingService } from "@/services/SchedulingService";
+import { Router } from "next/router";
+
 // import ReactPDF from "@react-pdf/renderer";
 // import dynamic from "next/dynamic";
 
@@ -24,6 +33,7 @@ export interface SchedulingCardProps {
   status: any;
   cpf: any;
   id: any;
+  occupiedDays: any;
 }
 
 export const SchedulingCard = ({
@@ -33,7 +43,18 @@ export const SchedulingCard = ({
   status,
   cpf,
   id,
+  occupiedDays,
 }: SchedulingCardProps) => {
+  const customPtBrLocale: Locale = {
+    ...ptBR,
+    options: {
+      ...ptBR.options,
+      weekStartsOn: 1,
+    },
+  };
+
+  const schedulingService = new SchedulingService();
+
   const [dateObj, setDateObj] = useState(dateToObj(date));
   const [phoneNumberFormated, setPhoneNumberFormated] = useState(
     formatPhoneNumber(phoneNumber)
@@ -53,6 +74,10 @@ export const SchedulingCard = ({
   const [showNewServiceModal, setShowNewServiceModal] = useState(false);
   const [newServiceName, setNewServiceName] = useState("");
   const [newServiceValue, setNewServiceValue]: any = useState("");
+  const [showDateModal, setShowDateModal] = useState(false);
+
+  const [currentChangeDateValue, setCurrentChangeDateValue]: any =
+    useState(null);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -62,6 +87,10 @@ export const SchedulingCard = ({
     setShowModal(false);
   };
 
+  const dateNow = new Date();
+
+  const nextYear = addYears(dateNow, 1);
+
   // const handleOpenSubModal = () => {
   //   setShowSubModal(true);
   // };
@@ -70,9 +99,19 @@ export const SchedulingCard = ({
     setShowSubModal(false);
   };
 
-  const handleClickConfirmScheduling = () => {
-    handleCloseSubModal();
+  const toggleStatusCurrentScheduling = async () => {
+    try {
+      await schedulingService.toggleStatusById(id)
+      console.log("confirm");
+      window.location.reload();
+    } catch (error) {
+      return
+    }
+   
+    // handleCloseSubModal();
   };
+
+
 
   function dateClientToString(dateValue: any) {
     // Converte a string de data para um objeto Date
@@ -216,19 +255,19 @@ export const SchedulingCard = ({
     setShowNewServiceModal(false);
   };
 
-  const handleChangeServiceName = (index: any, newName: any) => {
-    // Cria uma cópia do array additionalServices para não modificar o estado diretamente
-    const updatedServices = [...additionalServices];
+  // const handleChangeServiceName = (index: any, newName: any) => {
+  //   // Cria uma cópia do array additionalServices para não modificar o estado diretamente
+  //   const updatedServices = [...additionalServices];
 
-    // Modifica o objeto específico dentro do array com o novo name
-    updatedServices[index] = {
-      ...updatedServices[index],
-      serviceName: newName,
-    };
+  //   // Modifica o objeto específico dentro do array com o novo name
+  //   updatedServices[index] = {
+  //     ...updatedServices[index],
+  //     serviceName: newName,
+  //   };
 
-    // Define o novo array como o estado additionalServices
-    setAdditionalServices(updatedServices);
-  };
+  //   // Define o novo array como o estado additionalServices
+  //   setAdditionalServices(updatedServices);
+  // };
 
   const handleChangeServiceValue = (index: any, newValue: any) => {
     // Cria uma cópia do array additionalServices para não modificar o estado diretamente
@@ -249,6 +288,96 @@ export const SchedulingCard = ({
   useEffect(() => {
     console.log(additionalServices);
   }, [additionalServices]);
+
+  const bdDateToDate = (dateString: string) => {
+    const [day, month, year] = dateString.split("-");
+    const formattedDate = parse(
+      `${year}-${month}-${day}`,
+      "yyyy-MM-dd",
+      new Date()
+    );
+    return formattedDate;
+  };
+
+  function dayjsDateToSimpleDate(date: any) {
+    const data = dayjs(date).locale("pt-br"); // Parse da string de data e configuração do local
+    const formattedDate = data.format("DD-MM-YYYY"); // Formato desejado
+    return formattedDate;
+  }
+  const handleChangeDayOfChangeDate = (value: any) => {
+    const formattedDate = dayjsDateToSimpleDate(value);
+    setCurrentChangeDateValue(formattedDate);
+    console.log(formattedDate);
+  };
+
+
+  const customCalendarDay = (props: any): any => {
+    const { day, ...others } = props;
+    let reservedDay: any;
+
+    occupiedDays.forEach((element: any) => {
+      const dateFormated = bdDateToDate(element.date);
+      if (dateFormated == day.toString()) {
+        reservedDay = { date: dateFormated, status: element.status };
+      }
+    });
+
+    const currentDate = new Date();
+    const isDisabled = currentDate.getDate() > day.getDate(); // Verificar se o dia é anterior ao dia atual
+
+    return (
+      <PickersDay
+        {...others}
+        disabled={
+          (reservedDay && reservedDay.status === "occupied") || isDisabled
+        } // Desabilitar se a data estiver ocupada ou for anterior ao dia atual
+        style={{
+          color:
+            reservedDay && reservedDay.status === "occupied"
+              ? "green"
+              : reservedDay && reservedDay.status === "waiting"
+              ? "rgb(255, 128, 0)"
+              : "none",
+          fontWeight: reservedDay ? "bold" : "normal",
+        }}
+        day={day}
+        sx={{
+          ...(reservedDay && reservedDay.status === "occupied"
+            ? {
+                "&.Mui-selected": {
+                  backgroundColor: "green !important",
+                  color: "white !important",
+                },
+              }
+            : reservedDay && reservedDay.status === "waiting"
+            ? {
+                "&.Mui-selected": {
+                  backgroundColor: "rgb(255, 128, 0) !important",
+                  color: "white !important",
+                },
+              }
+            : {}),
+        }}
+      />
+    );
+  };
+
+  const handleChangeDateButton = async () => {
+    try {
+      await schedulingService.updateDateById(id, currentChangeDateValue);
+      window.location.reload();
+    } catch (error) {
+      return;
+    }
+  };
+
+  function verificarFormatoString(string: any) {
+    // Expressão regular para verificar o formato xx-xx-xxxx
+    const regex = /^[A-Za-z0-9]{2}-[A-Za-z0-9]{2}-[A-Za-z0-9]{4}$/;
+
+    // Testar se a string corresponde à expressão regular
+    return regex.test(string);
+  }
 
   return (
     isMounted && (
@@ -322,9 +451,30 @@ export const SchedulingCard = ({
                   />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
-                  <p className={styles.dateText}>
-                    Data: {dateClientToString(date)}
-                  </p>
+                  <div className={styles.dateField}>
+                    {/* Data: {dateClientToString(date)} */}
+                    <LocalizationProvider
+                      dateAdapter={AdapterDateFns}
+                      adapterLocale={customPtBrLocale}
+                    >
+                      {/* <DatePicker
+                        // disabled
+                        value={date}
+                        label="Basic date picker"
+                        slots={{
+                          day: customCalendarDay,
+                        }}
+                      /> */}
+                      <DatePicker disabled value={date} label="Data:" />
+                    </LocalizationProvider>
+                    <IoCheckmarkDone
+                      onClick={() => {
+                        setCurrentChangeDateValue(null);
+                        setShowDateModal(true);
+                      }}
+                      size={50}
+                    />
+                  </div>
                 </div>
                 <div
                   style={{ display: "flex", flexDirection: "row", gap: "15px" }}
@@ -395,19 +545,15 @@ export const SchedulingCard = ({
                         style={{
                           display: "flex",
                           flexDirection: "column",
-                          gap: "15px",
                         }}
                       >
-                        <div
-                          style={{ display: "flex", flexDirection: "column" }}
+                        <InputLabel
+                          sx={{ color: "#161616", fontWeight: 600 }}
+                          id={`demo-simple-select-label-${index}`}
                         >
-                          <InputLabel
-                            sx={{ color: "#161616" }}
-                            id={`demo-simple-select-label-${index}`}
-                          >
-                            #{1 + index} Serviço: *
-                          </InputLabel>
-                          <TextField
+                          #{1 + index} Serviço: {service.serviceName}
+                        </InputLabel>
+                        {/* <TextField
                             value={service.serviceName}
                             onChange={(e) =>
                               handleChangeServiceName(index, e.target.value)
@@ -415,33 +561,27 @@ export const SchedulingCard = ({
                             type="text"
                             required
                             sx={{ width: "200px" }}
-                          />
-                        </div>
+                          /> */}
 
-                        <div
-                          style={{ display: "flex", flexDirection: "column" }}
+                        <InputLabel
+                          id={`demo-simple-select-label-value-${index}`}
                         >
-                          <InputLabel
-                            id={`demo-simple-select-label-value-${index}`}
-                            sx={{ color: "#161616" }}
-                          >
-                            #{1 + index} Valor: *
-                          </InputLabel>
-                          <NumericFormat
-                            required
-                            customInput={TextField}
-                            thousandSeparator={true}
-                            prefix={"R$"}
-                            decimalScale={2}
-                            placeholder="R$"
-                            onChange={(e) =>
-                              handleChangeServiceValue(index, e.target.value)
-                            }
-                            value={service.value}
-                            fixedDecimalScale
-                            sx={{ width: "200px" }}
-                          />
-                        </div>
+                          Valor: *
+                        </InputLabel>
+                        <NumericFormat
+                          required
+                          customInput={TextField}
+                          thousandSeparator={true}
+                          prefix={"R$"}
+                          decimalScale={2}
+                          placeholder="R$"
+                          onChange={(e) =>
+                            handleChangeServiceValue(index, e.target.value)
+                          }
+                          value={service.value}
+                          fixedDecimalScale
+                          sx={{ width: "200px" }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -464,7 +604,8 @@ export const SchedulingCard = ({
                     <ContractGenerator
                       data={getDateToContractPdf()}
                       childComponent={
-                        <button
+                        <Button
+                          variant="contained"
                           // onClick={handleClickDownloadPdfButton}
                           className={styles.downloadButton}
                         >
@@ -473,26 +614,37 @@ export const SchedulingCard = ({
                             className={styles.downloadIcon}
                             size={30}
                           />
-                        </button>
+                        </Button>
                       }
                     />
-                    <button className={styles.sendButton}>
+                    <Button variant="contained" className={styles.sendButton}>
                       <p className={styles.textSendButton}>ENVIAR</p>
                       <IoMdSend className={styles.sendIcon} size={30} />
-                    </button>
+                    </Button>
                   </div>
                   <div className={styles.reserveButtonBox}>
-                    <button
-                      onClick={() => setShowSubModal(true)}
-                      className={styles.reserveButton}
-                    >
-                      RESERVAR
-                      <IoCheckmarkDone
-                        style={{ marginLeft: "2px" }}
-                        className={styles.sendIcon}
-                        size={30}
-                      />
-                    </button>
+                    {status == "occupied" ? (
+                      <Button
+                        className={styles.cancelReservedButton}
+                        variant="contained"
+                        onClick={() => setShowSubModal(true)}
+                      >
+                        CANCELAR RESERVA
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        onClick={() => setShowSubModal(true)}
+                        className={styles.reserveButton}
+                      >
+                        RESERVAR
+                        <IoCheckmarkDone
+                          style={{ marginLeft: "2px" }}
+                          className={styles.sendIcon}
+                          size={30}
+                        />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -504,26 +656,29 @@ export const SchedulingCard = ({
                   <div className={styles.subModalContent}>
                     <div className={styles.textBox}>
                       <p className={styles.textConfirmSubModal}>
-                        Deseja reservar esse pedido?
-                      </p>
-                      <p className={styles.subTextConfirmSubModal}>
-                        Todos os demais pedidos para o mesmo dia serão
-                        excluídos.
+                        {status == "occupied"
+                          ? "Deseja cancelar essa reserva?"
+                          : "Deseja reservar esse pedido?"}
                       </p>
                     </div>
                     <div className={styles.buttonsBox}>
-                      <button
+                      <Button
+                        variant="contained"
                         className={styles.cancelButtonSubModal}
                         onClick={handleCloseSubModal}
                       >
                         CANCELAR
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="contained"
                         className={styles.confirmButtonSubModal}
-                        onClick={handleClickConfirmScheduling}
+                        onClick={toggleStatusCurrentScheduling}
+                        style={{
+                          backgroundColor: status == "occupied" ? "red" : "",
+                        }}
                       >
-                        RESERVAR
-                      </button>
+                        CONFIRMAR
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -536,9 +691,7 @@ export const SchedulingCard = ({
                       <TextField
                         label="Nome:"
                         value={newServiceName}
-                        onChange={(e) =>
-                          setNewServiceName(e.target.value.toLowerCase())
-                        }
+                        onChange={(e) => setNewServiceName(e.target.value)}
                         type="text"
                         required
                         inputProps={{
@@ -562,8 +715,9 @@ export const SchedulingCard = ({
                       />
                     </div>
                     <div className={styles.buttonsBox}>
-                      <button
-                        className={styles.cancelButtonSubModal}
+                      <Button
+                        variant="outlined"
+                        className={styles.cancelButtonServiceModal}
                         onClick={() => {
                           setNewServiceName("");
                           setNewServiceValue("");
@@ -571,15 +725,72 @@ export const SchedulingCard = ({
                         }}
                       >
                         CANCELAR
-                      </button>
-                      <button
-                        className={styles.confirmButtonSubModal}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={styles.confirmButtonServiceModal}
                         onClick={() => {
                           handleAddedAdditionalServiceButton();
                         }}
                       >
                         ADICIONAR
-                      </button>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showDateModal && (
+                <div className={styles.dateModalBackground}>
+                  <div className={styles.dateModalContent}>
+                    <p className={styles.titleDateModal}>Nova data:</p>
+                    <LocalizationProvider
+                      dateAdapter={AdapterDateFns}
+                      adapterLocale={customPtBrLocale}
+                    >
+                      <DatePicker
+                        // disabled
+                        minDate={new Date()}
+                        maxDate={nextYear}
+                        slots={{
+                          day: customCalendarDay,
+                        }}
+                        disableOpenPicker={false}
+                        onChange={(e) => {
+                          handleChangeDayOfChangeDate(e);
+                        }}
+                      />
+                    </LocalizationProvider>
+                    <div className={styles.buttonsBox}>
+                      <Button
+                        variant="outlined"
+                        className={styles.cancelButtonDateModal}
+                        onClick={() => {
+                          setShowDateModal(false);
+                        }}
+                      >
+                        CANCELAR
+                      </Button>
+
+                      <Button
+                        disabled={
+                          !verificarFormatoString(currentChangeDateValue)
+                            ? true
+                            : false
+                        }
+                        sx={{
+                          backgroundColor: currentChangeDateValue
+                            ? "#007FFF"
+                            : "#90b4fc !important",
+                        }}
+                        variant="contained"
+                        className={styles.confirmButtonDateModal}
+                        onClick={() => {
+                          handleChangeDateButton();
+                        }}
+                      >
+                        ALTERAR
+                      </Button>
                     </div>
                   </div>
                 </div>

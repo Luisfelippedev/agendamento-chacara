@@ -61,8 +61,14 @@ export default function ContractGenerator({
   childComponent,
   data,
 }: IReportGeneratorProps) {
-  const { cpf, departureTime, entryTime, fullName, numberOfBusyDays, phoneNumber } =
-    data;
+  const {
+    cpf,
+    departureTime,
+    entryTime,
+    fullName,
+    numberOfBusyDays,
+    phoneNumber,
+  } = data;
   return (
     <>
       <div>
