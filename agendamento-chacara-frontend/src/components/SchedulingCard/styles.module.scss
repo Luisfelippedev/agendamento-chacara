@@ -161,8 +161,12 @@
                 margin-top: 15px;
                 .downloadButtonsBox{
                     display: flex;
-                    justify-content: flex-start;
+                    justify-content: center;
                     gap: 15px;
+
+                    @media(min-width: 500px){
+                        justify-content: flex-start;
+                    }
                     
 
                     .downloadButton {
@@ -472,7 +476,7 @@
         }
     }
 
-    @media(min-width: 768px){
+    @media(min-width: 1000px){
         .modalBox{
             width: 50%;
             .closeModalBox{

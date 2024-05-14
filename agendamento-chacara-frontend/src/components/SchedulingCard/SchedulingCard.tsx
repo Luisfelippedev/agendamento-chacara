@@ -21,7 +21,9 @@ import { VscDiffAdded } from "react-icons/vsc";
 import { GiPadlock } from "react-icons/gi";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
-import { Router } from "next/router";
+import { RiExchangeBoxFill } from "react-icons/ri";
+import changeDateIcon from "../../../public/change-date-icon.png";
+import Image from "next/image";
 
 // import ReactPDF from "@react-pdf/renderer";
 // import dynamic from "next/dynamic";
@@ -101,17 +103,15 @@ export const SchedulingCard = ({
 
   const toggleStatusCurrentScheduling = async () => {
     try {
-      await schedulingService.toggleStatusById(id)
+      await schedulingService.toggleStatusById(id);
       console.log("confirm");
       window.location.reload();
     } catch (error) {
-      return
+      return;
     }
-   
+
     // handleCloseSubModal();
   };
-
-
 
   function dateClientToString(dateValue: any) {
     // Converte a string de data para um objeto Date
@@ -310,7 +310,6 @@ export const SchedulingCard = ({
     console.log(formattedDate);
   };
 
-
   const customCalendarDay = (props: any): any => {
     const { day, ...others } = props;
     let reservedDay: any;
@@ -467,12 +466,33 @@ export const SchedulingCard = ({
                       /> */}
                       <DatePicker disabled value={date} label="Data:" />
                     </LocalizationProvider>
-                    <IoCheckmarkDone
+                    {/* <RiExchangeBoxFill
                       onClick={() => {
                         setCurrentChangeDateValue(null);
                         setShowDateModal(true);
                       }}
+                      color="blue"
                       size={50}
+                    /> */}
+                    <Image
+                      onClick={() => {
+                        setCurrentChangeDateValue(null);
+                        setShowDateModal(true);
+                      }}
+                      style={{
+                        height: "45px",
+                        width: "45px",
+                        cursor: "pointer",
+                        transition: "transform 0.2s ease-in-out", // Adicionando transição suave
+                      }}
+                      src={changeDateIcon}
+                      alt="change-date-icon"
+                      onMouseEnter={(e:any) => {
+                        e.target.style.transform = "scale(1.1)"; // Escala aumentada no hover
+                      }}
+                      onMouseLeave={(e:any) => {
+                        e.target.style.transform = "scale(1)"; // Escala normal ao sair do hover
+                      }}
                     />
                   </div>
                 </div>
@@ -743,7 +763,7 @@ export const SchedulingCard = ({
               {showDateModal && (
                 <div className={styles.dateModalBackground}>
                   <div className={styles.dateModalContent}>
-                    <p className={styles.titleDateModal}>Nova data:</p>
+                    <p className={styles.titleDateModal}>Alterar data:</p>
                     <LocalizationProvider
                       dateAdapter={AdapterDateFns}
                       adapterLocale={customPtBrLocale}
