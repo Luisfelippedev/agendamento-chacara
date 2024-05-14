@@ -111,8 +111,33 @@ export class SchedulingRepository {
     return schedulings;
   }
 
-  public async deleteById (id: string) {
-    const userDocRef = doc(firestore, 'Scheduling', id);
-      await deleteDoc(userDocRef);
+  public async deleteById(id: string) {
+    const userDocRef = doc(firestore, "Scheduling", id);
+    await deleteDoc(userDocRef);
   }
+
+  public async updateDateById(id: string, newDate: string) {
+    const schedulingDocRef = doc(firestore, "Scheduling", id);
+    await setDoc(schedulingDocRef, { date: newDate }, { merge: true });
+}
+
+public async toggleStatusById(id: string) {
+  const schedulingDocRef = doc(firestore, "Scheduling", id);
+  const newQuery = query(
+    collection(firestore, "Scheduling"),
+    where("id", "==", id)
+  );
+  const querySnapshot = await getDocs(newQuery);
+  let status
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if(data.status == false){
+      status = true
+    }else{
+      status=false
+    }
+  });
+
+  await setDoc(schedulingDocRef, { status: status }, { merge: true });
+}
 }

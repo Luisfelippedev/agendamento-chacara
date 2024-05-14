@@ -41,26 +41,26 @@ const AlertPage = () => {
   //   return dataFornecida < dataAtual;
   // }
 
-  function isPastDate(dataString: string) {
-    const dataFornecida = parse(dataString, 'dd-MM-yyyy', new Date());
-    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
+  // function isPastDate(dataString: string) {
+  //   const dataFornecida = parse(dataString, 'dd-MM-yyyy', new Date());
+  //   const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
     
-    return isBefore(dataFornecida, dataAtual);
-  }
+  //   return isBefore(dataFornecida, dataAtual);
+  // }
 
-  const deleteOldScheduling = async () => {
-    const allScheduling = await schedulingService.getAll();
-    allScheduling.forEach((scheduling) => {
-      const isPast = isPastDate(scheduling.date);
-      if(isPast){
-        schedulingService.deleteById(scheduling.id)
-      }
-    });
-  };
+    // const deleteOldScheduling = async () => {
+    //   const allScheduling = await schedulingService.getAll();
+    //   allScheduling.forEach((scheduling) => {
+    //     const isPast = isPastDate(scheduling.date);
+    //     if(isPast){
+    //       schedulingService.deleteById(scheduling.id)
+    //     }
+    //   });
+    // };
 
   useEffect(() => {
     schedulingExists();
-    deleteOldScheduling();
+    // deleteOldScheduling();
   });
 
   return (

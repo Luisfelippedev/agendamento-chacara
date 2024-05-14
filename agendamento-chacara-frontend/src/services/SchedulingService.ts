@@ -83,4 +83,23 @@ export class SchedulingService {
     }
     await this.schedulingRepository.deleteById(id);
   }
+
+  public async updateDateById(id: string, newDate: string) {
+    try {
+      await this.schedulingRepository.updateDateById(id, newDate)
+    } catch (error) {
+      throw new Error("Scheduling not found");
+    }
+    
+  }
+
+  public async toggleStatusById(id: string) {
+    try {
+      await this.schedulingRepository.toggleStatusById(id)
+    } catch (error) {
+      throw new Error("Scheduling not found");
+    }
+    
+  }
+
 }
