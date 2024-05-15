@@ -161,7 +161,7 @@
                 margin-top: 15px;
                 .downloadButtonsBox{
                     display: flex;
-                    justify-content: center;
+                    justify-content: flex-start;
                     gap: 15px;
                     @media(min-width: 500px){
                         justify-content: flex-start;

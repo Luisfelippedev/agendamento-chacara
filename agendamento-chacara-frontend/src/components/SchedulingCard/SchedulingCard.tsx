@@ -75,11 +75,15 @@ export const SchedulingCard = ({
   const [newServiceValue, setNewServiceValue]: any = useState("");
   const [showDateModal, setShowDateModal] = useState(false);
   const [dateIsOccupied, setDateIsOccupied]: any = useState();
+  const [availableDays, setAvailableDays]: any = useState();
 
   const [currentChangeDateValue, setCurrentChangeDateValue]: any =
     useState(null);
 
   const handleOpenModal = () => {
+    setFullNameClient(fullName);
+    setCpfClient(cpf);
+    setPhoneNumberFormated(formatPhoneNumber(phoneNumber));
     setShowModal(true);
   };
 
@@ -102,7 +106,6 @@ export const SchedulingCard = ({
   const toggleStatusCurrentScheduling = async () => {
     try {
       await schedulingService.toggleStatusById(id);
-      console.log("confirm");
       window.location.reload();
     } catch (error) {
       return;
@@ -117,7 +120,6 @@ export const SchedulingCard = ({
   };
 
   useEffect(() => {
-    console.log(numberOfBusyDays);
     setIsMounted(true);
     currentDateIsOccupied();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,13 +130,12 @@ export const SchedulingCard = ({
     const newValue = value.replace(/:/g, "");
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
-    if (parseInt(newValue, 10) <= 1200) {
-      setEntryTime(newValue);
-    } else {
-      // Se for maior que 12:00, define o valor como 1200 (12:00)
-      setEntryTime("1200");
-    }
-    console.log(entryTime);
+    // if (parseInt(newValue, 10) <= 2400) {
+    setEntryTime(newValue);
+    // } else {
+    //   // Se for maior que 12:00, define o valor como 1200 (12:00)
+    //   setEntryTime("0000");
+    // }
   };
 
   const onChangeDepartureTimeValue = (value: any) => {
@@ -142,13 +143,12 @@ export const SchedulingCard = ({
     const newValue = value.replace(/:/g, "");
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
-    if (parseInt(newValue, 10) <= 1200) {
-      setDepartureTime(newValue);
-    } else {
-      // Se for maior que 12:00, define o valor como 1200 (12:00)
-      setDepartureTime("1200");
-    }
-    console.log(departureTime);
+    // if (parseInt(newValue, 10) <= 1200) {
+    setDepartureTime(newValue);
+    // } else {
+    //   // Se for maior que 12:00, define o valor como 1200 (12:00)
+    //   setDepartureTime("1200");
+    // }
   };
 
   function dateToObj(date: any) {
@@ -235,7 +235,6 @@ export const SchedulingCard = ({
       serviceName: newServiceName,
       value: newServiceValue,
     });
-    console.log(additionalServices);
     setAdditionalServices(additionalServiceArr);
 
     setNewServiceName("");
@@ -249,15 +248,9 @@ export const SchedulingCard = ({
 
     // Verificando se entryTimeInt tem menos de 4 dígitos
     if (entryTimeInt < 1000) {
-      console.log("menos");
     } else {
-      console.log("mais");
     }
   }, [entryTime]);
-
-  useEffect(() => {
-    console.log(cpfClient);
-  }, [cpfClient]);
 
   const handleChangeServiceValue = (index: any, newValue: any) => {
     // Cria uma cópia do array additionalServices para não modificar o estado diretamente
@@ -274,10 +267,6 @@ export const SchedulingCard = ({
     // Define o novo array como o estado additionalServices
     setAdditionalServices(updatedServices);
   };
-
-  useEffect(() => {
-    console.log(additionalServices);
-  }, [additionalServices]);
 
   const bdDateToDate = (dateString: string) => {
     const [day, month, year] = dateString.split("-");
@@ -297,7 +286,6 @@ export const SchedulingCard = ({
   const handleChangeDayOfChangeDate = (value: any) => {
     const formattedDate = dayjsDateToSimpleDate(value);
     setCurrentChangeDateValue(formattedDate);
-    console.log(formattedDate);
   };
 
   const customCalendarDay = (props: any): any => {
@@ -375,7 +363,6 @@ export const SchedulingCard = ({
       (item: any) => item.date === currentDateBdString
     );
     currentDateOccupied.forEach((item: any) => {
-      console.log(item.status);
       if (item.status == "occupied") {
         status = true;
       }
@@ -392,6 +379,67 @@ export const SchedulingCard = ({
     let newValue = parseInt(value.replace(/[+()-\s]/g, ""));
     setPhoneNumberFormated(String(newValue));
   };
+
+  function adicionarUmDia(dataString: any) {
+    // Dividir a string da data em dia, mês e ano
+    const [dia, mes, ano] = dataString.split("-").map(Number);
+
+    // Criar um objeto de data usando o construtor Date
+    const data = new Date(ano, mes - 1, dia);
+
+    // Adicionar um dia à data
+    data.setDate(data.getDate() + 1);
+
+    // Obter o novo dia, mês e ano da data
+    const novoDia = data.getDate();
+    const novoMes = data.getMonth() + 1;
+    const novoAno = data.getFullYear();
+
+    // Formatar a nova data para o formato dd/mm/yyyy
+    const novaDataFormatada = `${novoDia.toString().padStart(2, "0")}-${novoMes
+      .toString()
+      .padStart(2, "0")}-${novoAno}`;
+
+    return novaDataFormatada;
+  }
+
+  const searchAvailableDays = async () => {
+    let currentDateDbFormat = adicionarUmDia(dayjsDateToSimpleDate(date));
+    // let currentDateDbFormat = adicionarUmDia("10-05-2024");
+    let availableDaysValue = 0;
+    let breakLoop = false;
+
+    while (breakLoop == false) {
+      try {
+        const scheduling = await schedulingService.getByDate(
+          currentDateDbFormat
+        );
+        scheduling.forEach((item) => {
+          if (item.status == true) {
+            breakLoop = true;
+          }
+        });
+        availableDaysValue++;
+        currentDateDbFormat = adicionarUmDia(currentDateDbFormat);
+      } catch (error) {
+        if (availableDaysValue > 15) {
+          breakLoop = true;
+        }
+        // console.log("chegou");
+        availableDaysValue++;
+        currentDateDbFormat = adicionarUmDia(currentDateDbFormat);
+      }
+    }
+
+    setAvailableDays(availableDaysValue);
+
+    console.log(availableDaysValue);
+  };
+
+  useEffect(() => {
+    console.log(availableDays);
+    searchAvailableDays();
+  }, []);
 
   return (
     isMounted && (
@@ -536,14 +584,16 @@ export const SchedulingCard = ({
                     id="demo-simple-select"
                     value={numberOfBusyDays}
                     onChange={(e) => setNumberOfBusyDays(e.target.value)}
+                    disabled={availableDays == undefined}
                   >
-                    {Array.from({ length: 30 }, (_, index) => index + 1).map(
-                      (value) => (
-                        <MenuItem key={value} value={value}>
-                          {value}
-                        </MenuItem>
-                      )
-                    )}
+                    {Array.from(
+                      { length: availableDays },
+                      (_, index) => index + 1
+                    ).map((value) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -677,10 +727,10 @@ export const SchedulingCard = ({
                       />
                     </Button>
 
-                    <Button variant="contained" className={styles.sendButton}>
+                    {/* <Button variant="contained" className={styles.sendButton}>
                       <p className={styles.textSendButton}>ENVIAR</p>
                       <IoMdSend className={styles.sendIcon} size={30} />
-                    </Button>
+                    </Button> */}
                   </div>
                   <div className={styles.reserveButtonBox}>
                     {status == "occupied" ? (
@@ -775,7 +825,7 @@ export const SchedulingCard = ({
                         type="text"
                         required
                         inputProps={{
-                          maxLength: 30,
+                          maxLength: 60,
                         }}
                       />
                     </div>
