@@ -466,6 +466,11 @@ const DashboardPage = () => {
                   Quantidade de pedidos: {numberOfSchedulings}
                 </p>
               )}
+              {schedulingStatus == "occupied" && (
+                <p className={styles.orderText}>
+                  Quantidade de pedidos: {numberOfSchedulings}
+                </p>
+              )}
               {schedulingStatus == "free" && (
                 <p className={styles.orderText}>Quantidade de pedidos: 0</p>
               )}
