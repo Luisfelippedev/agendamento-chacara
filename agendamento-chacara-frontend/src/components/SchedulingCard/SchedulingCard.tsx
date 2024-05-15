@@ -62,8 +62,8 @@ export const SchedulingCard = ({
     formatPhoneNumber(phoneNumber)
   );
   const [dateClient, setDateClient] = useState(date);
-  const [entryTime, setEntryTime] = useState("00:00");
-  const [departureTime, setDepartureTime] = useState("00:00");
+  const [entryTime, setEntryTime] = useState("");
+  const [departureTime, setDepartureTime] = useState("");
   const [dateString, setDateString] = useState(dateToString(date));
   const [showModal, setShowModal] = useState(false);
   const [showSubModal, setShowSubModal] = useState(false);
@@ -71,7 +71,7 @@ export const SchedulingCard = ({
   const [fullNameClient, setFullNameClient] = useState(fullName);
   const [cpfClient, setCpfClient] = useState(cpf);
   const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(1);
-  const [initialValue, setInitialValue]: any = useState("");
+  const [initialValue, setInitialValue]: any = useState(NaN);
   const [additionalServices, setAdditionalServices]: any = useState([]);
   const [showNewServiceModal, setShowNewServiceModal] = useState(false);
   const [newServiceName, setNewServiceName] = useState("");
@@ -148,6 +148,7 @@ export const SchedulingCard = ({
       // Se for maior que 12:00, define o valor como 1200 (12:00)
       setEntryTime("1200");
     }
+    console.log(entryTime);
   };
 
   const onChangeDepartureTimeValue = (value: any) => {
@@ -161,6 +162,7 @@ export const SchedulingCard = ({
       // Se for maior que 12:00, define o valor como 1200 (12:00)
       setDepartureTime("1200");
     }
+    console.log(departureTime);
   };
 
   function dateToObj(date: any) {
@@ -231,6 +233,13 @@ export const SchedulingCard = ({
     setInitialValue(floatValue);
   };
 
+  const onChangeNewServiceName = (value: any) => {
+
+  }
+  const onChangeNewServiceValue = (value: any) => {
+    
+  }
+
   const onChangeAdditionalValue = (value: any) => {
     // Remove o símbolo 'R$', vírgulas e pontos
     const cleanValue = value.replace(/[^\d.]/g, "");
@@ -255,6 +264,29 @@ export const SchedulingCard = ({
     setShowNewServiceModal(false);
   };
 
+  useEffect(() => {
+    console.log(initialValue.length);
+    console.log(fullNameClient.length);
+    console.log(phoneNumberFormated.length);
+    console.log("entryTime:" + entryTime.length);
+    console.log("departureTime:" + departureTime.length);
+  }, [initialValue]);
+
+  useEffect(() => {
+    // Convertendo entryTime para inteiro
+    const entryTimeInt = parseInt(entryTime, 10);
+
+    // Verificando se entryTimeInt tem menos de 4 dígitos
+    if (entryTimeInt < 1000) {
+      console.log("menos");
+    } else {
+      console.log("mais");
+    }
+  }, [entryTime]);
+
+  useEffect(() => {
+    console.log(cpfClient);
+  }, [cpfClient]);
   // const handleChangeServiceName = (index: any, newName: any) => {
   //   // Cria uma cópia do array additionalServices para não modificar o estado diretamente
   //   const updatedServices = [...additionalServices];
@@ -409,6 +441,11 @@ export const SchedulingCard = ({
               <div className={styles.closeModalBox}>
                 <div className={styles.titleBox}>
                   <p>{dateToLongString(date)}</p>
+                  {status == "occupied" && (
+                    <p style={{ color: "green", marginTop: "5px" }}>
+                      [ RESERVADO ]
+                    </p>
+                  )}
                 </div>
                 <IoIosCloseCircle
                   className={styles.closeIcon}
@@ -416,7 +453,10 @@ export const SchedulingCard = ({
                   size={30}
                 />
               </div>
-              <div className={styles.modalContentBox}>
+              <div
+                style={{ marginTop: status == "occupied" ? "80px" : "50px" }}
+                className={styles.modalContentBox}
+              >
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <TextField
                     label="Nome completo:"
@@ -487,10 +527,10 @@ export const SchedulingCard = ({
                       }}
                       src={changeDateIcon}
                       alt="change-date-icon"
-                      onMouseEnter={(e:any) => {
+                      onMouseEnter={(e: any) => {
                         e.target.style.transform = "scale(1.1)"; // Escala aumentada no hover
                       }}
-                      onMouseLeave={(e:any) => {
+                      onMouseLeave={(e: any) => {
                         e.target.style.transform = "scale(1)"; // Escala normal ao sair do hover
                       }}
                     />
@@ -507,6 +547,7 @@ export const SchedulingCard = ({
                     customInput={TextField}
                     placeholder="00:00"
                     onChange={(e) => onChangeEntryTimeValue(e.target.value)}
+                    value={entryTime}
                   />
                   <PatternFormat
                     required
@@ -516,6 +557,7 @@ export const SchedulingCard = ({
                     customInput={TextField}
                     placeholder="00:00"
                     onChange={(e) => onChangeDepartureTimeValue(e.target.value)}
+                    value={departureTime}
                   />
                 </div>
 
@@ -621,22 +663,44 @@ export const SchedulingCard = ({
                 </div>
                 <div className={styles.buttonsSubmitBox}>
                   <div className={styles.downloadButtonsBox}>
-                    <ContractGenerator
-                      data={getDateToContractPdf()}
-                      childComponent={
-                        <Button
-                          variant="contained"
-                          // onClick={handleClickDownloadPdfButton}
-                          className={styles.downloadButton}
-                        >
-                          <p className={styles.textDownloadButton}>PDF</p>
-                          <FaDownload
-                            className={styles.downloadIcon}
-                            size={30}
-                          />
-                        </Button>
+                    <Button
+                      disabled={
+                        fullNameClient.length < 5 ||
+                        phoneNumberFormated.length < 1 ||
+                        cpfClient.length < 1 ||
+                        entryTime == "" ||
+                        departureTime == "" ||
+                        parseInt(entryTime, 10) < 1000 ||
+                        parseInt(departureTime, 10) < 1000 ||
+                        isNaN(initialValue) ||
+                        initialValue == undefined ||
+                        (additionalServices.length > 0 &&
+                          additionalServices.every(
+                            (service: any) =>
+                            isNaN(service.value) ||
+                            service.value == undefined ||
+                            service.value == ""
+                          ))
                       }
-                    />
+                    >
+                      <ContractGenerator
+                        data={getDateToContractPdf()}
+                        childComponent={
+                          <Button
+                            variant="contained"
+                            // onClick={handleClickDownloadPdfButton}
+                            className={styles.downloadButton}
+                          >
+                            <p className={styles.textDownloadButton}>PDF</p>
+                            <FaDownload
+                              className={styles.downloadIcon}
+                              size={30}
+                            />
+                          </Button>
+                        }
+                      />
+                    </Button>
+
                     <Button variant="contained" className={styles.sendButton}>
                       <p className={styles.textSendButton}>ENVIAR</p>
                       <IoMdSend className={styles.sendIcon} size={30} />
