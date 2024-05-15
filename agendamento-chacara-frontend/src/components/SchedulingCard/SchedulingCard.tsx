@@ -18,10 +18,8 @@ import { IoMdSend } from "react-icons/io";
 import { IoCheckmarkDone } from "react-icons/io5";
 import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
 import { VscDiffAdded } from "react-icons/vsc";
-import { GiPadlock } from "react-icons/gi";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
-import { RiExchangeBoxFill } from "react-icons/ri";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
 
@@ -61,7 +59,6 @@ export const SchedulingCard = ({
   const [phoneNumberFormated, setPhoneNumberFormated] = useState(
     formatPhoneNumber(phoneNumber)
   );
-  const [dateClient, setDateClient] = useState(date);
   const [entryTime, setEntryTime] = useState("");
   const [departureTime, setDepartureTime] = useState("");
   const [dateString, setDateString] = useState(dateToString(date));
@@ -77,6 +74,7 @@ export const SchedulingCard = ({
   const [newServiceName, setNewServiceName] = useState("");
   const [newServiceValue, setNewServiceValue]: any = useState("");
   const [showDateModal, setShowDateModal] = useState(false);
+  const [dateIsOccupied, setDateIsOccupied]: any = useState();
 
   const [currentChangeDateValue, setCurrentChangeDateValue]: any =
     useState(null);
@@ -113,19 +111,6 @@ export const SchedulingCard = ({
     // handleCloseSubModal();
   };
 
-  function dateClientToString(dateValue: any) {
-    // Converte a string de data para um objeto Date
-    const dateObj = new Date(dateValue);
-
-    // Extrai o dia, mês e ano do objeto Date
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Mês é base 0 (janeiro = 0)
-    const year = dateObj.getFullYear();
-
-    // Retorna a data formatada como "dd/mm/yyyy"
-    return `${day}/${month}/${year}`;
-  }
-
   const dateToLongString = (date: any) => {
     const formattedDate = format(date, "eeee, MMMM dd, yyyy", { locale: ptBR });
     return formattedDate;
@@ -134,6 +119,7 @@ export const SchedulingCard = ({
   useEffect(() => {
     console.log(numberOfBusyDays);
     setIsMounted(true);
+    currentDateIsOccupied();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -233,13 +219,6 @@ export const SchedulingCard = ({
     setInitialValue(floatValue);
   };
 
-  const onChangeNewServiceName = (value: any) => {
-
-  }
-  const onChangeNewServiceValue = (value: any) => {
-    
-  }
-
   const onChangeAdditionalValue = (value: any) => {
     // Remove o símbolo 'R$', vírgulas e pontos
     const cleanValue = value.replace(/[^\d.]/g, "");
@@ -265,14 +244,6 @@ export const SchedulingCard = ({
   };
 
   useEffect(() => {
-    console.log(initialValue.length);
-    console.log(fullNameClient.length);
-    console.log(phoneNumberFormated.length);
-    console.log("entryTime:" + entryTime.length);
-    console.log("departureTime:" + departureTime.length);
-  }, [initialValue]);
-
-  useEffect(() => {
     // Convertendo entryTime para inteiro
     const entryTimeInt = parseInt(entryTime, 10);
 
@@ -287,19 +258,6 @@ export const SchedulingCard = ({
   useEffect(() => {
     console.log(cpfClient);
   }, [cpfClient]);
-  // const handleChangeServiceName = (index: any, newName: any) => {
-  //   // Cria uma cópia do array additionalServices para não modificar o estado diretamente
-  //   const updatedServices = [...additionalServices];
-
-  //   // Modifica o objeto específico dentro do array com o novo name
-  //   updatedServices[index] = {
-  //     ...updatedServices[index],
-  //     serviceName: newName,
-  //   };
-
-  //   // Define o novo array como o estado additionalServices
-  //   setAdditionalServices(updatedServices);
-  // };
 
   const handleChangeServiceValue = (index: any, newValue: any) => {
     // Cria uma cópia do array additionalServices para não modificar o estado diretamente
@@ -410,6 +368,21 @@ export const SchedulingCard = ({
     return regex.test(string);
   }
 
+  const currentDateIsOccupied = () => {
+    const currentDateBdString = dayjsDateToSimpleDate(date);
+    let status = false;
+    const currentDateOccupied = occupiedDays.filter(
+      (item: any) => item.date === currentDateBdString
+    );
+    currentDateOccupied.forEach((item: any) => {
+      console.log(item.status);
+      if (item.status == "occupied") {
+        status = true;
+      }
+    });
+    setDateIsOccupied(status);
+  };
+
   return (
     isMounted && (
       <>
@@ -491,29 +464,12 @@ export const SchedulingCard = ({
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <div className={styles.dateField}>
-                    {/* Data: {dateClientToString(date)} */}
                     <LocalizationProvider
                       dateAdapter={AdapterDateFns}
                       adapterLocale={customPtBrLocale}
                     >
-                      {/* <DatePicker
-                        // disabled
-                        value={date}
-                        label="Basic date picker"
-                        slots={{
-                          day: customCalendarDay,
-                        }}
-                      /> */}
                       <DatePicker disabled value={date} label="Data:" />
                     </LocalizationProvider>
-                    {/* <RiExchangeBoxFill
-                      onClick={() => {
-                        setCurrentChangeDateValue(null);
-                        setShowDateModal(true);
-                      }}
-                      color="blue"
-                      size={50}
-                    /> */}
                     <Image
                       onClick={() => {
                         setCurrentChangeDateValue(null);
@@ -578,7 +534,6 @@ export const SchedulingCard = ({
                         </MenuItem>
                       )
                     )}
-                    {/* <MenuItem value={1}>1</MenuItem> */}
                   </Select>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -615,15 +570,6 @@ export const SchedulingCard = ({
                         >
                           #{1 + index} Serviço: {service.serviceName}
                         </InputLabel>
-                        {/* <TextField
-                            value={service.serviceName}
-                            onChange={(e) =>
-                              handleChangeServiceName(index, e.target.value)
-                            }
-                            type="text"
-                            required
-                            sx={{ width: "200px" }}
-                          /> */}
 
                         <InputLabel
                           id={`demo-simple-select-label-value-${index}`}
@@ -677,9 +623,9 @@ export const SchedulingCard = ({
                         (additionalServices.length > 0 &&
                           additionalServices.every(
                             (service: any) =>
-                            isNaN(service.value) ||
-                            service.value == undefined ||
-                            service.value == ""
+                              isNaN(service.value) ||
+                              service.value == undefined ||
+                              service.value == ""
                           ))
                       }
                     >
@@ -688,8 +634,28 @@ export const SchedulingCard = ({
                         childComponent={
                           <Button
                             variant="contained"
-                            // onClick={handleClickDownloadPdfButton}
                             className={styles.downloadButton}
+                            style={{
+                              backgroundColor:
+                                fullNameClient.length < 5 ||
+                                phoneNumberFormated.length < 1 ||
+                                cpfClient.length < 1 ||
+                                entryTime == "" ||
+                                departureTime == "" ||
+                                parseInt(entryTime, 10) < 1000 ||
+                                parseInt(departureTime, 10) < 1000 ||
+                                isNaN(initialValue) ||
+                                initialValue == undefined ||
+                                (additionalServices.length > 0 &&
+                                  additionalServices.every(
+                                    (service: any) =>
+                                      isNaN(service.value) ||
+                                      service.value == undefined ||
+                                      service.value == ""
+                                  ))
+                                  ? "#ad7f7f"
+                                  : "#d32f2f",
+                            }}
                           >
                             <p className={styles.textDownloadButton}>PDF</p>
                             <FaDownload
@@ -716,18 +682,30 @@ export const SchedulingCard = ({
                         CANCELAR RESERVA
                       </Button>
                     ) : (
-                      <Button
-                        variant="contained"
-                        onClick={() => setShowSubModal(true)}
-                        className={styles.reserveButton}
-                      >
-                        RESERVAR
-                        <IoCheckmarkDone
-                          style={{ marginLeft: "2px" }}
-                          className={styles.sendIcon}
-                          size={30}
-                        />
-                      </Button>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Button
+                          variant="contained"
+                          onClick={() => setShowSubModal(true)}
+                          className={styles.reserveButton}
+                          disabled={dateIsOccupied == true}
+                          style={{
+                            backgroundColor:
+                              dateIsOccupied == true ? "#8aa28a" : "green",
+                          }}
+                        >
+                          RESERVAR
+                          <IoCheckmarkDone
+                            style={{ marginLeft: "2px" }}
+                            className={styles.sendIcon}
+                            size={30}
+                          />
+                        </Button>
+                        {dateIsOccupied == true && (
+                          <p style={{ color: "red", marginTop: "10px" }}>
+                            Já existe uma reserva para esse dia!
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
