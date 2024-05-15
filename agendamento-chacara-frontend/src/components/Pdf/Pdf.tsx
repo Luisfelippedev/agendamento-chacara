@@ -69,8 +69,17 @@ export default function ContractGenerator({
     numberOfBusyDays,
     phoneNumber,
   } = data;
+
+  // const handleClickButton = async (blob: any) => {
+  //   const render = new FileReader();
+  //   render.readAsDataURL(blob);
+  //   render.onloadend = () => {
+  //     console.log(render.result);
+  //   };
+  // };
+
   return (
-    <>
+    <>  
       <div>
         <PDFDownloadLink
           document={
@@ -85,6 +94,10 @@ export default function ContractGenerator({
           }
           fileName="report.pdf"
         >
+          {/* {({ blob, url, loading, error }) => {
+            !loading && handleClickButton(blob);
+            return loading ? "Loading document..." : "Download now!";
+          }} */}
           {childComponent}
         </PDFDownloadLink>
       </div>

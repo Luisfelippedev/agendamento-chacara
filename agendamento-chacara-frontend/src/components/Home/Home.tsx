@@ -60,11 +60,11 @@ export const HomePage = () => {
         <div className={styles.infoBox}>
           <p className={styles.textFooter}>
             <FaBusinessTime className={styles.iconFooter} color="white" />
-            Segunda - Domingo (6:00 até 22:00)
+            Segunda - Domingo
           </p>
           <p className={styles.textFooter}>
             <IoLogoWhatsapp className={styles.iconFooter} color="#25d366" />
-            (83) 99400-8849
+            (83) 99192-1727
           </p>
         </div>
         <div className={styles.mapBox}>
@@ -73,6 +73,8 @@ export const HomePage = () => {
             className={styles.iconMap}
             color="#FF5722"
           />
+          <p className={styles.textLocalInfo}>Saída para Boa Vista</p>
+          <p className={styles.textLocalInfo}>Sítio Saco, PB-366</p>
         </div>
       </div>
 

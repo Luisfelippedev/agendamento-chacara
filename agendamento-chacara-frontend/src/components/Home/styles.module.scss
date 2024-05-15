@@ -1,7 +1,7 @@
 @import "../../themes/theme.scss";
 
 .background{
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../../public/chacara-image.jpg");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../../public/chacara-image.jpeg");
     //background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.8)), url("../../public/chacara-image.jpg");
     background-repeat: no-repeat;
     background-size: cover;
@@ -94,13 +94,14 @@
    .footerContainer{
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end;
     width: 95%;
     margin-bottom: 1%;
         .infoBox{
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
+
             .textFooter{
                 gap: 10px;
                 display: flex;
@@ -119,6 +120,14 @@
             align-items: center;
             justify-content: center;
             height: 100%;
+            flex-direction: column;
+            gap: 5px;
+
+            .textLocalInfo{
+                font-size: 1rem;
+                color: white;
+
+            }
 
             $jump-duration: 1s; // Duração do salto
             $jump-delay: 2s; // Intervalo entre os saltos
@@ -145,6 +154,11 @@
                     font-size: 1.2rem;
                 }
             }
+            .mapBox{
+                .textLocalInfo{
+                    font-size: 1.2rem;
+                }
+            }
         }
         @media(min-width:1440px){
             .infoBox{
@@ -156,6 +170,9 @@
                 .iconMap{
                     height: 60px;
                     width: 60px;
+                }
+                .textLocalInfo{
+                    font-size: 1.5rem;
                 }
             }
         }
