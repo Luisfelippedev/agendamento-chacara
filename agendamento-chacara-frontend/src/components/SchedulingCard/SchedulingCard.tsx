@@ -56,7 +56,7 @@ export const SchedulingCard = ({
   const schedulingService = new SchedulingService();
 
   const [dateObj, setDateObj] = useState(dateToObj(date));
-  const [phoneNumberFormated, setPhoneNumberFormated] = useState(
+  const [phoneNumberFormated, setPhoneNumberFormated]: any = useState(
     formatPhoneNumber(phoneNumber)
   );
   const [entryTime, setEntryTime] = useState("");
@@ -383,6 +383,16 @@ export const SchedulingCard = ({
     setDateIsOccupied(status);
   };
 
+  const onChangeCpfInput = (value: any) => {
+    let newValue = parseInt(value.replace(/[.-]/g, ""));
+    setCpfClient(String(newValue));
+  };
+
+  const onChangePhoneNumberInput = (value: any) => {
+    let newValue = parseInt(value.replace(/[+()-\s]/g, ""));
+    setPhoneNumberFormated(String(newValue));
+  };
+
   return (
     isMounted && (
       <>
@@ -445,7 +455,7 @@ export const SchedulingCard = ({
                     format="+55 (##) #####-####"
                     label={"Telefone:"}
                     mask="_"
-                    onChange={(e) => setPhoneNumberFormated(e.target.value)}
+                    onChange={(e) => onChangePhoneNumberInput(e.target.value)}
                     value={phoneNumber}
                     customInput={TextField}
                   />
@@ -456,7 +466,7 @@ export const SchedulingCard = ({
                     format={"###.###.###-##"}
                     mask="_"
                     label={"Cpf:"}
-                    onChange={(e) => setCpfClient(e.target.value)}
+                    onChange={(e) => onChangeCpfInput(e.target.value)}
                     value={cpfClient}
                     customInput={TextField}
                     className={styles["input-phone"]}
@@ -612,8 +622,8 @@ export const SchedulingCard = ({
                     <Button
                       disabled={
                         fullNameClient.length < 5 ||
-                        phoneNumberFormated.length < 1 ||
-                        cpfClient.length < 1 ||
+                        phoneNumberFormated.length < 13 ||
+                        cpfClient.length < 11 ||
                         entryTime == "" ||
                         departureTime == "" ||
                         parseInt(entryTime, 10) < 1000 ||
@@ -638,8 +648,8 @@ export const SchedulingCard = ({
                             style={{
                               backgroundColor:
                                 fullNameClient.length < 5 ||
-                                phoneNumberFormated.length < 1 ||
-                                cpfClient.length < 1 ||
+                                phoneNumberFormated.length < 13 ||
+                                cpfClient.length < 11 ||
                                 entryTime == "" ||
                                 departureTime == "" ||
                                 parseInt(entryTime, 10) < 1000 ||
@@ -682,7 +692,14 @@ export const SchedulingCard = ({
                         CANCELAR RESERVA
                       </Button>
                     ) : (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
                         <Button
                           variant="contained"
                           onClick={() => setShowSubModal(true)}
@@ -691,6 +708,7 @@ export const SchedulingCard = ({
                           style={{
                             backgroundColor:
                               dateIsOccupied == true ? "#8aa28a" : "green",
+                            width: "150px",
                           }}
                         >
                           RESERVAR
