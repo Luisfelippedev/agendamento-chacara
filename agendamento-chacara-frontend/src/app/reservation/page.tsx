@@ -60,6 +60,29 @@ const ReservationPage = () => {
     return formattedDate;
   };
 
+  function adicionarUmDia(dataString: any) {
+    // Dividir a string da data em dia, mês e ano
+    const [dia, mes, ano] = dataString.split("-").map(Number);
+
+    // Criar um objeto de data usando o construtor Date
+    const data = new Date(ano, mes - 1, dia);
+
+    // Adicionar um dia à data
+    data.setDate(data.getDate() + 1);
+
+    // Obter o novo dia, mês e ano da data
+    const novoDia = data.getDate();
+    const novoMes = data.getMonth() + 1;
+    const novoAno = data.getFullYear();
+
+    // Formatar a nova data para o formato dd/mm/yyyy
+    const novaDataFormatada = `${novoDia.toString().padStart(2, "0")}-${novoMes
+      .toString()
+      .padStart(2, "0")}-${novoAno}`;
+
+    return novaDataFormatada;
+  }
+
   const searchOcuppiedDays = async () => {
     const schedulingService = new SchedulingService();
     try {
@@ -68,6 +91,15 @@ const ReservationPage = () => {
 
       allSchedulings.forEach((scheduling) => {
         if (scheduling.status == true) {
+          if (scheduling.avaliableDays > 1) {
+            let dateNewScheduling = scheduling.date;
+            for (let i = 1; i < scheduling.avaliableDays; i++) {
+              dateNewScheduling = adicionarUmDia(dateNewScheduling);
+
+              occupiedDaysArr.push(bdDateToDate(dateNewScheduling));
+              // }
+            }
+          }
           const dateFormated = bdDateToDate(scheduling.date);
           occupiedDaysArr.push(dateFormated);
         }
@@ -85,23 +117,23 @@ const ReservationPage = () => {
   }, []);
 
   const handleClickDayButton = async (dateValue: any) => {
-    setCurrentDateCalendar(dateValue)
+    setCurrentDateCalendar(dateValue);
     setSchedulingStatus(false);
     const stringDateFormated = dateToString(dateValue);
     setDateActualValue(stringDateFormated);
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
     setDateFromBd(simpleDateFormated);
-    const schedulingService = new SchedulingService();
-    try {
-      const schedulingExists = await schedulingService.getByDate(
-        simpleDateFormated
-      );
-      schedulingExists.forEach((scheduling) => {
-        if (scheduling.status == true) {
-          setSchedulingStatus(true);
-        }
-      });
-    } catch (error) {
+
+    console.log(dateValue);
+
+    let newArr = occupiedDays.filter((item: any) => {
+      return String(item) == String(dateValue);
+    });
+    console.log(newArr);
+
+    if (newArr.length > 0) {
+      setSchedulingStatus(true);
+    } else {
       return;
     }
   };
@@ -147,6 +179,9 @@ const ReservationPage = () => {
     );
   };
 
+  useEffect(() => {
+    console.log(occupiedDays);
+  }, [occupiedDays]);
   return (
     <div className={styles.background}>
       <Header page="reservationPage" />
@@ -204,7 +239,7 @@ const ReservationPage = () => {
           <div className={styles.buttonContainer}>
             <Button
               disabled={
-                schedulingStatus === "loading" || schedulingStatus === true 
+                schedulingStatus === "loading" || schedulingStatus === true
               }
               onClick={handleClickConfirmButton}
               className={styles.button}

@@ -7,4 +7,6 @@ export interface Scheduling {
   cpf: string
   date: string;
   status: boolean;
+  avaliableDays: number;
+  forgeinKey: string;
 }

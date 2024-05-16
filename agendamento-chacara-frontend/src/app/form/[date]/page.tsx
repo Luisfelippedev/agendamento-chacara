@@ -163,6 +163,8 @@ const Form = () => {
       date: params.date,
       phoneNumber: filteredNumber,
       status: false,
+      avaliableDays: 1,
+      forgeinKey: ""
     };
     try {
       await schedulingService.createScheduling(newScheduling);

@@ -16,7 +16,15 @@ export class SchedulingRepository {
   constructor() {}
 
   public async create(scheduling: Scheduling) {
-    const { clientName, cpf, date, phoneNumber, status } = scheduling;
+    const {
+      clientName,
+      cpf,
+      date,
+      phoneNumber,
+      status,
+      avaliableDays,
+      forgeinKey,
+    } = scheduling;
     const id = uuidv4();
     await setDoc(doc(firestore, "Scheduling", id), {
       id,
@@ -25,6 +33,8 @@ export class SchedulingRepository {
       date,
       phoneNumber,
       status,
+      avaliableDays,
+      forgeinKey
     });
   }
 
@@ -59,6 +69,8 @@ export class SchedulingRepository {
         date: data.date,
         phoneNumber: data.phoneNumber,
         status: data.status,
+        avaliableDays: data.avaliableDays,
+        forgeinKey: data.forgeinKey
       });
     });
 
@@ -82,6 +94,8 @@ export class SchedulingRepository {
         date: data.date,
         phoneNumber: data.phoneNumber,
         status: data.status,
+        avaliableDays: data.avaliableDays,
+        forgeinKey: data.forgeinKey
       });
     });
 
@@ -105,6 +119,8 @@ export class SchedulingRepository {
         date: data.date,
         phoneNumber: data.phoneNumber,
         status: data.status,
+        avaliableDays: data.avaliableDays,
+        forgeinKey: data.forgeinKey
       });
     });
 
@@ -119,25 +135,25 @@ export class SchedulingRepository {
   public async updateDateById(id: string, newDate: string) {
     const schedulingDocRef = doc(firestore, "Scheduling", id);
     await setDoc(schedulingDocRef, { date: newDate }, { merge: true });
-}
+  }
 
-public async toggleStatusById(id: string) {
-  const schedulingDocRef = doc(firestore, "Scheduling", id);
-  const newQuery = query(
-    collection(firestore, "Scheduling"),
-    where("id", "==", id)
-  );
-  const querySnapshot = await getDocs(newQuery);
-  let status
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if(data.status == false){
-      status = true
-    }else{
-      status=false
-    }
-  });
+  public async toggleStatusById(id: string) {
+    const schedulingDocRef = doc(firestore, "Scheduling", id);
+    const newQuery = query(
+      collection(firestore, "Scheduling"),
+      where("id", "==", id)
+    );
+    const querySnapshot = await getDocs(newQuery);
+    let status;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.status == false) {
+        status = true;
+      } else {
+        status = false;
+      }
+    });
 
-  await setDoc(schedulingDocRef, { status: status }, { merge: true });
-}
+    await setDoc(schedulingDocRef, { status: status }, { merge: true });
+  }
 }
