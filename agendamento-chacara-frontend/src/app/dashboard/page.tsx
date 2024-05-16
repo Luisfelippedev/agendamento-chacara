@@ -40,6 +40,7 @@ import {
 } from "@mui/x-date-pickers";
 import { SchedulingCard } from "@/components/SchedulingCard/SchedulingCard";
 import { SchedulingService } from "@/services/SchedulingService";
+import { Scheduling } from "../models/Scheduling";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -79,14 +80,55 @@ const DashboardPage = () => {
     return formattedDate;
   };
 
+  function adicionarUmDia(dataString: any) {
+    // Dividir a string da data em dia, mês e ano
+    const [dia, mes, ano] = dataString.split("-").map(Number);
+
+    // Criar um objeto de data usando o construtor Date
+    const data = new Date(ano, mes - 1, dia);
+
+    // Adicionar um dia à data
+    data.setDate(data.getDate() + 1);
+
+    // Obter o novo dia, mês e ano da data
+    const novoDia = data.getDate();
+    const novoMes = data.getMonth() + 1;
+    const novoAno = data.getFullYear();
+
+    // Formatar a nova data para o formato dd/mm/yyyy
+    const novaDataFormatada = `${novoDia.toString().padStart(2, "0")}-${novoMes
+      .toString()
+      .padStart(2, "0")}-${novoAno}`;
+
+    return novaDataFormatada;
+  }
+
   const searchOcuppiedDays = async () => {
     const schedulingService = new SchedulingService();
     try {
       let occupiedDaysArr: Array<any> = [];
       const allSchedulings = await schedulingService.getAll();
 
-      allSchedulings.forEach((scheduling) => {
+      for (const scheduling of allSchedulings) {
         if (scheduling.status == true) {
+          if (scheduling.avaliableDays > 1) {
+            let dateNewScheduling = scheduling.date;
+            for (let i = 1; i < scheduling.avaliableDays; i++) {
+              dateNewScheduling = adicionarUmDia(dateNewScheduling);
+
+              occupiedDaysArr.push({
+                date: dateNewScheduling,
+                status: "occupied",
+                fullName: scheduling.clientName,
+                cpf: scheduling.cpf,
+                id: "12312312",
+                phoneNumber: scheduling.phoneNumber,
+                avaliableDays: 1,
+                forgeinKey: scheduling.id,
+              });
+              // }
+            }
+          }
           // const dateFormated = bdDateToDate(scheduling.date);
           occupiedDaysArr.push({
             date: scheduling.date,
@@ -95,6 +137,8 @@ const DashboardPage = () => {
             cpf: scheduling.cpf,
             id: scheduling.id,
             phoneNumber: scheduling.phoneNumber,
+            avaliableDays: scheduling.avaliableDays,
+            forgeinKey: scheduling.forgeinKey,
           });
         } else {
           // const dateFormated = bdDateToDate(scheduling.date);
@@ -105,31 +149,11 @@ const DashboardPage = () => {
             cpf: scheduling.cpf,
             id: scheduling.id,
             phoneNumber: scheduling.phoneNumber,
+            avaliableDays: scheduling.avaliableDays,
+            forgeinKey: scheduling.forgeinKey,
           });
         }
-      });
-
-      // const filteredOccupiedDaysArr = occupiedDaysArr.filter(
-      //   (item) =>
-      //     item.status !== "waiting" ||
-      //     !occupiedDaysArr.some(
-      //       (occupiedItem) =>
-      //         occupiedItem.status === "occupied" &&
-      //         occupiedItem.date === item.date
-      //     )
-      // );
-
-      // filteredOccupiedDaysArr.sort((a, b) => {
-      //   const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
-      //   const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
-      //   return dateA - dateB;
-      // });
-
-      // occupiedDaysArr.sort((a, b) => {
-      //   const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
-      //   const dateB = new Date(b.date.split("-").reverse().join("-")).getTime();
-      //   return dateA - dateB;
-      // });
+      }
 
       occupiedDaysArr.sort((a, b) => {
         const dateA = new Date(a.date.split("-").reverse().join("-")).getTime();
@@ -203,15 +227,17 @@ const DashboardPage = () => {
 
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
     // setDateFromBd(simpleDateFormated);
-    const schedulingService = new SchedulingService();
-    try {
-      const schedulingExists = await schedulingService.getByDate(
-        simpleDateFormated
-      );
-      setNumberOfSchedulings(schedulingExists.length);
+    // const schedulingService = new SchedulingService();
+
+    let newArr = occupiedDays.filter((item: any) => {
+      return item.date === simpleDateFormated;
+    });
+
+    if (newArr.length > 0) {
+      setNumberOfSchedulings(newArr.length);
       let hasOccupied = false; // Estado intermediário para controlar se scheduling.status já foi true
-      schedulingExists.forEach((scheduling) => {
-        if (scheduling.status === true && !hasOccupied) {
+      occupiedDays.forEach((scheduling: any) => {
+        if (scheduling.status === "occupied" && !hasOccupied) {
           setSchedulingStatus("occupied");
           hasOccupied = true; // Marca que scheduling.status já foi true
         }
@@ -219,9 +245,28 @@ const DashboardPage = () => {
       if (!hasOccupied) {
         setSchedulingStatus("waiting");
       }
-    } catch (error) {
+    } else {
       setSchedulingStatus("free");
     }
+
+    // try {
+    //   const schedulingExists = await schedulingService.getByDate(
+    //     simpleDateFormated
+    //   );
+    //   setNumberOfSchedulings(schedulingExists.length);
+    //   let hasOccupied = false; // Estado intermediário para controlar se scheduling.status já foi true
+    //   occupiedDays.forEach((scheduling: any) => {
+    //     if (scheduling.status === "occupied" && !hasOccupied) {
+    //       setSchedulingStatus("occupied");
+    //       hasOccupied = true; // Marca que scheduling.status já foi true
+    //     }
+    //   });
+    //   if (!hasOccupied) {
+    //     setSchedulingStatus("waiting");
+    //   }
+    // } catch (error) {
+    //   setSchedulingStatus("free");
+    // }
   };
 
   const handleClickScheduleButton = () => {

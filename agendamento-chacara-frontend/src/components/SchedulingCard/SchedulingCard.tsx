@@ -67,7 +67,7 @@ export const SchedulingCard = ({
   const [isMounted, setIsMounted] = useState(false);
   const [fullNameClient, setFullNameClient] = useState(fullName);
   const [cpfClient, setCpfClient] = useState(cpf);
-  const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(1);
+  const [numberOfBusyDays, setNumberOfBusyDays]: any = useState();
   const [initialValue, setInitialValue]: any = useState(NaN);
   const [additionalServices, setAdditionalServices]: any = useState([]);
   const [showNewServiceModal, setShowNewServiceModal] = useState(false);
@@ -104,6 +104,7 @@ export const SchedulingCard = ({
   };
 
   const toggleStatusCurrentScheduling = async () => {
+      
     try {
       await schedulingService.toggleStatusById(id);
       window.location.reload();
@@ -122,6 +123,7 @@ export const SchedulingCard = ({
   useEffect(() => {
     setIsMounted(true);
     currentDateIsOccupied();
+    searchAvailableDays();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -131,7 +133,7 @@ export const SchedulingCard = ({
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 2400) {
-    setEntryTime(newValue);
+    setEntryTime(String(newValue));
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setEntryTime("0000");
@@ -144,7 +146,7 @@ export const SchedulingCard = ({
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 1200) {
-    setDepartureTime(newValue);
+    setDepartureTime(String(newValue));
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setDepartureTime("1200");
@@ -348,6 +350,14 @@ export const SchedulingCard = ({
     }
   };
 
+  useEffect(() => {
+    console.log(entryTime.length);
+  }, [entryTime]);
+
+  useEffect(() => {
+    console.log(departureTime.length);
+  }, [departureTime]);
+
   function verificarFormatoString(string: any) {
     // Expressão regular para verificar o formato xx-xx-xxxx
     const regex = /^[A-Za-z0-9]{2}-[A-Za-z0-9]{2}-[A-Za-z0-9]{4}$/;
@@ -436,10 +446,7 @@ export const SchedulingCard = ({
     console.log(availableDaysValue);
   };
 
-  useEffect(() => {
-    console.log(availableDays);
-    searchAvailableDays();
-  }, []);
+  
 
   return (
     isMounted && (
@@ -550,6 +557,27 @@ export const SchedulingCard = ({
                     />
                   </div>
                 </div>
+                <div>
+                  <InputLabel id="demo-simple-select-label">
+                    Dias ocupados:
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={numberOfBusyDays}
+                    onChange={(e) => setNumberOfBusyDays(e.target.value)}
+                    disabled={availableDays == undefined}
+                  >
+                    {Array.from(
+                      { length: availableDays },
+                      (_, index) => index + 1
+                    ).map((value) => (
+                      <MenuItem key={value} value={value}>
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </div>
                 <div
                   style={{ display: "flex", flexDirection: "row", gap: "15px" }}
                 >
@@ -575,27 +603,6 @@ export const SchedulingCard = ({
                   />
                 </div>
 
-                <div>
-                  <InputLabel id="demo-simple-select-label">
-                    Dias ocupados:
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={numberOfBusyDays}
-                    onChange={(e) => setNumberOfBusyDays(e.target.value)}
-                    disabled={availableDays == undefined}
-                  >
-                    {Array.from(
-                      { length: availableDays },
-                      (_, index) => index + 1
-                    ).map((value) => (
-                      <MenuItem key={value} value={value}>
-                        {value}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                   <InputLabel id="demo-simple-select-label">
                     Valor mínimo: *
@@ -702,8 +709,8 @@ export const SchedulingCard = ({
                                 cpfClient.length < 11 ||
                                 entryTime == "" ||
                                 departureTime == "" ||
-                                parseInt(entryTime, 10) < 1000 ||
-                                parseInt(departureTime, 10) < 1000 ||
+                                entryTime.length < 4 ||
+                                departureTime.length < 4 ||
                                 isNaN(initialValue) ||
                                 initialValue == undefined ||
                                 (additionalServices.length > 0 &&

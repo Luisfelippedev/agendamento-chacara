@@ -9,7 +9,7 @@ export class SchedulingService {
   }
 
   public async createScheduling(scheduling: Scheduling) {
-    const { clientName, cpf, date, phoneNumber } = scheduling;
+    const { clientName, cpf, date, phoneNumber, avaliableDays, forgeinKey } = scheduling;
     const allScheduling = await this.schedulingRepository.findAll();
     if (allScheduling) {
       allScheduling.forEach((item) => {
@@ -29,13 +29,16 @@ export class SchedulingService {
       date: date,
       phoneNumber: phoneNumber,
       status: false,
+      avaliableDays: avaliableDays,
+      forgeinKey: forgeinKey
     };
 
     if (
       !objScheduling.clientName ||
       !objScheduling.cpf ||
       !objScheduling.date ||
-      !objScheduling.phoneNumber
+      !objScheduling.phoneNumber ||
+      !objScheduling.avaliableDays
     ) {
       throw new Error("Empty input value");
     }
