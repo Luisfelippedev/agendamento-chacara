@@ -168,7 +168,6 @@ const DashboardPage = () => {
         return dateA - dateB;
       });
 
-      console.log(occupiedDaysArr);
 
       setOccupiedDays(occupiedDaysArr);
       return;
