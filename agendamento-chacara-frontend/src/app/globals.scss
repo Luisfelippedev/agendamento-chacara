@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import '@fontsource/lobster';
 
 *{
     margin: 0;
@@ -12,5 +12,5 @@ a{
   }
 
 .titleText{
-    font-family: "Lobster", sans-serif !important;
+    font-family: 'Lobster', system-ui !important;
 }
