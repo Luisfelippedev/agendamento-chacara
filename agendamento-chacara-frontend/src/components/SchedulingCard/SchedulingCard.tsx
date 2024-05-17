@@ -142,11 +142,11 @@ export const SchedulingCard = ({
 
   const onChangeEntryTimeValue = (value: any) => {
     // Remove os dois pontos ":" da string
-    const newValue = value.replace(/:/g, "");
+    // const newValue = value.replace(/:/g, "");
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 2400) {
-    setEntryTime(String(newValue));
+    setEntryTime(String(value).trim());
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setEntryTime("0000");
@@ -155,11 +155,11 @@ export const SchedulingCard = ({
 
   const onChangeDepartureTimeValue = (value: any) => {
     // Remove os dois pontos ":" da string
-    const newValue = value.replace(/:/g, "");
+    // const newValue = value.replace(/:/g, "");
 
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 1200) {
-    setDepartureTime(String(newValue));
+    setDepartureTime(String(value).trim());
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setDepartureTime("1200");
@@ -265,16 +265,6 @@ export const SchedulingCard = ({
     setShowNewServiceModal(false);
   };
 
-  useEffect(() => {
-    // Convertendo entryTime para inteiro
-    const entryTimeInt = parseInt(entryTime, 10);
-
-    // Verificando se entryTimeInt tem menos de 4 dígitos
-    if (entryTimeInt < 1000) {
-    } else {
-    }
-  }, [entryTime]);
-
   const handleChangeServiceValue = (index: any, newValue: any) => {
     // Cria uma cópia do array additionalServices para não modificar o estado diretamente
     const updatedServices = [...additionalServices];
@@ -372,10 +362,12 @@ export const SchedulingCard = ({
   };
 
   useEffect(() => {
+    console.log(entryTime);
     console.log(entryTime.length);
   }, [entryTime]);
 
   useEffect(() => {
+    console.log(departureTime);
     console.log(departureTime.length);
   }, [departureTime]);
 
@@ -712,8 +704,8 @@ export const SchedulingCard = ({
                         entryTime == "" ||
                         departureTime == "" ||
                         numberOfBusyDays == "" ||
-                        parseInt(entryTime, 10) < 1000 ||
-                        parseInt(departureTime, 10) < 1000 ||
+                        // parseInt(entryTime, 10) < 1000 ||
+                        // parseInt(departureTime, 10) < 1000 ||
                         isNaN(initialValue) ||
                         initialValue == undefined ||
                         // (additionalServices.length > 0 &&
@@ -910,7 +902,12 @@ export const SchedulingCard = ({
                         onClick={() => {
                           handleAddedAdditionalServiceButton();
                         }}
-                        style={{backgroundColor: newServiceName == "" || newServiceValue == "" ? "#8aa28a" : "green"}}
+                        style={{
+                          backgroundColor:
+                            newServiceName == "" || newServiceValue == ""
+                              ? "#8aa28a"
+                              : "green",
+                        }}
                         disabled={newServiceName == "" || newServiceValue == ""}
                       >
                         ADICIONAR
