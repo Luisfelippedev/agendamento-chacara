@@ -34,6 +34,7 @@ export interface SchedulingCardProps {
   cpf: any;
   id: any;
   occupiedDays: any;
+  avaliableDaysProp: any;
 }
 
 export const SchedulingCard = ({
@@ -44,6 +45,7 @@ export const SchedulingCard = ({
   cpf,
   id,
   occupiedDays,
+  avaliableDaysProp,
 }: SchedulingCardProps) => {
   const customPtBrLocale: Locale = {
     ...ptBR,
@@ -67,7 +69,10 @@ export const SchedulingCard = ({
   const [isMounted, setIsMounted] = useState(false);
   const [fullNameClient, setFullNameClient] = useState(fullName);
   const [cpfClient, setCpfClient] = useState(cpf);
-  const [numberOfBusyDays, setNumberOfBusyDays]: any = useState();
+  const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(
+    // avaliableDaysProp > 1 ? avaliableDaysProp : ""
+    status == "occupied" ? avaliableDaysProp : ""
+  );
   const [initialValue, setInitialValue]: any = useState(NaN);
   const [additionalServices, setAdditionalServices]: any = useState([]);
   const [showNewServiceModal, setShowNewServiceModal] = useState(false);
@@ -104,9 +109,13 @@ export const SchedulingCard = ({
   };
 
   const toggleStatusCurrentScheduling = async () => {
-      
     try {
       await schedulingService.toggleStatusById(id);
+      if (avaliableDaysProp > 1) {
+        await schedulingService.updateAvaliableDaysById(id, 1);
+      } else {
+        await schedulingService.updateAvaliableDaysById(id, numberOfBusyDays);
+      }
       window.location.reload();
     } catch (error) {
       return;
@@ -114,6 +123,10 @@ export const SchedulingCard = ({
 
     // handleCloseSubModal();
   };
+
+  useEffect(() => {
+    console.log(numberOfBusyDays);
+  }, [numberOfBusyDays]);
 
   const dateToLongString = (date: any) => {
     const formattedDate = format(date, "eeee, MMMM dd, yyyy", { locale: ptBR });
@@ -153,7 +166,7 @@ export const SchedulingCard = ({
     // }
   };
 
-  function dateToObj(date: any) {
+  function dateToObj(value: any) {
     const monthsPtBr = [
       "Janeiro",
       "Fevereiro",
@@ -169,13 +182,21 @@ export const SchedulingCard = ({
       "Dezembro",
     ];
 
-    const dateObj = new Date(date);
-    const day = dateObj.getDate();
+    const dateObj = new Date(value);
+    let day = String(dateObj.getDate());
     const monthIndex = dateObj.getMonth();
     const month = monthsPtBr[monthIndex];
     const year = dateObj.getFullYear();
-
     const formattedDate = dateObj.toString();
+
+    if (avaliableDaysProp > 1) {
+      let untilTheDate = dateToString(date);
+      for (let i = 1; i < avaliableDaysProp; i++) {
+        untilTheDate = adicionarUmDia(untilTheDate);
+      }
+      day = day + "-" + untilTheDate.substring(0, 2);
+      console.log(day);
+    }
 
     return {
       day,
@@ -413,25 +434,26 @@ export const SchedulingCard = ({
     return novaDataFormatada;
   }
 
-  const searchAvailableDays = async () => {
+  const searchAvailableDays = () => {
+    console.log(occupiedDays);
     let currentDateDbFormat = adicionarUmDia(dayjsDateToSimpleDate(date));
     // let currentDateDbFormat = adicionarUmDia("10-05-2024");
     let availableDaysValue = 0;
     let breakLoop = false;
 
     while (breakLoop == false) {
-      try {
-        const scheduling = await schedulingService.getByDate(
-          currentDateDbFormat
-        );
-        scheduling.forEach((item) => {
-          if (item.status == true) {
+      let newArr = occupiedDays.filter((item: any) => {
+        return item.date === currentDateDbFormat;
+      });
+      if (newArr.length > 0) {
+        newArr.forEach((item: any) => {
+          if (item.status == "occupied") {
             breakLoop = true;
           }
         });
         availableDaysValue++;
         currentDateDbFormat = adicionarUmDia(currentDateDbFormat);
-      } catch (error) {
+      } else {
         if (availableDaysValue > 15) {
           breakLoop = true;
         }
@@ -440,13 +462,9 @@ export const SchedulingCard = ({
         currentDateDbFormat = adicionarUmDia(currentDateDbFormat);
       }
     }
-
+    console.log("aqui" + availableDaysValue);
     setAvailableDays(availableDaysValue);
-
-    console.log(availableDaysValue);
   };
-
-  
 
   return (
     isMounted && (
@@ -535,26 +553,28 @@ export const SchedulingCard = ({
                     >
                       <DatePicker disabled value={date} label="Data:" />
                     </LocalizationProvider>
-                    <Image
-                      onClick={() => {
-                        setCurrentChangeDateValue(null);
-                        setShowDateModal(true);
-                      }}
-                      style={{
-                        height: "45px",
-                        width: "45px",
-                        cursor: "pointer",
-                        transition: "transform 0.2s ease-in-out", // Adicionando transição suave
-                      }}
-                      src={changeDateIcon}
-                      alt="change-date-icon"
-                      onMouseEnter={(e: any) => {
-                        e.target.style.transform = "scale(1.1)"; // Escala aumentada no hover
-                      }}
-                      onMouseLeave={(e: any) => {
-                        e.target.style.transform = "scale(1)"; // Escala normal ao sair do hover
-                      }}
-                    />
+                    {status === "waiting" && (
+                      <Image
+                        onClick={() => {
+                          setCurrentChangeDateValue(null);
+                          setShowDateModal(true);
+                        }}
+                        style={{
+                          height: "45px",
+                          width: "45px",
+                          cursor: "pointer",
+                          transition: "transform 0.2s ease-in-out", // Adicionando transição suave
+                        }}
+                        src={changeDateIcon}
+                        alt="change-date-icon"
+                        onMouseEnter={(e: any) => {
+                          e.target.style.transform = "scale(1.1)"; // Escala aumentada no hover
+                        }}
+                        onMouseLeave={(e: any) => {
+                          e.target.style.transform = "scale(1)"; // Escala normal ao sair do hover
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
                 <div>
@@ -566,16 +586,24 @@ export const SchedulingCard = ({
                     id="demo-simple-select"
                     value={numberOfBusyDays}
                     onChange={(e) => setNumberOfBusyDays(e.target.value)}
-                    disabled={availableDays == undefined}
+                    disabled={
+                      availableDays == undefined || status == "occupied"
+                    }
                   >
-                    {Array.from(
-                      { length: availableDays },
-                      (_, index) => index + 1
-                    ).map((value) => (
-                      <MenuItem key={value} value={value}>
-                        {value}
+                    {avaliableDaysProp > 1 || status == "occupied" ? (
+                      <MenuItem value={avaliableDaysProp}>
+                        {avaliableDaysProp}
                       </MenuItem>
-                    ))}
+                    ) : (
+                      Array.from(
+                        { length: availableDays },
+                        (_, index) => index + 1
+                      ).map((value) => (
+                        <MenuItem key={value} value={value}>
+                          {value}
+                        </MenuItem>
+                      ))
+                    )}
                   </Select>
                 </div>
                 <div
@@ -683,6 +711,7 @@ export const SchedulingCard = ({
                         cpfClient.length < 11 ||
                         entryTime == "" ||
                         departureTime == "" ||
+                        numberOfBusyDays == "" ||
                         parseInt(entryTime, 10) < 1000 ||
                         parseInt(departureTime, 10) < 1000 ||
                         isNaN(initialValue) ||
@@ -711,6 +740,7 @@ export const SchedulingCard = ({
                                 departureTime == "" ||
                                 entryTime.length < 4 ||
                                 departureTime.length < 4 ||
+                                numberOfBusyDays == "" ||
                                 isNaN(initialValue) ||
                                 initialValue == undefined ||
                                 (additionalServices.length > 0 &&
@@ -761,10 +791,14 @@ export const SchedulingCard = ({
                           variant="contained"
                           onClick={() => setShowSubModal(true)}
                           className={styles.reserveButton}
-                          disabled={dateIsOccupied == true}
+                          disabled={
+                            dateIsOccupied == true || numberOfBusyDays == ""
+                          }
                           style={{
                             backgroundColor:
-                              dateIsOccupied == true ? "#8aa28a" : "green",
+                              dateIsOccupied == true || numberOfBusyDays == ""
+                                ? "#8aa28a"
+                                : "green",
                             width: "150px",
                           }}
                         >
