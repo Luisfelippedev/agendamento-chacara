@@ -14,8 +14,6 @@ export class UserService {
   public async createUser(user: User) {
     const { cpf, fullName, password, phoneNumber } = user;
     const userExists = await this.userRepository.getAllUsers();
-    console.log(userExists);
-
     if (userExists.length > 0) {
       throw new Error("User already exists");
     }
@@ -37,7 +35,6 @@ export class UserService {
 
   public async getUserById(id: string) {
     const user = await this.userRepository.findById(id);
-    console.log(user);
   }
 
   public async login(cpf: string, password: string) {

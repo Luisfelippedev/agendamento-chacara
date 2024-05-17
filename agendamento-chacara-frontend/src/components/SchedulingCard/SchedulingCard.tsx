@@ -67,8 +67,8 @@ export const SchedulingCard = ({
   const [showModal, setShowModal] = useState(false);
   const [showSubModal, setShowSubModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [fullNameClient, setFullNameClient] = useState(fullName);
-  const [cpfClient, setCpfClient] = useState(cpf);
+  const [fullNameClient, setFullNameClient]: any = useState("");
+  const [cpfClient, setCpfClient]: any = useState("");
   const [numberOfBusyDays, setNumberOfBusyDays]: any = useState(
     // avaliableDaysProp > 1 ? avaliableDaysProp : ""
     status == "occupied" ? avaliableDaysProp : ""
@@ -81,18 +81,20 @@ export const SchedulingCard = ({
   const [showDateModal, setShowDateModal] = useState(false);
   const [dateIsOccupied, setDateIsOccupied]: any = useState();
   const [availableDays, setAvailableDays]: any = useState();
+  const [isTemporaryValues, setIsTemporaryValues]: any = useState(false);
 
   const [currentChangeDateValue, setCurrentChangeDateValue]: any =
     useState(null);
 
   const handleOpenModal = () => {
-    setFullNameClient(fullName);
-    setCpfClient(cpf);
-    setPhoneNumberFormated(formatPhoneNumber(phoneNumber));
+    // setFullNameClient(fullName);
+    // setCpfClient(cpf);
+    // setPhoneNumberFormated(formatPhoneNumber(phoneNumber));
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
+    searchTemporaryValuesInLocalStorage();
     setShowModal(false);
   };
 
@@ -116,6 +118,7 @@ export const SchedulingCard = ({
       } else {
         await schedulingService.updateAvaliableDaysById(id, numberOfBusyDays);
       }
+      setTemporaryValuesInLocalStorage();
       window.location.reload();
     } catch (error) {
       return;
@@ -124,19 +127,37 @@ export const SchedulingCard = ({
     // handleCloseSubModal();
   };
 
-  useEffect(() => {
-    console.log(numberOfBusyDays);
-  }, [numberOfBusyDays]);
-
   const dateToLongString = (date: any) => {
     const formattedDate = format(date, "eeee, MMMM dd, yyyy", { locale: ptBR });
     return formattedDate;
+  };
+
+  const searchTemporaryValuesInLocalStorage = () => {
+    const temporaryData = localStorage.getItem("temporaryData" + id);
+    if (temporaryData) {
+      const temporaryDataObject = JSON.parse(temporaryData);
+      console.log("aqui" + temporaryDataObject.initialValue);
+      setNumberOfBusyDays(temporaryDataObject.numberOfBusyDays);
+      setEntryTime(temporaryDataObject.entryTime);
+      setDepartureTime(temporaryDataObject.departureTime);
+      setInitialValue(temporaryDataObject.initialValue);
+      setAdditionalServices(temporaryDataObject.additionalServices);
+      setFullNameClient(temporaryDataObject.fullNameClient);
+      setCpfClient(temporaryDataObject.cpfClient);
+    } else {
+      setFullNameClient(fullName);
+      setCpfClient(cpf);
+      setIsTemporaryValues(true);
+    }
+    console.log("TESTEE");
   };
 
   useEffect(() => {
     setIsMounted(true);
     currentDateIsOccupied();
     searchAvailableDays();
+    //
+    searchTemporaryValuesInLocalStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -195,7 +216,6 @@ export const SchedulingCard = ({
         untilTheDate = adicionarUmDia(untilTheDate);
       }
       day = day + "-" + untilTheDate.substring(0, 2);
-      console.log(day);
     }
 
     return {
@@ -239,6 +259,7 @@ export const SchedulingCard = ({
 
     // Converte para número flutuante
     const floatValue = parseFloat(cleanValue);
+
     setInitialValue(floatValue);
   };
 
@@ -361,16 +382,6 @@ export const SchedulingCard = ({
     }
   };
 
-  useEffect(() => {
-    console.log(entryTime);
-    console.log(entryTime.length);
-  }, [entryTime]);
-
-  useEffect(() => {
-    console.log(departureTime);
-    console.log(departureTime.length);
-  }, [departureTime]);
-
   function verificarFormatoString(string: any) {
     // Expressão regular para verificar o formato xx-xx-xxxx
     const regex = /^[A-Za-z0-9]{2}-[A-Za-z0-9]{2}-[A-Za-z0-9]{4}$/;
@@ -427,7 +438,6 @@ export const SchedulingCard = ({
   }
 
   const searchAvailableDays = () => {
-    console.log(occupiedDays);
     let currentDateDbFormat = adicionarUmDia(dayjsDateToSimpleDate(date));
     // let currentDateDbFormat = adicionarUmDia("10-05-2024");
     let availableDaysValue = 0;
@@ -449,13 +459,57 @@ export const SchedulingCard = ({
         if (availableDaysValue > 15) {
           breakLoop = true;
         }
-        // console.log("chegou");
         availableDaysValue++;
         currentDateDbFormat = adicionarUmDia(currentDateDbFormat);
       }
     }
-    console.log("aqui" + availableDaysValue);
     setAvailableDays(availableDaysValue);
+  };
+
+  function addOneDay(dateString: any) {
+    // Cria um objeto Date a partir da string fornecida
+    const date = new Date(dateString);
+
+    // Adiciona um dia (86400000 milissegundos) à data
+    date.setTime(date.getTime() + 86400000);
+
+    // Converte a data de volta para o formato string original
+    return date.toString();
+  }
+
+  const getUntilDate = () => {
+    if (avaliableDaysProp > 1) {
+      let untilTheDate = date;
+      for (let i = 1; i < avaliableDaysProp; i++) {
+        untilTheDate = addOneDay(untilTheDate);
+      }
+      return untilTheDate;
+    }
+  };
+
+  const setTemporaryValuesInLocalStorage = () => {
+    const temporaryData = {
+      fullNameClient: fullNameClient,
+      phoneNumberFormated: phoneNumberFormated,
+      cpfClient: cpfClient,
+      numberOfBusyDays: numberOfBusyDays,
+      entryTime: entryTime,
+      departureTime: departureTime,
+      initialValue: initialValue,
+      additionalServices: additionalServices,
+    };
+    const temporaryDataString = JSON.stringify(temporaryData);
+    localStorage.setItem("temporaryData" + id, temporaryDataString);
+  };
+
+  const resetStatesValues = () => {
+    setFullNameClient(fullName);
+    setCpfClient(cpf);
+    setInitialValue(NaN);
+    setEntryTime("");
+    setDepartureTime("");
+    setAdditionalServices([]);
+    setNumberOfBusyDays(status == "occupied" ? avaliableDaysProp : "");
   };
 
   return (
@@ -495,14 +549,31 @@ export const SchedulingCard = ({
                     </p>
                   )}
                 </div>
-                <IoIosCloseCircle
-                  className={styles.closeIcon}
-                  onClick={handleCloseModal}
-                  size={30}
-                />
+
+                <div
+                  style={{
+                    display: "flex",
+                    height: "100%",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: "15px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <IoIosCloseCircle
+                      className={styles.closeIcon}
+                      onClick={handleCloseModal}
+                      size={30}
+                    />
+                  </div>
+                </div>
               </div>
+
               <div
-                style={{ marginTop: status == "occupied" ? "80px" : "50px" }}
+                style={{
+                  marginTop: status == "occupied" ? "90px" : "55px",
+                  paddingTop: status == "occupied" ? "10px" : "10px",
+                }}
                 className={styles.modalContentBox}
               >
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -543,7 +614,23 @@ export const SchedulingCard = ({
                       dateAdapter={AdapterDateFns}
                       adapterLocale={customPtBrLocale}
                     >
-                      <DatePicker disabled value={date} label="Data:" />
+                      {avaliableDaysProp > 1 ? (
+                        <div className={styles.datePickersFormBox}>
+                          <DatePicker
+                            disabled
+                            value={date}
+                            label="Data de Entrada:"
+                          />
+                          <DatePicker
+                            disabled
+                            // value={new Date("Wed May 22 2024 00:00:00 GMT-0300 (Horário Padrão de Brasília)")}
+                            value={new Date(getUntilDate())}
+                            label="Data de Saída:"
+                          />
+                        </div>
+                      ) : (
+                        <DatePicker disabled value={date} label="Data:" />
+                      )}
                     </LocalizationProvider>
                     {status === "waiting" && (
                       <Image
@@ -728,6 +815,7 @@ export const SchedulingCard = ({
                         data={getDateToContractPdf()}
                         childComponent={
                           <Button
+                            onClick={setTemporaryValuesInLocalStorage}
                             variant="contained"
                             className={styles.downloadButton}
                             style={{
@@ -815,6 +903,25 @@ export const SchedulingCard = ({
                         )}
                       </div>
                     )}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      className={styles.buttonViewAlll}
+                      onClick={resetStatesValues}
+                      disabled={status == "occupied"}
+                      style={{
+                        display: status == "occupied" ? "none" : "flex",
+                      }}
+                    >
+                      REDEFINIR
+                    </Button>
                   </div>
                 </div>
               </div>

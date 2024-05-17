@@ -91,7 +91,6 @@
             display: flex;
             justify-content: space-between;
             width:calc(95%);
-
             .titleBox{
                 box-sizing: border-box;
                 padding: 20px 0 0 15px;
@@ -116,15 +115,32 @@
         .modalContentBox{
             display: flex;
             flex-direction: column;
-            padding: 15px;
+            padding:  0 15px 15px 15px;
             gap: 15px;
             margin-top: 50px;
             overflow-y: auto;
             overflow-x: hidden;
+            .buttonViewAlll{
+                width: 110px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                border-color: #818080;
+                color: #464646;
+                background-color: #f4feff;
+            }
             .dateField{
                 display: flex;
                 gap: 15px;
                 align-items: center;
+                .datePickersFormBox{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+
+                    @media(min-width: 370px){
+                        flex-direction: row;
+                    }
+                }
         
             }
 
@@ -160,6 +176,16 @@
                 flex-direction: column;
                 gap: 20px;
                 margin-top: 15px;
+                .buttonViewAlll{
+                    width: 110px;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    border-color: #818080;
+                    color: #464646;
+                    background-color: #f4feff;
+                    margin-right: 15px;
+                }
+
                 .downloadButtonsBox{
                     display: flex;
                     justify-content: flex-start;
