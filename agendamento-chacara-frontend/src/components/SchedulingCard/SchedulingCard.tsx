@@ -716,12 +716,19 @@ export const SchedulingCard = ({
                         parseInt(departureTime, 10) < 1000 ||
                         isNaN(initialValue) ||
                         initialValue == undefined ||
+                        // (additionalServices.length > 0 &&
+                        //   additionalServices.every(
+                        //     (service: any) =>
+                        //       isNaN(service.value) ||
+                        //       service.value == undefined ||
+                        //       service.value == ""
+                        //   ))
                         (additionalServices.length > 0 &&
-                          additionalServices.every(
+                          additionalServices.some(
                             (service: any) =>
                               isNaN(service.value) ||
-                              service.value == undefined ||
-                              service.value == ""
+                              service.value === undefined ||
+                              service.value === ""
                           ))
                       }
                     >
@@ -744,11 +751,11 @@ export const SchedulingCard = ({
                                 isNaN(initialValue) ||
                                 initialValue == undefined ||
                                 (additionalServices.length > 0 &&
-                                  additionalServices.every(
+                                  additionalServices.some(
                                     (service: any) =>
                                       isNaN(service.value) ||
-                                      service.value == undefined ||
-                                      service.value == ""
+                                      service.value === undefined ||
+                                      service.value === ""
                                   ))
                                   ? "#ad7f7f"
                                   : "#d32f2f",
@@ -903,6 +910,8 @@ export const SchedulingCard = ({
                         onClick={() => {
                           handleAddedAdditionalServiceButton();
                         }}
+                        style={{backgroundColor: newServiceName == "" || newServiceValue == "" ? "#8aa28a" : "green"}}
+                        disabled={newServiceName == "" || newServiceValue == ""}
                       >
                         ADICIONAR
                       </Button>
