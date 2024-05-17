@@ -105,4 +105,13 @@ export class SchedulingService {
     
   }
 
+  public async updateAvaliableDaysById(id: string, avaliableDays: number) {
+    try {
+      await this.schedulingRepository.updateAvaliableDaysById(id, avaliableDays)
+    } catch (error) {
+      throw new Error("Scheduling not found");
+    }
+    
+  }
+
 }

@@ -156,4 +156,10 @@ export class SchedulingRepository {
 
     await setDoc(schedulingDocRef, { status: status }, { merge: true });
   }
+
+  public async updateAvaliableDaysById(id: string, numberOfBusyDays: number) {
+    const schedulingDocRef = doc(firestore, "Scheduling", id);
+    await setDoc(schedulingDocRef, { avaliableDays: numberOfBusyDays }, { merge: true });
+  }
+
 }

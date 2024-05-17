@@ -18,9 +18,9 @@
         justify-content: center;
         flex: 4;
         .titleText{
-            font-size: 2.3rem;
+            font-size: 2rem;
             color: $primary-text-color;
-            font-family: "Lobster", sans-serif !important;
+            font-family: "Lobster", sans-serif;
             font-style: normal;
         }
         .subTitleText{
@@ -47,7 +47,7 @@
         }
         @media(min-width: 375px){
             .titleText{
-                font-size: 2.7rem;
+                font-size: 2.5rem;
             }
         }
         @media(min-width: 425px){

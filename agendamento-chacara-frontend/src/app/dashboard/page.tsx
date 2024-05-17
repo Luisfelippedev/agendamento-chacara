@@ -580,7 +580,7 @@ const DashboardPage = () => {
                   </Button>
                 )}
               </div>
-              {occupiedDays.length > 0 &&
+              {/* {occupiedDays.length > 0 &&
                 isAllScheduling &&
                 occupiedDays.map((scheduling: any, index: any) => (
                   <SchedulingCard
@@ -592,12 +592,30 @@ const DashboardPage = () => {
                     id={scheduling.id}
                     cpf={scheduling.cpf}
                     occupiedDays={occupiedDays}
+                    avaliableDaysProp={scheduling.avaliableDays}
                   />
-                ))}
+                ))} */}
+              {occupiedDays.length > 0 &&
+                isAllScheduling &&
+                occupiedDays
+                  .filter((scheduling: any) => scheduling.forgeinKey === "") // Filtra os objetos com forgeinKey vazia
+                  .map((scheduling: any, index: any) => (
+                    <SchedulingCard
+                      key={index}
+                      date={bdDateToDate(scheduling.date)}
+                      status={scheduling.status}
+                      fullName={scheduling.fullName}
+                      phoneNumber={scheduling.phoneNumber}
+                      id={scheduling.id}
+                      cpf={scheduling.cpf}
+                      occupiedDays={occupiedDays}
+                      avaliableDaysProp={scheduling.avaliableDays}
+                    />
+                  ))}
               {occupiedDaysCurrentList.length > 0 && !isAllScheduling && (
                 <>
                   {/* Renderize primeiro os dias com status "occupied" */}
-                  {occupiedDaysCurrentList
+                  {/* {occupiedDaysCurrentList
                     .filter(
                       (scheduling: any) => scheduling.status === "occupied"
                     )
@@ -611,8 +629,38 @@ const DashboardPage = () => {
                         id={scheduling.id}
                         cpf={scheduling.cpf}
                         occupiedDays={occupiedDays}
+                        avaliableDaysProp={scheduling.avaliableDays}
                       />
-                    ))}
+                    ))} */}
+                  {occupiedDaysCurrentList
+                    .filter(
+                      (scheduling: any) => scheduling.status === "occupied"
+                    )
+                    .map((scheduling: any, index: any) => {
+                      let scheduledItem =
+                        scheduling.forgeinKey !== ""
+                          ? occupiedDays.find(
+                              (item: any) => item.id === scheduling.forgeinKey
+                            )
+                          : null;
+                      let schedulingToRender = scheduledItem
+                        ? scheduledItem
+                        : scheduling;
+
+                      return (
+                        <SchedulingCard
+                          key={index}
+                          date={bdDateToDate(schedulingToRender.date)}
+                          status={schedulingToRender.status}
+                          fullName={schedulingToRender.fullName}
+                          phoneNumber={schedulingToRender.phoneNumber}
+                          id={schedulingToRender.id}
+                          cpf={schedulingToRender.cpf}
+                          occupiedDays={occupiedDays}
+                          avaliableDaysProp={schedulingToRender.avaliableDays}
+                        />
+                      );
+                    })}
 
                   {/* Renderize os dias com status "waiting" depois */}
                   {occupiedDaysCurrentList
@@ -629,6 +677,7 @@ const DashboardPage = () => {
                         id={scheduling.id}
                         cpf={scheduling.cpf}
                         occupiedDays={occupiedDays}
+                        avaliableDaysProp={scheduling.avaliableDays}
                       />
                     ))}
                 </>
