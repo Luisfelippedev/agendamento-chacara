@@ -22,6 +22,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
+import { copyFile } from "fs";
 
 // import ReactPDF from "@react-pdf/renderer";
 // import dynamic from "next/dynamic";
@@ -133,14 +134,14 @@ export const SchedulingCard = ({
   };
 
   const getItemWithExpiration = (key: any) => {
-    const itemStr = localStorage.getItem(key);
+    const itemStr: any = localStorage.getItem(key);
 
     // Se o item não existir, retorne null
-    if (!itemStr) {
-      return null;
+    if(!itemStr){
+      return
     }
-
     const item = JSON.parse(itemStr);
+
     const now = new Date();
 
     // Verifique se o item expirou
@@ -150,14 +151,16 @@ export const SchedulingCard = ({
       return null;
     }
 
-    return item.value;
+    return item;
   };
 
   const searchTemporaryValuesInLocalStorage = () => {
-    const temporaryDataObject = getItemWithExpiration("temporaryData" + id);
+    const temporaryDataObject = getItemWithExpiration(`temporaryData${id}`);
+    console.log(temporaryDataObject);
     // const temporaryData = localStorage.getItem("temporaryData" + id);
     if (temporaryDataObject) {
       // const temporaryDataObject = JSON.parse(temporaryData);
+      console.log(temporaryDataObject);
       console.log("aqui" + temporaryDataObject.initialValue);
       setNumberOfBusyDays(temporaryDataObject.numberOfBusyDays);
       setEntryTime(temporaryDataObject.entryTime);
@@ -516,7 +519,6 @@ export const SchedulingCard = ({
     dateSpecific.setDate(dateSpecific.getDate() + 1);
     const differenceInMillis = dateSpecific.getTime() - now.getTime();
     const differenceInMinutes = Math.floor(differenceInMillis / (1000 * 60));
-    console.log(differenceInMinutes);
     const expirationDate = new Date(
       now.getTime() + differenceInMinutes * 60000
     );
