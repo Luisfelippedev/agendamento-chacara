@@ -41,6 +41,7 @@ import {
 import { SchedulingCard } from "@/components/SchedulingCard/SchedulingCard";
 import { SchedulingService } from "@/services/SchedulingService";
 import { Scheduling } from "../models/Scheduling";
+import { randomUUID } from "crypto";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -121,7 +122,7 @@ const DashboardPage = () => {
                 status: "occupied",
                 fullName: scheduling.clientName,
                 cpf: scheduling.cpf,
-                id: "12312312",
+                id: randomUUID,
                 phoneNumber: scheduling.phoneNumber,
                 avaliableDays: 1,
                 forgeinKey: scheduling.id,
@@ -167,7 +168,6 @@ const DashboardPage = () => {
 
         return dateA - dateB;
       });
-
 
       setOccupiedDays(occupiedDaysArr);
       return;
@@ -338,8 +338,15 @@ const DashboardPage = () => {
     searchOcuppiedDays();
   };
 
+  // const deleteOldTemporaryValuesInLocalStorage = () => {
+  //   occupiedDays.forEach((item: any) => {
+  //     if (item.id) console.log("aquiii teste" + item.id);
+  //   });
+  // };
+
   useEffect(() => {
     deleteOldScheduling();
+    // deleteOldTemporaryValuesInLocalStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

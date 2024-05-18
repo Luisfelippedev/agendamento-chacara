@@ -132,10 +132,32 @@ export const SchedulingCard = ({
     return formattedDate;
   };
 
+  const getItemWithExpiration = (key: any) => {
+    const itemStr = localStorage.getItem(key);
+
+    // Se o item não existir, retorne null
+    if (!itemStr) {
+      return null;
+    }
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    // Verifique se o item expirou
+    if (now > new Date(item.expiration)) {
+      // Se o item expirou, remova-o do localStorage e retorne null
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return item.value;
+  };
+
   const searchTemporaryValuesInLocalStorage = () => {
-    const temporaryData = localStorage.getItem("temporaryData" + id);
-    if (temporaryData) {
-      const temporaryDataObject = JSON.parse(temporaryData);
+    const temporaryDataObject = getItemWithExpiration("temporaryData" + id);
+    // const temporaryData = localStorage.getItem("temporaryData" + id);
+    if (temporaryDataObject) {
+      // const temporaryDataObject = JSON.parse(temporaryData);
       console.log("aqui" + temporaryDataObject.initialValue);
       setNumberOfBusyDays(temporaryDataObject.numberOfBusyDays);
       setEntryTime(temporaryDataObject.entryTime);
@@ -155,6 +177,7 @@ export const SchedulingCard = ({
   useEffect(() => {
     setIsMounted(true);
     currentDateIsOccupied();
+    // deleteOldTemporaryValuesInLocalStorage();
     searchAvailableDays();
     //
     searchTemporaryValuesInLocalStorage();
@@ -488,6 +511,16 @@ export const SchedulingCard = ({
   };
 
   const setTemporaryValuesInLocalStorage = () => {
+    const now = new Date();
+    const dateSpecific = new Date(date);
+    dateSpecific.setDate(dateSpecific.getDate() + 1);
+    const differenceInMillis = dateSpecific.getTime() - now.getTime();
+    const differenceInMinutes = Math.floor(differenceInMillis / (1000 * 60));
+    console.log(differenceInMinutes);
+    const expirationDate = new Date(
+      now.getTime() + differenceInMinutes * 60000
+    );
+
     const temporaryData = {
       fullNameClient: fullNameClient,
       phoneNumberFormated: phoneNumberFormated,
@@ -497,6 +530,7 @@ export const SchedulingCard = ({
       departureTime: departureTime,
       initialValue: initialValue,
       additionalServices: additionalServices,
+      expiration: expirationDate.toISOString(),
     };
     const temporaryDataString = JSON.stringify(temporaryData);
     localStorage.setItem("temporaryData" + id, temporaryDataString);
@@ -915,10 +949,10 @@ export const SchedulingCard = ({
                       variant="outlined"
                       className={styles.buttonViewAlll}
                       onClick={resetStatesValues}
-                      disabled={status == "occupied"}
-                      style={{
-                        display: status == "occupied" ? "none" : "flex",
-                      }}
+                      // disabled={status == "occupied"}
+                      // style={{
+                      //   display: status == "occupied" ? "none" : "flex",
+                      // }}
                     >
                       REDEFINIR
                     </Button>
