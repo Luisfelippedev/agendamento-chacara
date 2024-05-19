@@ -137,8 +137,8 @@ export const SchedulingCard = ({
     const itemStr: any = localStorage.getItem(key);
 
     // Se o item não existir, retorne null
-    if(!itemStr){
-      return
+    if (!itemStr) {
+      return;
     }
     const item = JSON.parse(itemStr);
 
@@ -699,7 +699,7 @@ export const SchedulingCard = ({
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={numberOfBusyDays}
+                    value={numberOfBusyDays > availableDays ? availableDays : numberOfBusyDays}
                     onChange={(e) => setNumberOfBusyDays(e.target.value)}
                     disabled={
                       availableDays == undefined || status == "occupied"
@@ -944,7 +944,7 @@ export const SchedulingCard = ({
                     style={{
                       display: "flex",
                       width: "100%",
-                      justifyContent: "flex-end",
+                      justifyContent: "flex-start",
                     }}
                   >
                     <Button
