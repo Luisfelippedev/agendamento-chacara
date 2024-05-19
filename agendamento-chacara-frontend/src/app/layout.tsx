@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.scss";
+import { Font } from "@react-pdf/renderer";
 
 const lobster = Roboto({ weight: "400", subsets: ["latin"] });
 

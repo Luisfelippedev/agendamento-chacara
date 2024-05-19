@@ -6,7 +6,24 @@ import {
   StyleSheet,
   PDFDownloadLink,
   Font,
+  PDFViewer,
 } from "@react-pdf/renderer";
+
+Font.register({
+  family: "Roboto",
+  fonts: [
+    {
+      src: "/fonts/roboto-v30-latin-900.ttf",
+      fontWeight: "bold",
+      fontStyle: "normal",
+    },
+    {
+      src: "/fonts/roboto-v30-latin-regular.ttf",
+      fontWeight: "normal",
+      fontStyle: "normal",
+    },
+  ],
+});
 
 export interface IContractTemplateProps {
   fullName: string;
@@ -17,45 +34,57 @@ export interface IContractTemplateProps {
   numberOfBusyDays: string;
 }
 
-Font.register({
-  family: "Helvetica",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/helvetica/v12/qkBBXvNN3pDl9YdFqNgV8drHsbv3wo13I9n3QAu6ySw.woff2",
-    },
-    {
-      src: "https://fonts.gstatic.com/s/helvetica/v12/qkBBXvNN3pDl9YdFqNgV8drHsbv3wo13I9n3QAu6ySw.woff2",
-      fontWeight: "bold",
-    },
-  ],
-});
-
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 80,
+    fontFamily: "Roboto",
     fontSize: 12,
-    fontFamily: "Helvetica",
   },
   title: {
     fontSize: 18,
     textAlign: "center",
     marginBottom: 20,
-    fontWeight: "bold",
   },
   section: {
     marginBottom: 10,
+    display: "flex",
+    gap: 5,
   },
   bold: {
-    fontFamily: "Helvetica",
+    fontSize: 12,
     fontWeight: "bold",
+  },
+  regular: {
+    fontFamily: "Helvetica",
+    fontSize: 12,
   },
   paragraph: {
     marginBottom: 10,
+    lineHeight: 1.2, // Adjust the line height as needed
   },
   listItem: {
     marginBottom: 5,
+    lineHeight: 1.2, // Adjust the line height as needed
+  },
+  headerBox: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "center",
+    alignContent: "center",
+    border: "1px solid black",
+    padding: 5,
+    fontFamily: "Roboto",
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 });
+
+interface MyComponentProps {
+  style?: Record<string, any>;
+  moreStyles?: Record<string, any>;
+}
+
 
 // Create Document Component
 const ContractTemplate = ({
@@ -68,21 +97,29 @@ const ContractTemplate = ({
 }: IContractTemplateProps) => (
   <Document>
     <Page size="A4" style={styles.page}>
+      <View style={styles.headerBox}>
+        <Text style={{ textAlign: "center" }}>
+          CONTRATO DE LOCAÇÃO DO ESPAÇO SILVEIRA
+        </Text>
+      </View>
       <View style={styles.section}>
-        <Text>{fullName}</Text>
+        {/* <Text>{fullName}</Text>
         <Text>{phoneNumber}</Text>
         <Text>{cpf}</Text>
         <Text>{departureTime}</Text>
         <Text>{entryTime}</Text>
-        <Text>{numberOfBusyDays}</Text>
+        <Text>{numberOfBusyDays}</Text> */}
         <View style={styles.section}>
-          <Text style={styles.bold}>LOCADORA:</Text>
           <Text>
-            ESPAÇO SILVEIRA, estabelecida na Rua Viriato Correia Qd.09 Lt.09. –
-            Cidade Satélite São Luiz, Aparecida de Goiânia, Estado de Goiás,
-            neste ato representada por sua proprietária Sr.ª CECÍLIA SILVEIRA DO
-            NASCIMENTO, brasileira, casada, portador do documento RG nº 823647
-            SPTC/GO e CPF nº 151.947.841-72, simplesmente denominada “LOCADORA”:
+            <Text style={styles.bold}>LOCADORA:</Text>{" "}
+            <Text>
+              ESPAÇO SILVEIRA, estabelecida na Rua Viriato Correia Qd.09 Lt.09.
+              – Cidade Satélite São Luiz, Aparecida de Goiânia, Estado de Goiás,
+              neste ato representada por sua proprietária Sr.ª CECÍLIA SILVEIRA
+              DO NASCIMENTO, brasileira, casada, portador do documento RG nº
+              823647 SPTC/GO e CPF nº 151.947.841-72, simplesmente denominada
+              “LOCADORA”.
+            </Text>
           </Text>
         </View>
 
@@ -275,9 +312,9 @@ export default function ContractGenerator({
           fileName="report.pdf"
         >
           {/* {({ blob, url, loading, error }) => {
-            !loading && handleClickButton(blob);
-            return loading ? "Loading document..." : "Download now!";
-          }} */}
+  !loading && handleClickButton(blob);
+  return loading ? "Loading document..." : "Download now!";
+}} */}
           {childComponent}
         </PDFDownloadLink>
       </div>
