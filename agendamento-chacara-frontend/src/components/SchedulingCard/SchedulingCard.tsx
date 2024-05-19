@@ -22,6 +22,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
+const numeroPorExtenso = require("numero-por-extenso");
+// import numeroPorExtenso from "numero-por-extenso"
+
 import { copyFile } from "fs";
 
 // import ReactPDF from "@react-pdf/renderer";
@@ -241,7 +244,7 @@ export const SchedulingCard = ({
       for (let i = 1; i < avaliableDaysProp; i++) {
         untilTheDate = adicionarUmDia(untilTheDate);
       }
-      day = day + "-" + untilTheDate.substring(0, 2);
+      day = day + " - " + untilTheDate.substring(0, 2);
     }
 
     return {
@@ -267,11 +270,48 @@ export const SchedulingCard = ({
     return formattedDate;
   }
 
-  const getDateToContractPdf = (): IContractTemplateProps => {
+  function formatCurrency(value: any) {
+    // Formata o número para o formato de moeda brasileira
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
+  // function numberToWords(value: any) {
+  //   // Converte o número para palavras em português
+  //   const inteiro = Math.floor(value);
+  //   const centavos = Math.round((value - inteiro) * 100);
+
+  //   let result = numeroPorExtenso(inteiro, numeroPorExtenso.estilo.monetario);
+
+  //   if (centavos > 0) {
+  //     result += ` e ${numeroPorExtenso(
+  //       centavos,
+  //       numeroPorExtenso.estilo.monetario
+  //     )} centavos`;
+  //   }
+  //   return result;
+  // }
+
+  const getDataToContractPdf = (): IContractTemplateProps => {
+    let totalValue = initialValue;
+    if (additionalServices.length > 0) {
+      additionalServices.forEach((item: any) => {
+        totalValue = totalValue + item.value;
+      });
+    }
+    let totalValueStringBrl = formatCurrency(totalValue);
+    // totalValueStringBrl = totalValueStringBrl.replace(/^R\$\s*/, "");
+
+    // const finalValue = numberToWords(totalValueStringBrl);
+    console.log(totalValueStringBrl);
+    // console.log(totalValueStringBrl);
+
     const dateProps: IContractTemplateProps = {
       cpf: cpfClient,
       fullName: fullName,
-      entryTime: entryTime,
+      totalValue: totalValue,
       departureTime: departureTime,
       numberOfBusyDays: numberOfBusyDays,
       phoneNumber: phoneNumberFormated,
@@ -699,7 +739,11 @@ export const SchedulingCard = ({
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={numberOfBusyDays > availableDays ? availableDays : numberOfBusyDays}
+                    value={
+                      numberOfBusyDays > availableDays
+                        ? availableDays
+                        : numberOfBusyDays
+                    }
                     onChange={(e) => setNumberOfBusyDays(e.target.value)}
                     disabled={
                       availableDays == undefined || status == "occupied"
@@ -848,7 +892,7 @@ export const SchedulingCard = ({
                       }
                     >
                       <ContractGenerator
-                        data={getDateToContractPdf()}
+                        data={getDataToContractPdf()}
                         childComponent={
                           <Button
                             onClick={setTemporaryValuesInLocalStorage}
@@ -861,8 +905,8 @@ export const SchedulingCard = ({
                                 cpfClient.length < 11 ||
                                 entryTime == "" ||
                                 departureTime == "" ||
-                                entryTime.length < 4 ||
-                                departureTime.length < 4 ||
+                                entryTime.length < 5 ||
+                                departureTime.length < 5 ||
                                 numberOfBusyDays == "" ||
                                 isNaN(initialValue) ||
                                 initialValue == undefined ||
