@@ -225,47 +225,36 @@ const DashboardPage = () => {
     setDateActualString(stringDateFormated);
 
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
-    // setDateFromBd(simpleDateFormated);
-    // const schedulingService = new SchedulingService();
 
     let newArr = occupiedDays.filter((item: any) => {
       return item.date === simpleDateFormated;
     });
 
+    console.log(newArr);
+
     if (newArr.length > 0) {
       setNumberOfSchedulings(newArr.length);
-      let hasOccupied = false; // Estado intermediário para controlar se scheduling.status já foi true
-      occupiedDays.forEach((scheduling: any) => {
-        if (scheduling.status === "occupied" && !hasOccupied) {
-          setSchedulingStatus("occupied");
-          hasOccupied = true; // Marca que scheduling.status já foi true
+      let foundOccupied = false; // Controle para verificar se encontramos um status "occupied"
+      let foundWaiting = false; // Controle para verificar se encontramos um status "waiting"
+
+      newArr.forEach((scheduling: any) => {
+        if (scheduling.status === "occupied") {
+          foundOccupied = true;
+        } else if (scheduling.status === "waiting") {
+          foundWaiting = true;
         }
       });
-      if (!hasOccupied) {
+
+      if (foundOccupied) {
+        setSchedulingStatus("occupied");
+      } else if (foundWaiting) {
         setSchedulingStatus("waiting");
+      } else {
+        setSchedulingStatus("free");
       }
     } else {
       setSchedulingStatus("free");
     }
-
-    // try {
-    //   const schedulingExists = await schedulingService.getByDate(
-    //     simpleDateFormated
-    //   );
-    //   setNumberOfSchedulings(schedulingExists.length);
-    //   let hasOccupied = false; // Estado intermediário para controlar se scheduling.status já foi true
-    //   occupiedDays.forEach((scheduling: any) => {
-    //     if (scheduling.status === "occupied" && !hasOccupied) {
-    //       setSchedulingStatus("occupied");
-    //       hasOccupied = true; // Marca que scheduling.status já foi true
-    //     }
-    //   });
-    //   if (!hasOccupied) {
-    //     setSchedulingStatus("waiting");
-    //   }
-    // } catch (error) {
-    //   setSchedulingStatus("free");
-    // }
   };
 
   const handleClickScheduleButton = () => {

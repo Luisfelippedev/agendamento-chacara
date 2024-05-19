@@ -30,6 +30,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "lottie-react": "^2.4.0",
     "next": "14.2.3",
+    "numero-por-extenso": "^1.0.8",
     "react": "^18",
     "react-dom": "^18.3.1",
     "react-icons": "^5.1.0",

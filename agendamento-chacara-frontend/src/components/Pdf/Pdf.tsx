@@ -29,15 +29,17 @@ export interface IContractTemplateProps {
   fullName: string;
   phoneNumber: string;
   cpf: string;
-  entryTime: string;
+  totalValue: string;
   departureTime: string;
   numberOfBusyDays: string;
+
 }
 
 const styles = StyleSheet.create({
   page: {
     padding: 80,
     fontFamily: "Roboto",
+    fontWeight: 'normal',
     fontSize: 12,
   },
   title: {
@@ -51,12 +53,14 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   bold: {
+    fontFamily: "Roboto",
     fontSize: 12,
     fontWeight: "bold",
   },
   regular: {
-    fontFamily: "Helvetica",
+    fontFamily: "Roboto",
     fontSize: 12,
+    fontWeight: 'normal'
   },
   paragraph: {
     marginBottom: 10,
@@ -80,11 +84,6 @@ const styles = StyleSheet.create({
   },
 });
 
-interface MyComponentProps {
-  style?: Record<string, any>;
-  moreStyles?: Record<string, any>;
-}
-
 
 // Create Document Component
 const ContractTemplate = ({
@@ -92,7 +91,7 @@ const ContractTemplate = ({
   phoneNumber,
   cpf,
   departureTime,
-  entryTime,
+  totalValue,
   numberOfBusyDays,
 }: IContractTemplateProps) => (
   <Document>
@@ -281,7 +280,7 @@ export default function ContractGenerator({
   const {
     cpf,
     departureTime,
-    entryTime,
+    totalValue,
     fullName,
     numberOfBusyDays,
     phoneNumber,
@@ -303,7 +302,7 @@ export default function ContractGenerator({
             <ContractTemplate
               cpf={cpf}
               departureTime={departureTime}
-              entryTime={entryTime}
+              totalValue={totalValue}
               fullName={fullName}
               numberOfBusyDays={numberOfBusyDays}
               phoneNumber={phoneNumber}

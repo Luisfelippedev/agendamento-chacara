@@ -3228,6 +3228,11 @@ normalize-svg-path@^1.1.0:
   dependencies:
     svg-arc-to-cubic-bezier "^3.0.0"
 
+numero-por-extenso@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/numero-por-extenso/-/numero-por-extenso-1.0.8.tgz#2cc5447eec2d42b8c93dd18522cd31acd888b70d"
+  integrity sha512-DOwE+gOIQBcD0xy/SAWxVmaquOMuKiZXSIesbXnP495RnfctAZ6EbKAElofk05qf575aK8ICg9ISlAQt5KFAbQ==
+
 object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
