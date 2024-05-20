@@ -40,8 +40,6 @@ export interface IDateObj {
   month: any;
   year: any;
   formattedDate: any;
-  entryTimeValue: any;
-  departureTimeValue: any;
 }
 
 export const SchedulingCard = ({
@@ -64,14 +62,11 @@ export const SchedulingCard = ({
 
   const schedulingService = new SchedulingService();
 
-
   const [dateObj, setDateObj] = useState<IDateObj>({
     day: "",
     month: "",
     year: "",
     formattedDate: "",
-    entryTimeValue: "",
-    departureTimeValue: "",
   });
   const [phoneNumberFormated, setPhoneNumberFormated]: any = useState(
     formatPhoneNumber(phoneNumber)
@@ -214,10 +209,7 @@ export const SchedulingCard = ({
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 2400) {
     setEntryTime(String(value).trim());
-    setDateObj((prevState) => ({
-      ...prevState,
-      entryTimeValue: String(value).trim(),
-    }));
+
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setEntryTime("0000");
@@ -231,10 +223,6 @@ export const SchedulingCard = ({
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 1200) {
     setDepartureTime(String(value).trim());
-    setDateObj((prevState) => ({
-      ...prevState,
-      departureTimeValue: String(value).trim(),
-    }));
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setDepartureTime("1200");
@@ -272,20 +260,13 @@ export const SchedulingCard = ({
       day = day + " - " + untilTheDate.substring(0, 2);
     }
 
-
     setDateObj({
       day,
       month,
       year,
       formattedDate,
-      entryTimeValue: "",
-      departureTimeValue: "",
     });
   }
-
-  useEffect(() => {
-    console.log(dateObj);
-  }, [dateObj]);
 
   function formatPhoneNumber(phone: any): string {
     const cleaned = ("" + phone).replace(/\D/g, "");
@@ -311,10 +292,6 @@ export const SchedulingCard = ({
       style: "currency",
       currency: "BRL",
     });
-  }
-
-  function getDateStringToPdf(value: string) {
-    console.log(dateObj);
   }
 
   const getDataToContractPdf = (): IContractTemplateProps => {
@@ -344,14 +321,15 @@ export const SchedulingCard = ({
 
     const dateProps: IContractTemplateProps = {
       cpf: formattedCPF,
-      fullName: fullName,
+      fullName: fullNameClient,
       totalValue: finalValue,
       departureTime: departureTime,
+      entryTime: entryTime,
       numberOfBusyDays: numberOfBusyDays,
       phoneNumber: phoneNumberFormated,
-      dateObj: dateObj,
-      date: date
+      date: date,
     };
+
     return dateProps;
   };
 
@@ -609,6 +587,7 @@ export const SchedulingCard = ({
       initialValue: initialValue,
       additionalServices: additionalServices,
       expiration: expirationDate.toISOString(),
+      // busyDays: dateObj.day
     };
     const temporaryDataString = JSON.stringify(temporaryData);
     localStorage.setItem("temporaryData" + id, temporaryDataString);
@@ -623,6 +602,22 @@ export const SchedulingCard = ({
     setAdditionalServices([]);
     setNumberOfBusyDays(status == "occupied" ? avaliableDaysProp : "");
   };
+
+  // const setBusyDaysToDateObj = (value: any) => {
+  //   const dateObj = new Date(date);
+  //   let newDay = String(dateObj.getDate());
+
+  //   let untilTheDate = dateToString(date);
+  //   for (let i = 1; i < value; i++) {
+  //     untilTheDate = adicionarUmDia(untilTheDate);
+  //   }
+  //   newDay = newDay + " - " + untilTheDate.substring(0, 2);
+
+  //   setDateObj((prevState) => ({
+  //     ...prevState,
+  //     day: newDay,
+  //   }));
+  // };
 
   return (
     isMounted && (
@@ -782,7 +777,9 @@ export const SchedulingCard = ({
                         ? availableDays
                         : numberOfBusyDays
                     }
-                    onChange={(e) => setNumberOfBusyDays(e.target.value)}
+                    onChange={(e) => {
+                      setNumberOfBusyDays(e.target.value);
+                    }}
                     disabled={
                       availableDays == undefined || status == "occupied"
                     }
