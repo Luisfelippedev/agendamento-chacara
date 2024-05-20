@@ -22,13 +22,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
-const numeroPorExtenso = require("numero-por-extenso");
-// import numeroPorExtenso from "numero-por-extenso"
-
-import { copyFile } from "fs";
-
-// import ReactPDF from "@react-pdf/renderer";
-// import dynamic from "next/dynamic";
+const numero = require("numero-por-extenso");
 
 export interface SchedulingCardProps {
   date: any;
@@ -39,6 +33,15 @@ export interface SchedulingCardProps {
   id: any;
   occupiedDays: any;
   avaliableDaysProp: any;
+}
+
+export interface IDateObj {
+  day: any;
+  month: any;
+  year: any;
+  formattedDate: any;
+  entryTimeValue: any;
+  departureTimeValue: any;
 }
 
 export const SchedulingCard = ({
@@ -61,7 +64,15 @@ export const SchedulingCard = ({
 
   const schedulingService = new SchedulingService();
 
-  const [dateObj, setDateObj] = useState(dateToObj(date));
+
+  const [dateObj, setDateObj] = useState<IDateObj>({
+    day: "",
+    month: "",
+    year: "",
+    formattedDate: "",
+    entryTimeValue: "",
+    departureTimeValue: "",
+  });
   const [phoneNumberFormated, setPhoneNumberFormated]: any = useState(
     formatPhoneNumber(phoneNumber)
   );
@@ -168,6 +179,11 @@ export const SchedulingCard = ({
       setNumberOfBusyDays(temporaryDataObject.numberOfBusyDays);
       setEntryTime(temporaryDataObject.entryTime);
       setDepartureTime(temporaryDataObject.departureTime);
+      setDateObj((prevState) => ({
+        ...prevState,
+        entryTimeValue: temporaryDataObject.entryTime,
+        departureTimeValue: temporaryDataObject.departureTime,
+      }));
       setInitialValue(temporaryDataObject.initialValue);
       setAdditionalServices(temporaryDataObject.additionalServices);
       setFullNameClient(temporaryDataObject.fullNameClient);
@@ -186,6 +202,7 @@ export const SchedulingCard = ({
     // deleteOldTemporaryValuesInLocalStorage();
     searchAvailableDays();
     //
+    insertDateToObj();
     searchTemporaryValuesInLocalStorage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -197,6 +214,10 @@ export const SchedulingCard = ({
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 2400) {
     setEntryTime(String(value).trim());
+    setDateObj((prevState) => ({
+      ...prevState,
+      entryTimeValue: String(value).trim(),
+    }));
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setEntryTime("0000");
@@ -210,13 +231,17 @@ export const SchedulingCard = ({
     // Verifica se o valor inserido é menor ou igual a 1200 (12:00)
     // if (parseInt(newValue, 10) <= 1200) {
     setDepartureTime(String(value).trim());
+    setDateObj((prevState) => ({
+      ...prevState,
+      departureTimeValue: String(value).trim(),
+    }));
     // } else {
     //   // Se for maior que 12:00, define o valor como 1200 (12:00)
     //   setDepartureTime("1200");
     // }
   };
 
-  function dateToObj(value: any) {
+  function insertDateToObj() {
     const monthsPtBr = [
       "Janeiro",
       "Fevereiro",
@@ -232,7 +257,7 @@ export const SchedulingCard = ({
       "Dezembro",
     ];
 
-    const dateObj = new Date(value);
+    const dateObj = new Date(date);
     let day = String(dateObj.getDate());
     const monthIndex = dateObj.getMonth();
     const month = monthsPtBr[monthIndex];
@@ -247,13 +272,20 @@ export const SchedulingCard = ({
       day = day + " - " + untilTheDate.substring(0, 2);
     }
 
-    return {
+
+    setDateObj({
       day,
       month,
       year,
       formattedDate,
-    };
+      entryTimeValue: "",
+      departureTimeValue: "",
+    });
   }
+
+  useEffect(() => {
+    console.log(dateObj);
+  }, [dateObj]);
 
   function formatPhoneNumber(phone: any): string {
     const cleaned = ("" + phone).replace(/\D/g, "");
@@ -272,27 +304,18 @@ export const SchedulingCard = ({
 
   function formatCurrency(value: any) {
     // Formata o número para o formato de moeda brasileira
+    if (isNaN(value)) {
+      return "";
+    }
     return value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
   }
 
-  // function numberToWords(value: any) {
-  //   // Converte o número para palavras em português
-  //   const inteiro = Math.floor(value);
-  //   const centavos = Math.round((value - inteiro) * 100);
-
-  //   let result = numeroPorExtenso(inteiro, numeroPorExtenso.estilo.monetario);
-
-  //   if (centavos > 0) {
-  //     result += ` e ${numeroPorExtenso(
-  //       centavos,
-  //       numeroPorExtenso.estilo.monetario
-  //     )} centavos`;
-  //   }
-  //   return result;
-  // }
+  function getDateStringToPdf(value: string) {
+    console.log(dateObj);
+  }
 
   const getDataToContractPdf = (): IContractTemplateProps => {
     let totalValue = initialValue;
@@ -302,19 +325,32 @@ export const SchedulingCard = ({
       });
     }
     let totalValueStringBrl = formatCurrency(totalValue);
-    // totalValueStringBrl = totalValueStringBrl.replace(/^R\$\s*/, "");
+    totalValueStringBrl = totalValueStringBrl.replace(/^R\$\s*/, "");
 
-    // const finalValue = numberToWords(totalValueStringBrl);
-    console.log(totalValueStringBrl);
-    // console.log(totalValueStringBrl);
+    const totalValueInFull = numero.porExtenso(
+      totalValue,
+      numero.estilo.monetario
+    );
+    const finalValue = `${totalValueStringBrl} (${totalValueInFull})`;
+    console.log(date);
+
+    const formattedCPF = cpfClient.replace(
+      /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
+      "$1.$2.$3-$4"
+    );
+
+    const dateStringToPdf = date;
+    console.log(dateStringToPdf);
 
     const dateProps: IContractTemplateProps = {
-      cpf: cpfClient,
+      cpf: formattedCPF,
       fullName: fullName,
-      totalValue: totalValue,
+      totalValue: finalValue,
       departureTime: departureTime,
       numberOfBusyDays: numberOfBusyDays,
       phoneNumber: phoneNumberFormated,
+      dateObj: dateObj,
+      date: date
     };
     return dateProps;
   };
@@ -740,7 +776,9 @@ export const SchedulingCard = ({
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={
-                      numberOfBusyDays > availableDays
+                      status === "occupied"
+                        ? numberOfBusyDays
+                        : numberOfBusyDays > availableDays
                         ? availableDays
                         : numberOfBusyDays
                     }
