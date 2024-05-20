@@ -10,6 +10,7 @@ import {
 } from "@react-pdf/renderer";
 import { IDateObj } from "../SchedulingCard/SchedulingCard";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 Font.register({
   family: "Roboto",
@@ -33,8 +34,8 @@ export interface IContractTemplateProps {
   cpf: string;
   totalValue: string;
   departureTime: string;
+  entryTime: string;
   numberOfBusyDays: string;
-  dateObj: IDateObj;
   date: any;
 }
 
@@ -100,8 +101,8 @@ const ContractTemplate = ({
   departureTime,
   totalValue,
   numberOfBusyDays,
-  dateObj,
   date,
+  entryTime,
 }: IContractTemplateProps) => {
   function dateToDateWithBar(dateString: string) {
     const date = new Date(dateString);
@@ -112,38 +113,54 @@ const ContractTemplate = ({
     return `${day}/${month}/${year}`;
   }
 
-  function formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+  function dateToString(date: any) {
+    const data = dayjs(date).locale("pt-br"); // Parse da string de data e configuração do local
+    const formattedDate = data.format("DD-MM-YYYY"); // Formato desejado
+    return formattedDate;
+  }
+
+  function adicionarUmDia(dataString: any) {
+    // Dividir a string da data em dia, mês e ano
+    const [dia, mes, ano] = dataString.split("-").map(Number);
+
+    // Criar um objeto de data usando o construtor Date
+    const data = new Date(ano, mes - 1, dia);
+
+    // Adicionar um dia à data
+    data.setDate(data.getDate() + 1);
+
+    // Obter o novo dia, mês e ano da data
+    const novoDia = data.getDate();
+    const novoMes = data.getMonth() + 1;
+    const novoAno = data.getFullYear();
+
+    // Formatar a nova data para o formato dd/mm/yyyy
+    const novaDataFormatada = `${novoDia.toString().padStart(2, "0")}-${novoMes
+      .toString()
+      .padStart(2, "0")}-${novoAno}`;
+
+    return novaDataFormatada;
   }
 
   function calculateEndDate(): string {
-    const startDate = new Date(date);
-    const [, endDay] = dateObj.day.split(" - ").map(Number);
-
-    // Adiciona um mês à data inicial
-    const endDate = new Date(startDate);
-    endDate.setMonth(endDate.getMonth() + 1);
-    endDate.setDate(endDay);
-
-    return formatDate(endDate);
+    let untilTheDate = dateToString(date);
+    if (Number(numberOfBusyDays) > 1) {
+      for (let i = 1; i < Number(numberOfBusyDays); i++) {
+        untilTheDate = adicionarUmDia(untilTheDate);
+      }
+    }
+    return untilTheDate.replace(/-/g, "/");
   }
 
   const getDateFullString = () => {
-    if (dateObj.day.length > 2) {
-      return `do dia ${dateToDateWithBar(date)}, entrando as ${
-        dateObj.entryTimeValue
-      } horas, até o dia ${calculateEndDate()}, saindo as ${
-        dateObj.departureTimeValue
-      } horas, para o fim de realizar atividades de lazer.`;
+    if (Number(numberOfBusyDays) > 1) {
+      return `do dia ${dateToDateWithBar(
+        date
+      )}, entrando as ${entryTime} horas, até o dia ${calculateEndDate()}, saindo as ${departureTime} horas, para o fim de realizar atividades de lazer.`;
     }
-    return `no dia ${dateToDateWithBar(date)}, no horário das ${
-      dateObj.entryTimeValue
-    } até as ${
-      dateObj.departureTimeValue
-    } para o fim de realizar atividades de lazer.`;
+    return `no dia ${dateToDateWithBar(
+      date
+    )}, no horário das ${entryTime} até as ${departureTime} para o fim de realizar atividades de lazer.`;
   };
 
   return (
@@ -161,7 +178,7 @@ const ContractTemplate = ({
           <Text>{departureTime}</Text>
           <Text>{totalValue}</Text>
           <Text>{numberOfBusyDays}</Text>
-          <Text>{dateObj.entryTimeValue}</Text>
+          <Text>{entryTime}</Text>
           <Text>{String(date)}</Text>
           <View style={{ marginBottom: 10 }}>
             <View style={styles.sectionTwoText}>
@@ -380,8 +397,8 @@ export default function ContractGenerator({
     fullName,
     numberOfBusyDays,
     phoneNumber,
-    dateObj,
     date,
+    entryTime,
   } = data;
 
   // const handleClickButton = async (blob: any) => {
@@ -398,7 +415,6 @@ export default function ContractGenerator({
         <PDFDownloadLink
           document={
             <ContractTemplate
-              dateObj={dateObj}
               cpf={cpf}
               departureTime={departureTime}
               totalValue={totalValue}
@@ -406,6 +422,7 @@ export default function ContractGenerator({
               numberOfBusyDays={numberOfBusyDays}
               phoneNumber={phoneNumber}
               date={date}
+              entryTime={entryTime}
             />
           }
           fileName="report.pdf"
