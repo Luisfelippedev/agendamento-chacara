@@ -317,14 +317,18 @@ const DashboardPage = () => {
   }
 
   const deleteOldScheduling = async () => {
-    const allScheduling = await schedulingService.getAll();
-    allScheduling.forEach((scheduling) => {
-      const isPast = isPastDate(scheduling.date);
-      if (isPast) {
-        schedulingService.deleteById(scheduling.id);
-      }
-    });
-    searchOcuppiedDays();
+    try {
+      const allScheduling = await schedulingService.getAll();
+      allScheduling.forEach((scheduling) => {
+        const isPast = isPastDate(scheduling.date);
+        if (isPast) {
+          schedulingService.deleteById(scheduling.id);
+        }
+      });
+      searchOcuppiedDays();
+    } catch (error) {
+      return;
+    }
   };
 
   // const deleteOldTemporaryValuesInLocalStorage = () => {

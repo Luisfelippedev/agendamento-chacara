@@ -8,7 +8,6 @@ import {
   Font,
   PDFViewer,
 } from "@react-pdf/renderer";
-import { IDateObj } from "../SchedulingCard/SchedulingCard";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
@@ -163,6 +162,15 @@ const ContractTemplate = ({
     )}, no horário das ${entryTime} até as ${departureTime} para o fim de realizar atividades de lazer.`;
   };
 
+  function getTodayDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // O mês é baseado em zero, então adicionamos 1
+    const year = today.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -172,14 +180,14 @@ const ContractTemplate = ({
           </Text>
         </View>
         <View style={styles.section}>
-          <Text>{fullName}</Text>
+          {/* <Text>{fullName}</Text>
           <Text>{phoneNumber}</Text>
           <Text>{cpf}</Text>
           <Text>{departureTime}</Text>
           <Text>{totalValue}</Text>
           <Text>{numberOfBusyDays}</Text>
           <Text>{entryTime}</Text>
-          <Text>{String(date)}</Text>
+          <Text>{String(date)}</Text> */}
           <View style={{ marginBottom: 10 }}>
             <View style={styles.sectionTwoText}>
               <Text style={styles.bold}>LOCADORA:</Text>
@@ -262,118 +270,232 @@ const ContractTemplate = ({
               </Text>
             </View>
 
-            <Text style={styles.listItem}>
-              3) A locadora cede ao locatário o espaço identificado no objeto do
-              presente, para ser utilizado no dia _____/_____/______, no horário
-              das __________________, para o fim de realizar
-              ________________________________________________
-            </Text>
-            <Text style={styles.listItem}>
-              4) Constitui-se objeto deste contrato a locação da área coberta,
-              banheiros masculino e feminino, área da cozinha, área da piscina,
-              para realização do evento acima descrito. Com os seguintes itens:
-              1 TV 29’ Samsung com controle remoto, 1 aparelho de DVD Philco com
-              controle remoto, 1 aparelho de som Philips com duas caixas de 40W,
-              1 freezer horizontal 2 portas (240 litros), 1 fogão industrial 2
-              bocas (Dako), 1 botijão de gás, 4 banquetas de madeira, 2 grelhas
-              para churrasco. ___________ cadeiras plásticas, ____________ mesas
-              plásticas.
-            </Text>
-            <Text style={styles.listItem}>
-              5) Ficará a cargo do(a) LOCATÁRIO(a) providenciar o suprimento do
-              material que irá consumir no evento, tais como: talheres, toalhas
-              de papel, papel higiênico, sabão, material de cozinha, etc. em
-              quantidade suficientes e compatíveis com suas necessidades e com a
-              estrutura das instalações.
-            </Text>
-            <Text style={styles.listItem}>
-              6) Fica estipulado o valor da locação de R$:
-              _____________________________.
-            </Text>
-            <Text style={styles.listItem}>
-              PARÁGRAFO PRIMEIRO: Quando da assinatura do presente contrato o(a)
-              Locatário(a), obrigatoriamente efetuará o pagamento de 50%
-              (cinqüenta por cento) do valor da locação:
-            </Text>
-            <Text style={styles.listItem}>
-              PARÁGRAFO SEGUNDO: Antes de iniciar o evento o(a) locatário(a)
-              deverá pagar o valor restante, equivalente a 50%(cinqüenta por
-              cento) do valor total.
-            </Text>
-            <Text style={styles.listItem}>
-              PARÁGRAFO TERCEIRO: Caso haja desistência por parte do(a)
-              Locatário(a), 50% (cinqüenta por cento) do valor pago relativo à
-              locação não será devolvido.
-            </Text>
-            <Text style={styles.listItem}>
-              7) É de responsabilidade do(a) Locatário(a) o recolhimento dos
-              encargos referentes a Direitos Autorais, pelo cumprimento do
-              horário noturno - lei do silêncio, legalmente estipulado para uso
-              de música ao vivo ou mecânica, durante a realização do evento.
-            </Text>
-            <Text style={styles.listItem}>
-              PARÁGRAFO ÚNICO: Não será permitido som automotivo no local, o
-              volume do som diurno (das 07:00 as 22:00 horas) não poderá
-              ultrapassar os 50 decibéis, e em horário noturno (das 22:00 das
-              07:00 horas) não poderá ultrapassar os 30 decibéis.
-            </Text>
-            <Text style={styles.listItem}>
-              8) Os danos causados ao patrimônio serão reparados em comum acordo
-              com a Locadora, correndo a despesa por conta do(a) Locatário(a).
-            </Text>
-            <Text style={styles.listItem}>
-              9) É de responsabilidade do(a) Locatário(a) pela contratação de
-              serviço de segurança a ser utilizada no local, e demais obrigações
-              com mão-de-obra empregadas no respectivo evento, bem como do
-              controle de acesso de convidados ao evento.
-            </Text>
-            <Text style={styles.listItem}>
-              10) A Locadora não se responsabiliza pelos atos e danos praticados
-              pelo(a) Locatário(a) e convidados, inclusive acidentes ocorridos
-              nas áreas interna e externa.
-            </Text>
-            <Text style={styles.listItem}>
-              11) Não será permitida, para sustentação de balões, faixas,
-              cartazes e painéis, a colocação de pregos, parafusos e outros
-              objetos que danifiquem a pintura das paredes, teto, colunas do
-              espaço.
-            </Text>
-            <Text style={styles.listItem}>
-              12) Após o horário definido para término do evento o(a)
-              Locatário(a) se compromete a devolver o espaço nas condições de
-              asseio e manutenção já descritas neste contrato, impreterivelmente
-              até às 09:00h do dia seguinte, nas mesmas condições como foi
-              recebido.
-            </Text>
-            <Text style={styles.listItem}>
-              PARÁGRAFO ÚNICO: Caso a devolução do espaço não ocorra na forma
-              estipulada nesta cláusula por atitudes do(a) Locatário(a), este
-              deverá imediatamente ressarcir financeiramente ao Locador o
-              possível dano causado nas instalações físicas, asseio e
-              manutenção, e ainda, prejuízos decorrentes pela extrapolação do
-              horário limite do evento. Neste caso será cobrado multa no valor
-              de R$ 50,00 por hora e/ou fração.
-            </Text>
-            <Text style={styles.listItem}>
-              13) A Locadora não se responsabiliza pelo extravio ou danos a
-              quaisquer objetos deixados pelo(a) Locatário(a) nas dependências e
-              imediações do espaço, antes, durante e após o evento.
-            </Text>
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>4)</Text>
+                <Text style={styles.regular}>
+                  Constitui-se objeto deste contrato a locação da área coberta,
+                  banheiros masculino
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                e feminino, área da cozinha, área da piscina, para realização do
+                evento acima descrito. Com os seguintes itens: 1 TV 29’ Samsung
+                com controle remoto, 1 aparelho de DVD Philco com controle
+                remoto, 1 aparelho de som Philips com duas caixas de 40W, 1
+                freezer horizontal 2 portas (240 litros), 1 fogão industrial 2
+                bocas (Dako), 1 botijão de gás, 4 banquetas de madeira, 2
+                grelhas para churrasco.
+              </Text>
+            </View>
+            {/* <View style={{ marginTop: 40 }} /> */}
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>5)</Text>
+                <Text style={styles.regular}>
+                  Ficará a cargo do(a) LOCATÁRIO(a) providenciar o suprimento do
+                  material que irá
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                consumir no evento, tais como: talheres, toalhas de papel, papel
+                higiênico, sabão, material de cozinha, etc. em quantidade
+                suficientes e compatíveis com suas necessidades e com a
+                estrutura das instalações.
+              </Text>
+            </View>
+
+            <View style={styles.sectionTwoText}>
+              <Text style={styles.bold}>6)</Text>
+              <Text style={styles.regular}>
+                Fica estipulado o valor da locação de R$: {totalValue}
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>PARÁGRAFO PRIMEIRO:</Text>
+                <Text style={styles.regular}>
+                  Quando da assinatura do presente contrato o(a)
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                Locatário(a), obrigatoriamente efetuará o pagamento de 50%
+                (cinqüenta por cento) do valor da locação:
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>PARÁGRAFO SEGUNDO:</Text>
+                <Text style={styles.regular}>
+                  Antes de iniciar o evento o(a) locatário(a) deverá pagar
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                o valor restante, equivalente a 50%(cinqüenta por cento) do
+                valor total.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>PARÁGRAFO TERCEIRO:</Text>
+                <Text style={styles.regular}>
+                  Caso haja desistência por parte do(a) Locatário(a),
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                50% (cinqüenta por cento) do valor pago relativo à locação não
+                será devolvido.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>7)</Text>
+                <Text style={styles.regular}>
+                  É de responsabilidade do(a) Locatário(a) o recolhimento dos
+                  encargos referentes
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                a Direitos Autorais, pelo cumprimento do horário noturno - lei
+                do silêncio, legalmente estipulado para uso de música ao vivo ou
+                mecânica, durante a realização do evento.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>PARÁGRAFO ÚNICO:</Text>
+                <Text style={styles.regular}>
+                  Não será permitido som automotivo no local, o volume
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                do som diurno (das 07:00 as 22:00 horas) não poderá ultrapassar
+                os 50 decibéis, e em horário noturno (das 22:00 das 07:00 horas)
+                não poderá ultrapassar os 30 decibéis.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>8)</Text>
+                <Text style={styles.regular}>
+                  Os danos causados ao patrimônio serão reparados em comum
+                  acordo com a
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                Locadora, correndo a despesa por conta do(a) Locatário(a).
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>9)</Text>
+                <Text style={styles.regular}>
+                  É de responsabilidade do(a) Locatário(a) pela contratação de
+                  serviço de segu-
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                rança a ser utilizada no local, e demais obrigações com
+                mão-de-obra empregadas no respectivo evento, bem como do
+                controle de acesso de convidados ao evento.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>10)</Text>
+                <Text style={styles.regular}>
+                  A Locadora não se responsabiliza pelos atos e danos praticados
+                  pelo(a)
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                Locatário(a) e convidados, inclusive acidentes ocorridos nas
+                áreas interna e externa.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>11)</Text>
+                <Text style={styles.regular}>
+                  Não será permitida, para sustentação de balões, faixas,
+                  cartazes e painéis,
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                a colocação de pregos, parafusos e outros objetos que danifiquem
+                a pintura das paredes, teto, colunas do espaço.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>12)</Text>
+                <Text style={styles.regular}>
+                  Após o horário definido para término do evento o(a)
+                  Locatário(a) se compromete
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                a devolver o espaço nas condições de asseio e manutenção já
+                descritas neste contrato, impreterivelmente até às 09:00h do dia
+                de , nas mesmas condições como foi recebido.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>PARÁGRAFO ÚNICO:</Text>
+                <Text style={styles.regular}>
+                  Caso a devolução do espaço não ocorra na forma estipulada
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                nesta cláusula por atitudes do(a) Locatário(a), este deverá
+                imediatamente ressarcir financeiramente ao Locador o possível
+                dano causado nas instalações físicas, asseio e manutenção, e
+                ainda, prejuízos decorrentes pela extrapolação do horário limite
+                do evento. Neste caso será cobrado multa no valor de R$ 50,00
+                por hora e/ou fração.
+              </Text>
+            </View>
+
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>13)</Text>
+                <Text style={styles.regular}>
+                  A Locadora não se responsabiliza pelo extravio ou danos a
+                  quaisquer objetos
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                deixados pelo(a) Locatário(a) nas dependências e imediações do
+                espaço, antes, durante e após o evento.
+              </Text>
+            </View>
           </View>
 
           <View style={styles.section}>
-            <Text>Aparecida de Goiânia _____/_____/______</Text>
+            <Text>São José de Piranhas {getTodayDate()} </Text>
+            <View style={{ marginTop: 10 }} />
             <Text>____________________________</Text>
             <Text>Locatário(a)</Text>
+            <View style={{ marginTop: 10 }} />
             <Text>____________________________</Text>
             <Text>Locadora</Text>
           </View>
 
           <View style={styles.section}>
-            <Text>
-              Endereço:_________________________________________________________
-            </Text>
-            <Text>Telefone: ____________________________________</Text>
+            <Text>Endereço: São José de Piranhas, PB-366</Text>
+            <Text>Telefone: (83) 99192-1727</Text>
           </View>
         </View>
       </Page>

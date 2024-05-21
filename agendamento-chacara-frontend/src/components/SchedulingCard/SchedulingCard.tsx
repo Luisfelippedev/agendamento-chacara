@@ -169,8 +169,6 @@ export const SchedulingCard = ({
     // const temporaryData = localStorage.getItem("temporaryData" + id);
     if (temporaryDataObject) {
       // const temporaryDataObject = JSON.parse(temporaryData);
-      console.log(temporaryDataObject);
-      console.log("aqui" + temporaryDataObject.initialValue);
       setNumberOfBusyDays(temporaryDataObject.numberOfBusyDays);
       setEntryTime(temporaryDataObject.entryTime);
       setDepartureTime(temporaryDataObject.departureTime);
@@ -285,7 +283,11 @@ export const SchedulingCard = ({
 
   function formatCurrency(value: any) {
     // Formata o número para o formato de moeda brasileira
+    console.log(value);
     if (isNaN(value)) {
+      return "";
+    }
+    if (!value) {
       return "";
     }
     return value.toLocaleString("pt-BR", {
@@ -296,6 +298,21 @@ export const SchedulingCard = ({
 
   const getDataToContractPdf = (): IContractTemplateProps => {
     let totalValue = initialValue;
+
+    if (!totalValue) {
+      const dateProps: IContractTemplateProps = {
+        cpf: "1",
+        fullName: fullNameClient,
+        totalValue: "1",
+        departureTime: departureTime,
+        entryTime: entryTime,
+        numberOfBusyDays: numberOfBusyDays,
+        phoneNumber: phoneNumberFormated,
+        date: date,
+      };
+      return dateProps;
+    }
+
     if (additionalServices.length > 0) {
       additionalServices.forEach((item: any) => {
         totalValue = totalValue + item.value;
@@ -405,7 +422,6 @@ export const SchedulingCard = ({
   const customCalendarDay = (props: any): any => {
     const { day, ...others } = props;
     let reservedDay: any;
-
     occupiedDays.forEach((element: any) => {
       const dateFormated = bdDateToDate(element.date);
       if (dateFormated == day.toString()) {
@@ -453,14 +469,57 @@ export const SchedulingCard = ({
     );
   };
 
+  function transformarData(dataString: any): Date {
+    // Dividindo a string da data para obter dia, mês e ano
+    const [dia, mes, ano] = dataString.split("-");
+
+    // Criando um objeto Date com os valores extraídos (lembrando que o mês em JavaScript é 0-indexado)
+    const data = new Date(ano, mes - 1, dia);
+
+    // Retornando a data no formato desejado
+    return data;
+  }
+
   const handleChangeDateButton = async () => {
     try {
       await schedulingService.updateDateById(id, currentChangeDateValue);
+
+      let temporaryDataObject = getItemWithExpiration(`temporaryData${id}`);
+
+      if (temporaryDataObject) {
+        const now = new Date();
+        const dateSpecific = transformarData(currentChangeDateValue);
+        const dateDifference = calcularDiferencaDias(now, dateSpecific);
+        dateSpecific.setDate(dateSpecific.getDate() + dateDifference + 1);
+        const differenceInMillis = dateSpecific.getTime() - now.getTime();
+        const differenceInMinutes = Math.floor(
+          differenceInMillis / (1000 * 60)
+        );
+        const expirationDate = new Date(
+          now.getTime() + differenceInMinutes * 60000
+        );
+        temporaryDataObject.expiration = expirationDate.toISOString();
+
+        console.log("nunesmama2" + temporaryDataObject.expiration);
+
+        const temporaryDataString = JSON.stringify(temporaryDataObject);
+        localStorage.setItem("temporaryData" + id, temporaryDataString);
+      }
+
       window.location.reload();
     } catch (error) {
       return;
     }
   };
+
+  // useEffect(() => {
+  //   console.log(
+  //     "aqui" +
+  //       currentChangeDateValue +
+  //       " " +
+  //       transformarData(currentChangeDateValue)
+  //   );
+  // }, currentChangeDateValue);
 
   function verificarFormatoString(string: any) {
     // Expressão regular para verificar o formato xx-xx-xxxx
@@ -567,10 +626,20 @@ export const SchedulingCard = ({
     }
   };
 
+  function calcularDiferencaDias(data1: any, data2: any) {
+    const umDiaEmMilissegundos = 24 * 60 * 60 * 1000; // Milissegundos em um dia
+    const diferencaEmMilissegundos = Math.abs(data1 - data2); // Diferença em milissegundos
+    const diferencaEmDias = Math.ceil(
+      diferencaEmMilissegundos / umDiaEmMilissegundos
+    ); // Convertendo milissegundos em dias
+    return diferencaEmDias;
+  }
+
   const setTemporaryValuesInLocalStorage = () => {
     const now = new Date();
     const dateSpecific = new Date(date);
-    dateSpecific.setDate(dateSpecific.getDate() + 1);
+    const dateDifference = calcularDiferencaDias(now, dateSpecific);
+    dateSpecific.setDate(dateSpecific.getDate() + dateDifference + 1);
     const differenceInMillis = dateSpecific.getTime() - now.getTime();
     const differenceInMinutes = Math.floor(differenceInMillis / (1000 * 60));
     const expirationDate = new Date(
@@ -994,11 +1063,61 @@ export const SchedulingCard = ({
                           onClick={() => setShowSubModal(true)}
                           className={styles.reserveButton}
                           disabled={
-                            dateIsOccupied == true || numberOfBusyDays == ""
+                            dateIsOccupied == true ||
+                            numberOfBusyDays == "" ||
+                            fullNameClient.length < 5 ||
+                            phoneNumberFormated.length < 13 ||
+                            cpfClient.length < 11 ||
+                            entryTime == "" ||
+                            departureTime == "" ||
+                            numberOfBusyDays == "" ||
+                            // parseInt(entryTime, 10) < 1000 ||
+                            // parseInt(departureTime, 10) < 1000 ||
+                            isNaN(initialValue) ||
+                            initialValue == undefined ||
+                            // (additionalServices.length > 0 &&
+                            //   additionalServices.every(
+                            //     (service: any) =>
+                            //       isNaN(service.value) ||
+                            //       service.value == undefined ||
+                            //       service.value == ""
+                            //   ))
+                            (additionalServices.length > 0 &&
+                              additionalServices.some(
+                                (service: any) =>
+                                  isNaN(service.value) ||
+                                  service.value === undefined ||
+                                  service.value === ""
+                              ))
                           }
                           style={{
                             backgroundColor:
-                              dateIsOccupied == true || numberOfBusyDays == ""
+                              dateIsOccupied == true ||
+                              numberOfBusyDays == "" ||
+                              fullNameClient.length < 5 ||
+                              phoneNumberFormated.length < 13 ||
+                              cpfClient.length < 11 ||
+                              entryTime == "" ||
+                              departureTime == "" ||
+                              numberOfBusyDays == "" ||
+                              // parseInt(entryTime, 10) < 1000 ||
+                              // parseInt(departureTime, 10) < 1000 ||
+                              isNaN(initialValue) ||
+                              initialValue == undefined ||
+                              // (additionalServices.length > 0 &&
+                              //   additionalServices.every(
+                              //     (service: any) =>
+                              //       isNaN(service.value) ||
+                              //       service.value == undefined ||
+                              //       service.value == ""
+                              //   ))
+                              (additionalServices.length > 0 &&
+                                additionalServices.some(
+                                  (service: any) =>
+                                    isNaN(service.value) ||
+                                    service.value === undefined ||
+                                    service.value === ""
+                                ))
                                 ? "#8aa28a"
                                 : "green",
                             width: "150px",
