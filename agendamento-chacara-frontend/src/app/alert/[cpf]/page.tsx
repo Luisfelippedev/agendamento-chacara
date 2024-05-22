@@ -22,8 +22,7 @@ const AlertPage = () => {
     try {
       await schedulingService.getByCpf(filteredCpf);
       window.open(
-        "https://wa.me/5583993190450?text=Ol%C3%A1,%20solicitei%20uma%20reserva%20para%20o%20dia%20xx/xx/xxxx",
-        "_blank"
+        "https://api.whatsapp.com/send?phone=5583993190450&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Data:*%20xx/xx/xxxx%0A*Nome:*%20xxxxx%0A*Cpf:*%20xxxxx%0A*Telefone:*%20xxxxx"
       );
     } catch (error) {
       router.push("/reservation");
@@ -44,19 +43,19 @@ const AlertPage = () => {
   // function isPastDate(dataString: string) {
   //   const dataFornecida = parse(dataString, 'dd-MM-yyyy', new Date());
   //   const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
-    
+
   //   return isBefore(dataFornecida, dataAtual);
   // }
 
-    // const deleteOldScheduling = async () => {
-    //   const allScheduling = await schedulingService.getAll();
-    //   allScheduling.forEach((scheduling) => {
-    //     const isPast = isPastDate(scheduling.date);
-    //     if(isPast){
-    //       schedulingService.deleteById(scheduling.id)
-    //     }
-    //   });
-    // };
+  // const deleteOldScheduling = async () => {
+  //   const allScheduling = await schedulingService.getAll();
+  //   allScheduling.forEach((scheduling) => {
+  //     const isPast = isPastDate(scheduling.date);
+  //     if(isPast){
+  //       schedulingService.deleteById(scheduling.id)
+  //     }
+  //   });
+  // };
 
   useEffect(() => {
     schedulingExists();
