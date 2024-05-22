@@ -42,7 +42,7 @@ export const HomePage = () => {
 
   return (
     <div className={styles.background}>
-      <NavBar />
+      <NavBar type="tridev"/>
       <div className={styles.midContainer}>
         <p className={styles.titleText}>Chácara do Dandão</p>
         <p className={styles.subTitleText}>Reserva de ambiente privado</p>

@@ -49,6 +49,7 @@ const ReservationPage = () => {
   const [dateFromBd, setDateFromBd]: any = useState();
   const [occupiedDays, setOccupiedDays]: any = useState();
   const [currentDateCalendar, setCurrentDateCalendar]: any = useState();
+  const [waitSendDate, setWaitSendDate] = useState(false)
 
   const bdDateToDate = (dateString: string) => {
     const [day, month, year] = dateString.split("-");
@@ -144,6 +145,7 @@ const ReservationPage = () => {
 
   const handleClickConfirmButton = async () => {
     if (dateFromBd) {
+      setWaitSendDate(true)
       router.push(`/form/${dateFromBd}`);
     }
   };
@@ -239,11 +241,12 @@ const ReservationPage = () => {
           <div className={styles.buttonContainer}>
             <Button
               disabled={
-                schedulingStatus === "loading" || schedulingStatus === true
+                schedulingStatus === "loading" || schedulingStatus === true || waitSendDate
               }
               onClick={handleClickConfirmButton}
               className={styles.button}
               variant="contained"
+            
             >
               CONTINUAR
             </Button>

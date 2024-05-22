@@ -35,11 +35,14 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1% 2% 0 1%;
+        padding: 1.2% 2% 0 3%;
         width: 100%;
             .logoImage{
-                width: 4rem;
-                height: 4rem;
+                width: 3rem;
+                height: 3rem;
+                &:hover{
+                    cursor: pointer;
+                }
             }
             .userAvatar{
                 height: 40px;
@@ -49,10 +52,10 @@
 
 
         @media(min-width: 768px){
-            padding: 0 2% 0 2%;
+            padding: 1% 2% 0 2%;
             .logoImage{
-                width: 5rem;
-                height: 5rem;
+                width: 3.5rem;
+                height: 3.5rem;
             }
             .userAvatar{
                 height: 50px;

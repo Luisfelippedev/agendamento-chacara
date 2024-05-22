@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { UserService } from "@/services/UserService";
 import styles from "./styles.module.scss";
 import Image from "next/image";
-import logo from "../../../public/tridev-logo-black.png";
+import { deleteCookie } from "cookies-next";
+import chacaraGrey from "../../../public/chacara-grey.png";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import Lottie from "lottie-react";
@@ -42,6 +43,7 @@ import { SchedulingCard } from "@/components/SchedulingCard/SchedulingCard";
 import { SchedulingService } from "@/services/SchedulingService";
 import { Scheduling } from "../models/Scheduling";
 import { randomUUID } from "crypto";
+import Link from "next/link";
 
 const DashboardPage = () => {
   const router = useRouter();
@@ -403,6 +405,20 @@ const DashboardPage = () => {
     );
   };
 
+  const handleClickSupportButton = () => {
+    window.open(
+      "https://wa.me/5583993190450?text=Ola%2C+vim+atrav%C3%A9s+do+sistema+de+agendamento+de+ch%C3%A1cara%2C+preciso+de+ajuda%21",
+      "_blank"
+    );
+    closeModal();
+  };
+
+  const handleClickLogoutButton = () => {
+    deleteCookie("token");
+    router.push("/login");
+    closeModal();
+  };
+
   if (!isLogged) {
     return (
       <div className={styles.backgroundLoading}>
@@ -414,10 +430,17 @@ const DashboardPage = () => {
       </div>
     ); // Não renderiza nada enquanto a verificação não estiver concluída
   }
+
   return (
     <div className={styles.background}>
       <div className={styles.header}>
-        <Image className={styles.logoImage} src={logo} alt="tridev-logo" />
+        <Link href={"/"}>
+          <Image
+            className={styles.logoImage}
+            src={chacaraGrey}
+            alt="tridev-logo"
+          />
+        </Link>
 
         <div className={styles.lastBox}>
           <Tooltip title="Account settings">
@@ -446,13 +469,13 @@ const DashboardPage = () => {
               Luis Felippe
             </p>
             <Divider />
-            <MenuItem onClick={closeModal}>
+            <MenuItem onClick={handleClickSupportButton}>
               <ListItemIcon>
                 <MdOutlineSupportAgent className={styles.userIcon} size={30} />
               </ListItemIcon>
               Suporte
             </MenuItem>
-            <MenuItem onClick={closeModal}>
+            <MenuItem onClick={handleClickLogoutButton}>
               <ListItemIcon>
                 <IoLogOut className={styles.userIcon} size={30} />
               </ListItemIcon>

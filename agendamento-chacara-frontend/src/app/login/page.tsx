@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../../public/loading-animation.json";
 import { NavBar } from "@/components/NavBar/NavBar";
+import { Footer } from "@/components/Footer/Footer";
 
 const Login = () => {
   const router = useRouter();
@@ -15,11 +16,12 @@ const Login = () => {
   const [passwordValue, setPasswordValue] = useState("");
   const [isInvalidLogin, setIsInvalidLogin] = useState(false);
   const [isLogged, setIsLogged] = useState(false);
+  const [waitVerifyAuth, setWaitVerifyAuth] = useState(false)
   const userService = new UserService();
 
   const handleClickButtonSubmit = async () => {
     let isLogin = false;
-
+    setWaitVerifyAuth(true)
     const filteredCpf = cpfValue.replace(/\D/g, "");
     try {
       await userService.login(filteredCpf, passwordValue);
@@ -28,6 +30,7 @@ const Login = () => {
         router.push("/dashboard");
       }
     } catch (error) {
+      setWaitVerifyAuth(false)
       setCpfValue("");
       setPasswordValue("");
       setIsInvalidLogin(true);
@@ -68,7 +71,7 @@ const Login = () => {
   }
   return (
     <div className={styles.background}>
-      <NavBar />
+      <NavBar type="chacara" />
       <div className={styles.centerBox}>
         <div className={styles.formContainer}>
           <p className={styles.titleForm}>Faça login:</p>
@@ -96,6 +99,7 @@ const Login = () => {
             onClick={handleClickButtonSubmit}
             className={styles.submitButton}
             variant="contained"
+            disabled={waitVerifyAuth}
           >
             FAZER LOGIN
           </Button>
@@ -104,6 +108,7 @@ const Login = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

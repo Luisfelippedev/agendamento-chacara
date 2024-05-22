@@ -1,0 +1,25 @@
+@import "../../themes/theme.scss";
+@import '@fontsource/lobster';
+
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1% 3%;
+    .logoBox{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        .logoImage{
+            width: 4rem;
+            height: 4rem;
+        }
+        .logoText{
+            color: $primary-text-color;
+            font-size: 1.2rem;
+            font-family: 'Lobster', system-ui !important;
+        }
+    }    
+}
