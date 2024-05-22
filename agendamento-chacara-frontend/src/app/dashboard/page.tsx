@@ -177,6 +177,39 @@ const DashboardPage = () => {
     }
   };
 
+  function isPastDate(dataString: string) {
+    const dataFornecida = parse(dataString, "dd-MM-yyyy", new Date());
+    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
+
+    return isBefore(dataFornecida, dataAtual);
+  }
+
+  const deleteOldScheduling = async () => {
+    try {
+      const allScheduling = await schedulingService.getAll();
+      allScheduling.forEach((scheduling) => {
+        if (scheduling.avaliableDays > 1) {
+          let untilTheDate = scheduling.date;
+          for (let i = 1; i < scheduling.avaliableDays; i++) {
+            untilTheDate = adicionarUmDia(untilTheDate);
+          }
+          const isPast = isPastDate(untilTheDate);
+          if (isPast) {
+            schedulingService.deleteById(scheduling.id);
+          }
+        } else {
+          const isPast = isPastDate(scheduling.date);
+          if (isPast) {
+            schedulingService.deleteById(scheduling.id);
+          }
+        }
+      });
+      searchOcuppiedDays();
+    } catch (error) {
+      return;
+    }
+  };
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -307,28 +340,6 @@ const DashboardPage = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  };
-
-  function isPastDate(dataString: string) {
-    const dataFornecida = parse(dataString, "dd-MM-yyyy", new Date());
-    const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
-
-    return isBefore(dataFornecida, dataAtual);
-  }
-
-  const deleteOldScheduling = async () => {
-    try {
-      const allScheduling = await schedulingService.getAll();
-      allScheduling.forEach((scheduling) => {
-        const isPast = isPastDate(scheduling.date);
-        if (isPast) {
-          schedulingService.deleteById(scheduling.id);
-        }
-      });
-      searchOcuppiedDays();
-    } catch (error) {
-      return;
-    }
   };
 
   // const deleteOldTemporaryValuesInLocalStorage = () => {
