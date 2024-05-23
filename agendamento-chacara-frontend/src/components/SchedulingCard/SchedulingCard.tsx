@@ -1001,7 +1001,18 @@ export const SchedulingCard = ({
                     </div>
                   ))}
 
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    border: "1px dashed rgb(109, 109, 109)",
+                    width: "200px",
+                    padding: "0 10px 0 25px",
+                    alignItems: "center",
+                    borderRadius: "10px",
+                    backgroundColor: "rgb(243, 243, 243)",
+                  }}
+                >
                   <div
                     onClick={() => setShowNewServiceModal(true)}
                     className={styles.additionalValueButton}
