@@ -451,7 +451,7 @@ const DashboardPage = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar className={styles.userAvatar}>L</Avatar>
+              <Avatar className={styles.userAvatar}>D</Avatar>
             </IconButton>
           </Tooltip>
 
@@ -465,7 +465,7 @@ const DashboardPage = () => {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
             <p style={{ textAlign: "center", padding: "6% 0 8% 0" }}>
-              Luis Felippe
+              Damocles
             </p>
             <Divider />
             <MenuItem onClick={handleClickSupportButton}>
