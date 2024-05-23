@@ -41,6 +41,8 @@ export interface IContractTemplateProps {
 const styles = StyleSheet.create({
   page: {
     padding: 80,
+    paddingBottom: 15,
+    paddingTop: 70,
     fontFamily: "Roboto",
     fontWeight: "normal",
     fontSize: 12,
@@ -210,6 +212,8 @@ const ContractTemplate = ({
             <View style={styles.sectionTwoText}>
               <Text style={styles.bold}>LOCATÁRIO(A):</Text>
               <Text style={styles.regular}>{fullName},</Text>
+            </View>
+            <View style={styles.sectionTwoText}>
               <Text style={styles.bold}>Cpf:</Text>
               <Text style={styles.regular}>{cpf},</Text>
             </View>
@@ -352,6 +356,7 @@ const ContractTemplate = ({
             </View>
 
             <View>
+              <View style={{ marginTop: 20 }} />
               <View style={styles.sectionTwoText}>
                 <Text style={styles.bold}>7)</Text>
                 <Text style={styles.regular}>
@@ -483,19 +488,58 @@ const ContractTemplate = ({
             </View>
           </View>
 
-          <View style={styles.section}>
-            <Text>São José de Piranhas {getTodayDate()} </Text>
-            <View style={{ marginTop: 10 }} />
-            <Text>____________________________</Text>
-            <Text>Locatário(a)</Text>
-            <View style={{ marginTop: 10 }} />
-            <Text>____________________________</Text>
-            <Text>Locadora</Text>
-          </View>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              gap: 30,
+            }}
+          >
+            <View
+              style={{
+                display: "flex",
+                gap: 25,
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  gap: 20,
+                }}
+              >
+                <Text>São José de Piranhas {getTodayDate()} </Text>
+                <Text>____________________________</Text>
+                <Text>Locatário(a)</Text>
+              </View>
+            </View>
 
-          <View style={styles.section}>
-            <Text>Endereço: São José de Piranhas, PB-366</Text>
-            <Text>Telefone: (83) 99192-1727</Text>
+            <View
+              style={{
+                marginTop: 34,
+                display: "flex",
+                gap: 5,
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  gap: 20,
+                }}
+              >
+                <Text>____________________________</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    gap: 5,
+                  }}
+                >
+                  <Text>Locadora</Text>
+                  <Text>Endereço: São José de Piranhas, PB-366</Text>
+                  <Text>Telefone: (83) 99192-1727</Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </Page>
