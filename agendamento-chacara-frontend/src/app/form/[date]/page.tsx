@@ -14,6 +14,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Scheduling } from "@/app/models/Scheduling";
 import { PatternFormat } from "react-number-format";
 import { isBefore, parse, startOfDay } from "date-fns";
+import validator from "validator";
 
 const isLetters = (str: any) => /^[A-Za-z\s]*$/.test(str);
 
@@ -33,6 +34,7 @@ const Form = () => {
   const [firstNameValue, setFirstNameValue] = useState("");
   const [lastNameValue, setLastNameValue] = useState("");
   const [isComponentLoaded, setIsComponentLoaded] = useState(true);
+  const [isValidCpf, setIsValidCpf] = useState(true);
 
   useEffect(() => {
     setIsComponentLoaded(false);
@@ -108,44 +110,68 @@ const Form = () => {
     }
   };
 
+  function isValidCPF(value: any) {
+    // Remove caracteres não numéricos
+    let cpfFormated = value.replace(/[^\d]/g, "");
+
+    // Verifica se o CPF tem 11 dígitos
+    if (!validator.isLength(cpfFormated, { min: 11, max: 11 })) {
+      return false;
+    }
+
+    if (!validator.isNumeric(cpfFormated)) {
+      return false;
+    }
+
+    // Elimina CPFs com todos os dígitos iguais
+    if (/^(\d)\1+$/.test(cpfFormated)) {
+      return false;
+    }
+
+    // Valida os dígitos verificadores
+    let sum = 0;
+    let remainder;
+
+    for (let i = 1; i <= 9; i++) {
+      sum += parseInt(cpfFormated.substring(i - 1, i)) * (11 - i);
+    }
+
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) {
+      remainder = 0;
+    }
+    if (remainder !== parseInt(cpfFormated.substring(9, 10))) {
+      return false;
+    }
+
+    sum = 0;
+    for (let i = 1; i <= 10; i++) {
+      sum += parseInt(cpfFormated.substring(i - 1, i)) * (12 - i);
+    }
+
+    remainder = (sum * 10) % 11;
+    if (remainder === 10 || remainder === 11) {
+      remainder = 0;
+    }
+    if (remainder !== parseInt(cpfFormated.substring(10, 11))) {
+      return false;
+    }
+
+    return true;
+  }
+
   const handleClickButtonSubmit = async () => {
     // setIsComponentLoaded(true);
     setIsExistsScheduling(false);
-    let isValid = true;
+    setIsValidCpf(true)
 
-    const filteredCpf = cpfValue.replace(/\D/g, "");
-
-    if (filteredCpf.length == 0 || cpfValue.length < 10) {
-      isValid = false;
-    }
-
-    if (
-      firstNameValue.length == 0 ||
-      firstNameValue.length < 2 ||
-      firstNameValue.length > 40
-    ) {
-      isValid = false;
-    }
-
-    if (
-      lastNameValue.length == 0 ||
-      lastNameValue.length < 2 ||
-      lastNameValue.length > 40
-    ) {
-      isValid = false;
-    }
-
-    const filteredNumber = phoneNumberValue
-      .replace(/\D/g, "")
-      .replace(/^55/, "")
-      .trim();
-
-    if (filteredNumber.length < 11) {
-      isValid = false;
-    }
+    let isValid = isValidCPF(cpfValue);
+    console.log(isValid);
 
     if (isValid) {
       createScheduling();
+    } else {
+      setIsValidCpf(false);
     }
   };
 
@@ -164,7 +190,7 @@ const Form = () => {
       phoneNumber: filteredNumber,
       status: false,
       avaliableDays: 1,
-      forgeinKey: ""
+      forgeinKey: "",
     };
     try {
       await schedulingService.createScheduling(newScheduling);
@@ -268,6 +294,15 @@ const Form = () => {
             className={styles.invalidValueLabel}
           >
             Desculpe, já existe um agendamento para esta data com esse Cpf
+          </p>
+        )}
+
+        {!isValidCpf && (
+          <p
+            style={{ textAlign: "center" }}
+            className={styles.invalidValueLabel}
+          >
+            Cpf inválido
           </p>
         )}
       </div>
