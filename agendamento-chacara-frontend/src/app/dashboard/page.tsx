@@ -129,7 +129,6 @@ const DashboardPage = () => {
                 avaliableDays: 1,
                 forgeinKey: scheduling.id,
               });
-              // }
             }
           }
           // const dateFormated = bdDateToDate(scheduling.date);

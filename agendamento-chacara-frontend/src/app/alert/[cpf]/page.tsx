@@ -7,60 +7,53 @@ import talkAnimation from "../../../../public/talk-animation.json";
 import whatsappAnimation from "../../../../public/whatsapp-animation.json";
 import whatsappTwoAnimation from "../../../../public/whatsapptwo-animation.json";
 import { Button } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { SchedulingService } from "@/services/SchedulingService";
+import loadingAnimation from "../../../../public/loading-animation.json";
 import { isBefore, parse, startOfDay } from "date-fns";
 
 const AlertPage = () => {
   const params = useParams<{ cpf: string }>();
   const router = useRouter();
   const schedulingService = new SchedulingService();
+  const [isLogged, setIsLogged] = useState(false);
 
   const schedulingExists = async () => {
     const filteredCpf = params.cpf.replace(/\D/g, "");
     try {
-      await schedulingService.getByCpf(filteredCpf);
+      const schedulingByCpf: any = await schedulingService.getByCpf(
+        filteredCpf
+      );
+      setIsLogged(true);
+      const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
       window.open(
-        "https://api.whatsapp.com/send?phone=5583993190450&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Data:*%20xx/xx/xxxx%0A*Nome:*%20xxxxx%0A*Cpf:*%20xxxxx%0A*Telefone:*%20xxxxx"
+        `https://api.whatsapp.com/send?phone=5583993190450&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Data:*%20${date.replace(
+          /-/g,
+          "/"
+        )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
       );
     } catch (error) {
       router.push("/reservation");
     }
   };
 
-  // function isPastDate(dataString: string) {
-  //   const partes = dataString.split("-");
-  //   const dia = parseInt(partes[0], 10);
-  //   const mes = parseInt(partes[1], 10) - 1; // O mês em JavaScript começa em 0 (janeiro = 0)
-  //   const ano = parseInt(partes[2], 10);
-  //   const dataFornecida = new Date(ano, mes, dia);
-  //   const dataAtual = new Date();
-
-  //   return dataFornecida < dataAtual;
-  // }
-
-  // function isPastDate(dataString: string) {
-  //   const dataFornecida = parse(dataString, 'dd-MM-yyyy', new Date());
-  //   const dataAtual = startOfDay(new Date()); // Inicia a hora do dia atual em 00:00:00
-
-  //   return isBefore(dataFornecida, dataAtual);
-  // }
-
-  // const deleteOldScheduling = async () => {
-  //   const allScheduling = await schedulingService.getAll();
-  //   allScheduling.forEach((scheduling) => {
-  //     const isPast = isPastDate(scheduling.date);
-  //     if(isPast){
-  //       schedulingService.deleteById(scheduling.id)
-  //     }
-  //   });
-  // };
-
   useEffect(() => {
     schedulingExists();
     // deleteOldScheduling();
   });
+
+  if (!isLogged) {
+    return (
+      <div className={styles.backgroundLoading}>
+        <Lottie
+          className={styles.loadingAnimation}
+          animationData={loadingAnimation}
+          loop={true}
+        />
+      </div>
+    ); // Não renderiza nada enquanto a verificação não estiver concluída
+  }
 
   return (
     <div className={styles.background}>

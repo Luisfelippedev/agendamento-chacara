@@ -11,6 +11,7 @@ export class SchedulingService {
   public async createScheduling(scheduling: Scheduling) {
     const { clientName, cpf, date, phoneNumber, avaliableDays, forgeinKey } = scheduling;
     const allScheduling = await this.schedulingRepository.findAll();
+    
     if (allScheduling) {
       allScheduling.forEach((item) => {
         if (item.cpf == cpf) {
