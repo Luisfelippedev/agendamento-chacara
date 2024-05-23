@@ -120,6 +120,16 @@
             margin-top: 50px;
             overflow-y: auto;
             overflow-x: hidden;
+            .hoursInputsBox{
+                display: flex;
+                justify-content: flex-start;
+                gap: 16px;
+                flex-direction: column;
+
+                @media(min-width: 360px){
+                    flex-direction: row;
+                }
+            }
 
             .deleteServiceIcon{
                 display: flex;
@@ -519,17 +529,29 @@
         }
     }
 
-    @media(min-width: 1000px){
+    @media(min-width: 700px){
         .modalBox{
-            width: 50%;
+            width: 60%;
             .closeModalBox{
-                width:calc(85% - 35%);
+                width:calc(95% - 35%);
             }
         }
     }
-    @media(min-width: 1024px){
+
+    @media(min-width: 1000px){
         .modalBox{
-            width: 50%;
+            width: 40%;
+            .closeModalBox{
+                width:calc(75% - 35%);
+            }
+        }
+    }
+    @media(min-width: 1600px){
+        .modalBox{
+            width: 30%;
+            .closeModalBox{
+                width:calc(65% - 35%);
+            }
         }
     }
   }

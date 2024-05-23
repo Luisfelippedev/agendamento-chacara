@@ -806,7 +806,7 @@ export const SchedulingCard = ({
                         </div>
                       ) : (
                         <DatePicker
-                          sx={{ width: "216px" }}
+                          sx={{ width: "100%" }}
                           disabled
                           value={date}
                           label="Data:"
@@ -837,66 +837,92 @@ export const SchedulingCard = ({
                     )}
                   </div>
                 </div>
-                <div>
-                  <InputLabel id="demo-simple-select-label">
-                    Dias ocupados:
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={
-                      status === "occupied"
-                        ? numberOfBusyDays
-                        : numberOfBusyDays > availableDays
-                        ? availableDays
-                        : numberOfBusyDays
-                    }
-                    onChange={(e) => {
-                      setNumberOfBusyDays(e.target.value);
-                    }}
-                    disabled={
-                      availableDays == undefined || status == "occupied"
-                    }
-                  >
-                    {avaliableDaysProp > 1 || status == "occupied" ? (
-                      <MenuItem value={avaliableDaysProp}>
-                        {avaliableDaysProp}
-                      </MenuItem>
-                    ) : (
-                      Array.from(
-                        { length: availableDays },
-                        (_, index) => index + 1
-                      ).map((value) => (
-                        <MenuItem key={value} value={value}>
-                          {value}
-                        </MenuItem>
-                      ))
-                    )}
-                  </Select>
-                </div>
                 <div
-                  style={{ display: "flex", flexDirection: "row", gap: "15px" }}
+                  className={styles.hoursInputsBox}
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                  }}
                 >
-                  <PatternFormat
-                    required
-                    format={"##:##"}
-                    label={"Início:"}
-                    sx={{ width: "100px" }}
-                    customInput={TextField}
-                    placeholder="00:00"
-                    onChange={(e) => onChangeEntryTimeValue(e.target.value)}
-                    value={entryTime}
-                  />
-                  <PatternFormat
-                    required
-                    format={"##:##"}
-                    label={"Saída:"}
-                    sx={{ width: "100px" }}
-                    customInput={TextField}
-                    placeholder="00:00"
-                    onChange={(e) => onChangeDepartureTimeValue(e.target.value)}
-                    value={departureTime}
-                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <InputLabel id="demo-simple-select-label">
+                      Dias ocupados:
+                    </InputLabel>
+                    <Select
+                      sx={{ width: "100%" }}
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={
+                        status === "occupied"
+                          ? numberOfBusyDays
+                          : numberOfBusyDays > availableDays
+                          ? availableDays
+                          : numberOfBusyDays
+                      }
+                      onChange={(e) => {
+                        setNumberOfBusyDays(e.target.value);
+                      }}
+                      disabled={
+                        availableDays == undefined || status == "occupied"
+                      }
+                    >
+                      {avaliableDaysProp > 1 || status == "occupied" ? (
+                        <MenuItem value={avaliableDaysProp}>
+                          {avaliableDaysProp}
+                        </MenuItem>
+                      ) : (
+                        Array.from(
+                          { length: availableDays },
+                          (_, index) => index + 1
+                        ).map((value) => (
+                          <MenuItem key={value} value={value}>
+                            {value}
+                          </MenuItem>
+                        ))
+                      )}
+                    </Select>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      gap: "15px",
+                      alignItems: "flex-end",
+                      justifyContent: "center",
+                      height: "100%",
+                      flex: 1,
+                    }}
+                  >
+                    <PatternFormat
+                      required
+                      format={"##:##"}
+                      label={"Início:"}
+                      sx={{ width: "100%" }}
+                      customInput={TextField}
+                      placeholder="00:00"
+                      onChange={(e) => onChangeEntryTimeValue(e.target.value)}
+                      value={entryTime}
+                    />
+                    <PatternFormat
+                      required
+                      format={"##:##"}
+                      label={"Saída:"}
+                      sx={{ width: "100%" }}
+                      customInput={TextField}
+                      placeholder="00:00"
+                      onChange={(e) =>
+                        onChangeDepartureTimeValue(e.target.value)
+                      }
+                      value={departureTime}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -915,7 +941,7 @@ export const SchedulingCard = ({
                       onChange={(e) => onChangeInitialValue(e.target.value)}
                       value={initialValue}
                       fixedDecimalScale
-                      sx={{ width: "214px" }}
+                      sx={{ width: "100%" }}
                     />
                   </div>
                 </div>
@@ -962,7 +988,7 @@ export const SchedulingCard = ({
                             }
                             value={service.value}
                             fixedDecimalScale
-                            sx={{ width: "214px" }}
+                            sx={{ width: "100%" }}
                           />
                           <div
                             onClick={() => handleClickDeleteAdditional(index)}
