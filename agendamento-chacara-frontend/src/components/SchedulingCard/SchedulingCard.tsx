@@ -22,6 +22,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { SchedulingService } from "@/services/SchedulingService";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
+import { MdDelete } from "react-icons/md";
 const numero = require("numero-por-extenso");
 
 export interface SchedulingCardProps {
@@ -672,21 +673,20 @@ export const SchedulingCard = ({
     setNumberOfBusyDays(status == "occupied" ? avaliableDaysProp : "");
   };
 
-  // const setBusyDaysToDateObj = (value: any) => {
-  //   const dateObj = new Date(date);
-  //   let newDay = String(dateObj.getDate());
+  const handleClickDeleteAdditional = (key: any) => {
+    setAdditionalServices((prevServices: any) =>
+      prevServices.filter((_: any, i: any) => i !== key)
+    );
+  };
 
-  //   let untilTheDate = dateToString(date);
-  //   for (let i = 1; i < value; i++) {
-  //     untilTheDate = adicionarUmDia(untilTheDate);
-  //   }
-  //   newDay = newDay + " - " + untilTheDate.substring(0, 2);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const regex = /^[a-zA-Z]*$/;
 
-  //   setDateObj((prevState) => ({
-  //     ...prevState,
-  //     day: newDay,
-  //   }));
-  // };
+    if (regex.test(value)) {
+      setNewServiceName(value);
+    }
+  };
 
   return (
     isMounted && (
@@ -805,7 +805,12 @@ export const SchedulingCard = ({
                           />
                         </div>
                       ) : (
-                        <DatePicker disabled value={date} label="Data:" />
+                        <DatePicker
+                          sx={{ width: "216px" }}
+                          disabled
+                          value={date}
+                          label="Data:"
+                        />
                       )}
                     </LocalizationProvider>
                     {status === "waiting" && (
@@ -899,18 +904,20 @@ export const SchedulingCard = ({
                     Valor mínimo: *
                   </InputLabel>
 
-                  <NumericFormat
-                    required
-                    customInput={TextField}
-                    thousandSeparator={true}
-                    prefix={"R$"}
-                    decimalScale={2}
-                    placeholder="R$"
-                    onChange={(e) => onChangeInitialValue(e.target.value)}
-                    value={initialValue}
-                    fixedDecimalScale
-                    sx={{ width: "200px" }}
-                  />
+                  <div style={{ display: "flex", gap: "15px" }}>
+                    <NumericFormat
+                      required
+                      customInput={TextField}
+                      thousandSeparator={true}
+                      prefix={"R$"}
+                      decimalScale={2}
+                      placeholder="R$"
+                      onChange={(e) => onChangeInitialValue(e.target.value)}
+                      value={initialValue}
+                      fixedDecimalScale
+                      sx={{ width: "214px" }}
+                    />
+                  </div>
                 </div>
                 {additionalServices.length > 0 &&
                   // Se sim, mapeia o array para renderizar um componente para cada item
@@ -934,20 +941,36 @@ export const SchedulingCard = ({
                         >
                           Valor: *
                         </InputLabel>
-                        <NumericFormat
-                          required
-                          customInput={TextField}
-                          thousandSeparator={true}
-                          prefix={"R$"}
-                          decimalScale={2}
-                          placeholder="R$"
-                          onChange={(e) =>
-                            handleChangeServiceValue(index, e.target.value)
-                          }
-                          value={service.value}
-                          fixedDecimalScale
-                          sx={{ width: "200px" }}
-                        />
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            gap: "15px",
+                          }}
+                        >
+                          <NumericFormat
+                            required
+                            customInput={TextField}
+                            thousandSeparator={true}
+                            prefix={"R$"}
+                            decimalScale={2}
+                            placeholder="R$"
+                            onChange={(e) =>
+                              handleChangeServiceValue(index, e.target.value)
+                            }
+                            value={service.value}
+                            fixedDecimalScale
+                            sx={{ width: "214px" }}
+                          />
+                          <div
+                            onClick={() => handleClickDeleteAdditional(index)}
+                            className={styles.deleteServiceIcon}
+                          >
+                            <MdDelete color="#FF0000" size={38} />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -1202,7 +1225,8 @@ export const SchedulingCard = ({
                       <TextField
                         label="Nome:"
                         value={newServiceName}
-                        onChange={(e) => setNewServiceName(e.target.value)}
+                        // onChange={(e) => setNewServiceName(e.target.value)}
+                        onChange={handleNameChange}
                         type="text"
                         required
                         inputProps={{

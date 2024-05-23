@@ -120,6 +120,23 @@
             margin-top: 50px;
             overflow-y: auto;
             overflow-x: hidden;
+
+            .deleteServiceIcon{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.3s ease;    
+                cursor: pointer;
+                background-color: #f0f0f0;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+
+                &:hover{
+                    transform: scale(1.1); 
+                }
+
+            }
             .buttonViewAlll{
                 width: 110px;
                 font-size: 0.75rem;
