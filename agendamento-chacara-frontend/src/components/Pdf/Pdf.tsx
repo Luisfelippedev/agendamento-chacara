@@ -201,8 +201,9 @@ const ContractTemplate = ({
               <Text style={styles.regular}>
                 de Piranhas, Estado da Paraíba, neste ato representada por seu
                 proprietário Sr.º DAMOCLES MENDES DE HOLANDA, brasileiro,
-                casado, portador do documento RG nº xxxxx SPTC/GO e CPF nº
-                041.844.724-19, simplesmente denominada “LOCADORA”:
+                casado, portador do documento RG nº {process.env.OWNER_RG}{" "}
+                SPTC/GO e CPF nº {process.env.OWNER_CPF}, simplesmente
+                denominada “LOCADORA”:
               </Text>
             </View>
           </View>
