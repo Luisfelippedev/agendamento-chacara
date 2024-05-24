@@ -681,7 +681,7 @@ export const SchedulingCard = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const regex = /^[a-zA-Z]*$/;
+    const regex = /^[a-zA-Z\s]*$/;
 
     if (regex.test(value)) {
       setNewServiceName(value);
