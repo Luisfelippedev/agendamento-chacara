@@ -576,6 +576,18 @@ export default function ContractGenerator({
   //   };
   // };
 
+  function getFirstAndSecondName(string:any) {
+    // Divide a string em um array de palavras
+    const nameParts = string.trim().split(/\s+/);
+  
+    // Pega o primeiro e o segundo nome, se existirem
+    const firstName = nameParts[0] || '';
+    const secondName = nameParts[1] || '';
+  
+    // Retorna a junção do primeiro e segundo nome
+    return `${firstName} ${secondName}`.trim();
+  }
+
   return (
     <>
       <div>
@@ -592,7 +604,7 @@ export default function ContractGenerator({
               entryTime={entryTime}
             />
           }
-          fileName="report.pdf"
+          fileName={getFirstAndSecondName(fullName)}
         >
           {/* {({ blob, url, loading, error }) => {
   !loading && handleClickButton(blob);
