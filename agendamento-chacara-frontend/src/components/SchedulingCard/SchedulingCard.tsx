@@ -14,7 +14,7 @@ import "dayjs/locale/pt-br";
 import { ptBR } from "date-fns/locale";
 import { Locale, addYears, format, parse } from "date-fns";
 import { FaDownload } from "react-icons/fa6";
-import { IoMdSend } from "react-icons/io";
+import { TfiPencilAlt } from "react-icons/tfi";
 import { IoCheckmarkDone } from "react-icons/io5";
 import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
 import { VscDiffAdded } from "react-icons/vsc";
@@ -1094,11 +1094,17 @@ export const SchedulingCard = ({
                         }
                       />
                     </Button>
-
-                    {/* <Button variant="contained" className={styles.sendButton}>
-                      <p className={styles.textSendButton}>ENVIAR</p>
-                      <IoMdSend className={styles.sendIcon} size={30} />
-                    </Button> */}
+                    <Button>
+                      <Button
+                        href="https://assinador.iti.br/assinatura/index.xhtml"
+                        target="_blank"
+                        variant="contained"
+                        className={styles.sendButton}
+                      >
+                        <p className={styles.textSendButton}>ASSINAR</p>
+                        <TfiPencilAlt className={styles.sendIcon} size={30} />
+                      </Button>
+                    </Button>
                   </div>
                   <div className={styles.reserveButtonBox}>
                     {status == "occupied" ? (

@@ -216,7 +216,7 @@
                 .downloadButtonsBox{
                     display: flex;
                     justify-content: flex-start;
-                    gap: 15px;
+                    gap: 10px;
                     @media(min-width: 500px){
                         justify-content: flex-start;
                     }
@@ -250,12 +250,14 @@
                       .sendButton {
                         display: inline-flex;
                         align-items: center;
-                        padding: 8px 10px 8px 16px;
+                        padding: 8px 8px 8px 10px;
                         border-radius: 8px;
                         color: #ffffff; /* Cor do texto branco */
                         font-size: 0.9rem;
                         font-weight: bold;
+                        text-transform: uppercase;
                         text-decoration: none;
+                        transition: background-color 0.3s ease;
                         cursor: pointer;
                         border: none;
                       
