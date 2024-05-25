@@ -6,10 +6,12 @@ import {
   StyleSheet,
   PDFDownloadLink,
   Font,
+  Image,
   PDFViewer,
 } from "@react-pdf/renderer";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+// import assinaturaImg from "../../../public/assinatura.png";
 
 Font.register({
   family: "Roboto",
@@ -92,10 +94,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 3,
   },
+  image: {
+    width: 100,
+    height: 50,
+    objectFit: "contain", // Manter a proporção da imagem
+  },
 });
 
 // Create Document Component
-const ContractTemplate = ({
+export const ContractTemplate = ({
   fullName,
   phoneNumber,
   cpf,
@@ -172,6 +179,8 @@ const ContractTemplate = ({
 
     return `${day}/${month}/${year}`;
   }
+
+  const assinaturaImg = "/assinatura.png";
 
   return (
     <Document>
@@ -510,7 +519,10 @@ const ContractTemplate = ({
                 }}
               >
                 <Text>São José de Piranhas {getTodayDate()} </Text>
-                <Text>____________________________</Text>
+
+                <Text style={{ marginTop: 55 }}>
+                  ____________________________
+                </Text>
                 <Text>Locatário(a)</Text>
               </View>
             </View>
@@ -522,6 +534,8 @@ const ContractTemplate = ({
                 gap: 5,
               }}
             >
+              {/* eslint-disable-next-line jsx-a11y/alt-text */}
+              <Image style={styles.image} src={assinaturaImg} />
               <View
                 style={{
                   display: "flex",
@@ -576,14 +590,14 @@ export default function ContractGenerator({
   //   };
   // };
 
-  function getFirstAndSecondName(string:any) {
+  function getFirstAndSecondName(string: any) {
     // Divide a string em um array de palavras
     const nameParts = string.trim().split(/\s+/);
-  
+
     // Pega o primeiro e o segundo nome, se existirem
-    const firstName = nameParts[0] || '';
-    const secondName = nameParts[1] || '';
-  
+    const firstName = nameParts[0] || "";
+    const secondName = nameParts[1] || "";
+
     // Retorna a junção do primeiro e segundo nome
     return `${firstName} ${secondName}`.trim();
   }
