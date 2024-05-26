@@ -180,6 +180,34 @@ export const ContractTemplate = ({
     return `${day}/${month}/${year}`;
   }
 
+  function isNextDay() {
+    // Divide as strings de entrada e saída no formato "HH:MM"
+    const [entryHours, entryMinutes] = entryTime.split(":").map(Number);
+    const [departureHours, departureMinutes] = departureTime.split(":").map(Number);
+
+    // Crie objetos Date para os horários de entrada e saída
+    const entryDate = new Date();
+    entryDate.setHours(entryHours, entryMinutes, 0, 0);
+
+    const departureDate = new Date();
+    departureDate.setHours(departureHours, departureMinutes, 0, 0);
+
+    // Verifique se o horário de saída é antes do horário de entrada, indicando que é no dia seguinte
+    if (departureDate <= entryDate) {
+        let dateValue = dateToString(date);
+        dateValue = adicionarUmDia(dateValue);
+        return dateValue.replace(/-/g, "/");
+    }
+    return dateToDateWithBar(date);
+}
+
+  function getFinishScheduleString() {
+    if (Number(numberOfBusyDays) > 1) {
+      return `até às ${departureTime}h do dia de ${calculateEndDate()}`;
+    }
+    return `até às ${departureTime}h do dia de ${isNextDay()}`;
+  }
+
   const assinaturaImg = "/assinatura.png";
 
   return (
@@ -461,8 +489,9 @@ export const ContractTemplate = ({
               </View>
               <Text style={styles.listItem}>
                 a devolver o espaço nas condições de asseio e manutenção já
-                descritas neste contrato, impreterivelmente até às 09:00h do dia
-                de , nas mesmas condições como foi recebido.
+                descritas neste contrato, impreterivelmente{" "}
+                {getFinishScheduleString()}, nas mesmas condições como foi
+                recebido.
               </Text>
             </View>
 

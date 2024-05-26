@@ -14,7 +14,7 @@ import "dayjs/locale/pt-br";
 import { ptBR } from "date-fns/locale";
 import { Locale, addYears, format, parse } from "date-fns";
 import { FaDownload } from "react-icons/fa6";
-import { TfiPencilAlt } from "react-icons/tfi";
+import { RiFolderSharedFill } from "react-icons/ri";
 import { IoCheckmarkDone } from "react-icons/io5";
 import ContractGenerator, { IContractTemplateProps } from "../Pdf/Pdf";
 import { VscDiffAdded } from "react-icons/vsc";
@@ -670,6 +670,7 @@ export const SchedulingCard = ({
     setEntryTime("");
     setDepartureTime("");
     setAdditionalServices([]);
+    setPhoneNumberFormated(formatPhoneNumber(phoneNumber));
     setNumberOfBusyDays(status == "occupied" ? avaliableDaysProp : "");
   };
 
@@ -1094,15 +1095,19 @@ export const SchedulingCard = ({
                         }
                       />
                     </Button>
-                    <Button>
+                    <Button disabled={phoneNumberFormated.length < 13}>
                       <Button
-                        href="https://assinador.iti.br/assinatura/index.xhtml"
+                        href="https://api.whatsapp.com/send?phone=5583994008849&text=*CONTRATO%20-%20Loca%C3%A7%C3%A3o%20da%20Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Assinatura%20Digital:*%20Baixe%20o%20PDF%20do%20contrato%20a%20seguir%20e%20assine%20agora%20mesmo%20atrav%C3%A9s%20de%20uma%20das%20plataformas%20a%20seguir:%0A%0A*1*%20-%20https://assinador.iti.br/assinatura/index.xhtml%0A*ou*%0A*2*%20-%20https://www.autentique.com.br/%0A%0APor%20gentileza,%20ap%C3%B3s%20assinar%20o%20documento,%20na%20pr%C3%B3pria%20plataforma%20baixe%20o%20PDF%20assinado%20e%20envie%20aqui%20mesmo."
                         target="_blank"
                         variant="contained"
+                        disabled={phoneNumberFormated.length < 13}
                         className={styles.sendButton}
                       >
-                        <p className={styles.textSendButton}>ASSINAR</p>
-                        <TfiPencilAlt className={styles.sendIcon} size={30} />
+                        <p className={styles.textSendButton}>ENVIAR</p>
+                        <RiFolderSharedFill
+                          className={styles.sendIcon}
+                          size={30}
+                        />
                       </Button>
                     </Button>
                   </div>
