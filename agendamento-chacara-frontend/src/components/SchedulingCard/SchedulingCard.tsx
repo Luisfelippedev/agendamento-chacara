@@ -689,6 +689,7 @@ export const SchedulingCard = ({
     }
   };
 
+
   return (
     isMounted && (
       <>
@@ -1097,7 +1098,7 @@ export const SchedulingCard = ({
                     </Button>
                     <Button disabled={phoneNumberFormated.length < 13}>
                       <Button
-                        href="https://api.whatsapp.com/send?phone=5583994008849&text=*CONTRATO%20-%20Loca%C3%A7%C3%A3o%20da%20Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Assinatura%20Digital:*%20Baixe%20o%20PDF%20do%20contrato%20a%20seguir%20e%20assine%20agora%20mesmo%20atrav%C3%A9s%20de%20uma%20das%20plataformas%20a%20seguir:%0A%0A*1*%20-%20https://assinador.iti.br/assinatura/index.xhtml%0A*ou*%0A*2*%20-%20https://www.autentique.com.br/%0A%0APor%20gentileza,%20ap%C3%B3s%20assinar%20o%20documento,%20na%20pr%C3%B3pria%20plataforma%20baixe%20o%20PDF%20assinado%20e%20envie%20aqui%20mesmo."
+                        href={`https://api.whatsapp.com/send?phone=55${phoneNumber}&text=*CONTRATO%20-%20Loca%C3%A7%C3%A3o%20da%20Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Assinatura%20Digital:*%20Baixe%20o%20PDF%20do%20contrato%20a%20seguir%20e%20assine%20agora%20mesmo%20atrav%C3%A9s%20de%20uma%20das%20plataformas%20a%20seguir:%0A%0A*1*%20-%20https://assinador.iti.br/assinatura/index.xhtml%0A*ou*%0A*2*%20-%20https://www.autentique.com.br/%0A%0APor%20gentileza,%20ap%C3%B3s%20assinar%20o%20documento,%20na%20pr%C3%B3pria%20plataforma%20baixe%20o%20PDF%20assinado%20e%20envie%20aqui%20mesmo.`}
                         target="_blank"
                         variant="contained"
                         disabled={phoneNumberFormated.length < 13}
