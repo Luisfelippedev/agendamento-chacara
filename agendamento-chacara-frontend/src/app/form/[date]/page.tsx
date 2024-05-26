@@ -264,7 +264,7 @@ const Form = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <PatternFormat
             format="+55 (##) #####-####"
-            label={"Telefone:"}
+            label={"Whatsapp:"}
             mask="_"
             onChange={(e) => onPhoneNumberInputChange(e.target.value)}
             value={phoneNumberValue}
