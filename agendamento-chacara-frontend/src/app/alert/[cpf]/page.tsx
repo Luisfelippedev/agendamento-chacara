@@ -19,7 +19,31 @@ const AlertPage = () => {
   const schedulingService = new SchedulingService();
   const [isLogged, setIsLogged] = useState(false);
 
+  const delay = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
   const schedulingExists = async () => {
+    const filteredCpf = params.cpf.replace(/\D/g, "");
+    try {
+      const schedulingByCpf: any = await schedulingService.getByCpf(
+        filteredCpf
+      );
+      setIsLogged(true);
+      const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
+      await delay(3000);
+      window.open(
+        `https://api.whatsapp.com/send?phone=5583994008849&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Data:*%20${date.replace(
+          /-/g,
+          "/"
+        )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
+      );
+    } catch (error) {
+      router.push("/reservation");
+    }
+  };
+
+  const handleClickWhatsappButton = async () => {
     const filteredCpf = params.cpf.replace(/\D/g, "");
     try {
       const schedulingByCpf: any = await schedulingService.getByCpf(
@@ -34,7 +58,7 @@ const AlertPage = () => {
         )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
       );
     } catch (error) {
-      router.push("/reservation");
+      return
     }
   };
 
@@ -90,7 +114,8 @@ const AlertPage = () => {
             abaixo!
           </p>
           <Button
-            href="https://wa.me/5583993190450?text=Ol%C3%A1,%20solicitei%20uma%20reserva%20para%20o%20dia%20xx/xx/xxxx."
+            href=""
+            onClick={handleClickWhatsappButton}
             target="_blank"
             className={styles.button}
             variant="outlined"
