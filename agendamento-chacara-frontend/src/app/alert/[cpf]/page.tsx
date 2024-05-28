@@ -33,7 +33,7 @@ const AlertPage = () => {
       const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
       await delay(2000);
       window.open(
-        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A*Data:*%20${date.replace(
+        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A%0A*Data:*%20${date.replace(
           /-/g,
           "/"
         )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
@@ -52,7 +52,7 @@ const AlertPage = () => {
       setIsLogged(true);
       const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
       window.open(
-        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A*Data:*%20${date.replace(
+        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A%0A*Data:*%20${date.replace(
           /-/g,
           "/"
         )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
