@@ -38,6 +38,7 @@ export interface IContractTemplateProps {
   entryTime: string;
   numberOfBusyDays: string;
   date: any;
+  additionalServices: Array<any>;
 }
 
 const styles = StyleSheet.create({
@@ -95,8 +96,8 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   image: {
-    width: 100,
-    height: 50,
+    width: "100%", // Ajuste conforme necessário
+    height: "auto", // Ajuste conforme necessário
     objectFit: "contain", // Manter a proporção da imagem
   },
 });
@@ -111,6 +112,7 @@ export const ContractTemplate = ({
   numberOfBusyDays,
   date,
   entryTime,
+  additionalServices,
 }: IContractTemplateProps) => {
   function dateToDateWithBar(dateString: string) {
     const date = new Date(dateString);
@@ -183,7 +185,9 @@ export const ContractTemplate = ({
   function isNextDay() {
     // Divide as strings de entrada e saída no formato "HH:MM"
     const [entryHours, entryMinutes] = entryTime.split(":").map(Number);
-    const [departureHours, departureMinutes] = departureTime.split(":").map(Number);
+    const [departureHours, departureMinutes] = departureTime
+      .split(":")
+      .map(Number);
 
     // Crie objetos Date para os horários de entrada e saída
     const entryDate = new Date();
@@ -194,12 +198,12 @@ export const ContractTemplate = ({
 
     // Verifique se o horário de saída é antes do horário de entrada, indicando que é no dia seguinte
     if (departureDate <= entryDate) {
-        let dateValue = dateToString(date);
-        dateValue = adicionarUmDia(dateValue);
-        return dateValue.replace(/-/g, "/");
+      let dateValue = dateToString(date);
+      dateValue = adicionarUmDia(dateValue);
+      return dateValue.replace(/-/g, "/");
     }
     return dateToDateWithBar(date);
-}
+  }
 
   function getFinishScheduleString() {
     if (Number(numberOfBusyDays) > 1) {
@@ -207,6 +211,16 @@ export const ContractTemplate = ({
     }
     return `até às ${departureTime}h do dia de ${isNextDay()}`;
   }
+
+  const createServiceString = () => {
+    if (additionalServices.length > 0) {
+      return additionalServices
+        .map((service) => service.serviceName)
+        .join(", ");
+    }
+
+    return null;
+  };
 
   const assinaturaImg = "/assinatura.png";
 
@@ -227,6 +241,11 @@ export const ContractTemplate = ({
           <Text>{numberOfBusyDays}</Text>
           <Text>{entryTime}</Text>
           <Text>{String(date)}</Text> */}
+          {/* <Text>{createServiceString()}</Text> */}
+          {/* 
+          {additionalServices.map((item, index) => (
+            <Text key={index}>{item.serviceName}</Text>
+          ))} */}
           <View style={{ marginBottom: 10 }}>
             <View style={styles.sectionTwoText}>
               <Text style={styles.bold}>LOCADORA:</Text>
@@ -280,10 +299,7 @@ export const ContractTemplate = ({
                   destina-se exclusivamente a atividades de cunho
                 </Text>
               </View>
-              <Text style={styles.listItem}>
-                familiar, social e cultural. Não será admitida a realização de
-                eventos com acesso livre ao público, com finalidade lucrativa.
-              </Text>
+              <Text style={styles.listItem}>familiar, social e cultural.</Text>
             </View>
 
             <View>
@@ -295,7 +311,7 @@ export const ContractTemplate = ({
                 </Text>
               </View>
               <Text style={styles.listItem}>
-                de 150 (cento e cinqüenta) pessoas.
+                de 400 (quatrocentos) pessoas.
               </Text>
             </View>
 
@@ -322,12 +338,12 @@ export const ContractTemplate = ({
               </View>
               <Text style={styles.listItem}>
                 e feminino, área da cozinha, área da piscina, para realização do
-                evento acima descrito. Com os seguintes itens: 1 TV 29’ Samsung
-                com controle remoto, 1 aparelho de DVD Philco com controle
-                remoto, 1 aparelho de som Philips com duas caixas de 40W, 1
-                freezer horizontal 2 portas (240 litros), 1 fogão industrial 2
-                bocas (Dako), 1 botijão de gás, 4 banquetas de madeira, 2
-                grelhas para churrasco.
+                evento acima descrito. Com os seguintes itens: 1 TV com controle
+                remoto, 1 aparelho de DVD Philco com controle remoto, 1 aparelho
+                de som Philips com duas caixas de 40W, 1 freezer horizontal 2
+                portas (240 litros), 1 fogão industrial 2 bocas (Dako), 1
+                botijão de gás, 4 banquetas de madeira, 2 grelhas para
+                churrasco.
               </Text>
             </View>
             {/* <View style={{ marginTop: 40 }} /> */}
@@ -394,7 +410,7 @@ export const ContractTemplate = ({
             </View>
 
             <View>
-              <View style={{ marginTop: 20 }} />
+              <View style={{ marginTop: 50 }} />
               <View style={styles.sectionTwoText}>
                 <Text style={styles.bold}>7)</Text>
                 <Text style={styles.regular}>
@@ -525,6 +541,18 @@ export const ContractTemplate = ({
                 espaço, antes, durante e após o evento.
               </Text>
             </View>
+
+            {createServiceString() !== null && (
+              <View>
+                <View style={styles.sectionTwoText}>
+                  <Text style={styles.bold}>14)</Text>
+                  <Text style={styles.regular}>
+                    O locatário terá direito aos seguintes serviços:
+                  </Text>
+                </View>
+                <Text style={styles.listItem}>{createServiceString()}.</Text>
+              </View>
+            )}
           </View>
 
           <View
@@ -533,6 +561,7 @@ export const ContractTemplate = ({
               flexDirection: "row",
               width: "100%",
               gap: 30,
+              marginTop: 40,
             }}
           >
             <View
@@ -545,12 +574,13 @@ export const ContractTemplate = ({
                 style={{
                   display: "flex",
                   gap: 20,
+                  marginTop: 70,
                 }}
               >
                 <Text>São José de Piranhas {getTodayDate()} </Text>
 
-                <Text style={{ marginTop: 55 }}>
-                  ____________________________
+                <Text style={{ marginTop: 116 }}>
+                  _______________________________________
                 </Text>
                 <Text>Locatário(a)</Text>
               </View>
@@ -558,9 +588,9 @@ export const ContractTemplate = ({
 
             <View
               style={{
-                marginTop: 34,
+                marginTop: 5,
                 display: "flex",
-                gap: 5,
+                gap: 0,
               }}
             >
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
@@ -571,7 +601,7 @@ export const ContractTemplate = ({
                   gap: 20,
                 }}
               >
-                <Text>____________________________</Text>
+                <Text>_______________________________________</Text>
                 <View
                   style={{
                     display: "flex",
@@ -609,6 +639,7 @@ export default function ContractGenerator({
     phoneNumber,
     date,
     entryTime,
+    additionalServices,
   } = data;
 
   // const handleClickButton = async (blob: any) => {
@@ -637,6 +668,7 @@ export default function ContractGenerator({
         <PDFDownloadLink
           document={
             <ContractTemplate
+              additionalServices={additionalServices}
               cpf={cpf}
               departureTime={departureTime}
               totalValue={totalValue}

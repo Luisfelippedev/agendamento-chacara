@@ -310,7 +310,8 @@ export const SchedulingCard = ({
         numberOfBusyDays: numberOfBusyDays,
         phoneNumber: phoneNumberFormated,
         date: date,
-      };
+        additionalServices: additionalServices
+      }
       return dateProps;
     }
 
@@ -346,6 +347,7 @@ export const SchedulingCard = ({
       numberOfBusyDays: numberOfBusyDays,
       phoneNumber: phoneNumberFormated,
       date: date,
+      additionalServices: additionalServices
     };
 
     return dateProps;
