@@ -427,20 +427,6 @@ export const ContractTemplate = ({
 
             <View>
               <View style={styles.sectionTwoText}>
-                <Text style={styles.bold}>PARÁGRAFO ÚNICO:</Text>
-                <Text style={styles.regular}>
-                  Não será permitido som automotivo no local, o volume
-                </Text>
-              </View>
-              <Text style={styles.listItem}>
-                do som diurno (das 07:00 as 22:00 horas) não poderá ultrapassar
-                os 50 decibéis, e em horário noturno (das 22:00 das 07:00 horas)
-                não poderá ultrapassar os 30 decibéis.
-              </Text>
-            </View>
-
-            <View>
-              <View style={styles.sectionTwoText}>
                 <Text style={styles.bold}>8)</Text>
                 <Text style={styles.regular}>
                   Os danos causados ao patrimônio serão reparados em comum
@@ -542,10 +528,35 @@ export const ContractTemplate = ({
               </Text>
             </View>
 
+            <View>
+              <View style={styles.sectionTwoText}>
+                <Text style={styles.bold}>14)</Text>
+                <Text style={styles.regular}>
+                  O LOCATÁRIO se responsabiliza integralmente por qualquer tipo
+                  de taxa,
+                </Text>
+              </View>
+              <Text style={styles.listItem}>
+                multa ou penalidade que venha a ser imposta por órgãos de
+                fiscalização ou judiciais, seja na esfera municipal, estadual ou
+                federal, decorrente da utilização da chácara objeto deste
+                contrato. Além do mais, O LOCATÁRIO compromete-se a arcar com
+                todos os custos e encargos relacionados a tais penalidades,
+                isentando completamente o LOCADOR de qualquer responsabilidade
+                ou obrigação financeira que possa surgir em decorrência dessas
+                infrações. Caso o LOCADOR venha a ser notificado ou cobrado por
+                tais penalidades, o LOCATÁRIO se obriga a reembolsar prontamente
+                o LOCADOR por quaisquer valores pagos ou despesas incorridas.
+                Esta cláusula permanece válida e eficaz mesmo após o término do
+                período de locação, abrangendo todas as infrações ocorridas
+                durante a vigência do contrato.
+              </Text>
+            </View>
+
             {createServiceString() !== null && (
               <View>
                 <View style={styles.sectionTwoText}>
-                  <Text style={styles.bold}>14)</Text>
+                  <Text style={styles.bold}>15)</Text>
                   <Text style={styles.regular}>
                     O locatário terá direito aos seguintes serviços:
                   </Text>
@@ -574,7 +585,7 @@ export const ContractTemplate = ({
                 style={{
                   display: "flex",
                   gap: 20,
-                  marginTop: 70,
+                  marginTop: 0,
                 }}
               >
                 <Text>São José de Piranhas {getTodayDate()} </Text>
