@@ -125,12 +125,9 @@ const ReservationPage = () => {
     const simpleDateFormated = dayjsDateToSimpleDate(dateValue);
     setDateFromBd(simpleDateFormated);
 
-    console.log(dateValue);
-
     let newArr = occupiedDays.filter((item: any) => {
       return String(item) == String(dateValue);
     });
-    console.log(newArr);
 
     if (newArr.length > 0) {
       setSchedulingStatus(true);
@@ -181,9 +178,6 @@ const ReservationPage = () => {
     );
   };
 
-  useEffect(() => {
-    console.log(occupiedDays);
-  }, [occupiedDays]);
   return (
     <div className={styles.background}>
       <Header page="reservationPage" />

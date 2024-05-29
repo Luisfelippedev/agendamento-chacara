@@ -642,14 +642,6 @@ export default function ContractGenerator({
     additionalServices,
   } = data;
 
-  // const handleClickButton = async (blob: any) => {
-  //   const render = new FileReader();
-  //   render.readAsDataURL(blob);
-  //   render.onloadend = () => {
-  //     console.log(render.result);
-  //   };
-  // };
-
   function getFirstAndSecondName(string: any) {
     // Divide a string em um array de palavras
     const nameParts = string.trim().split(/\s+/);
