@@ -166,7 +166,6 @@ const Form = () => {
     setIsValidCpf(true)
 
     let isValid = isValidCPF(cpfValue);
-    console.log(isValid);
 
     if (isValid) {
       createScheduling();

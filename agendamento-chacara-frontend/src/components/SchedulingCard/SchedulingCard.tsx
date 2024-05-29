@@ -166,7 +166,6 @@ export const SchedulingCard = ({
 
   const searchTemporaryValuesInLocalStorage = () => {
     const temporaryDataObject = getItemWithExpiration(`temporaryData${id}`);
-    console.log(temporaryDataObject);
     // const temporaryData = localStorage.getItem("temporaryData" + id);
     if (temporaryDataObject) {
       // const temporaryDataObject = JSON.parse(temporaryData);
@@ -187,7 +186,6 @@ export const SchedulingCard = ({
       setCpfClient(cpf);
       setIsTemporaryValues(true);
     }
-    console.log("TESTEE");
   };
 
   useEffect(() => {
@@ -284,7 +282,6 @@ export const SchedulingCard = ({
 
   function formatCurrency(value: any) {
     // Formata o número para o formato de moeda brasileira
-    console.log(value);
     if (isNaN(value)) {
       return "";
     }
@@ -328,7 +325,6 @@ export const SchedulingCard = ({
       numero.estilo.monetario
     );
     const finalValue = `${totalValueStringBrl} (${totalValueInFull})`;
-    console.log(date);
 
     const formattedCPF = cpfClient.replace(
       /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
@@ -336,7 +332,6 @@ export const SchedulingCard = ({
     );
 
     const dateStringToPdf = date;
-    console.log(dateStringToPdf);
 
     const dateProps: IContractTemplateProps = {
       cpf: formattedCPF,
@@ -503,8 +498,6 @@ export const SchedulingCard = ({
         );
         temporaryDataObject.expiration = expirationDate.toISOString();
 
-        console.log("nunesmama2" + temporaryDataObject.expiration);
-
         const temporaryDataString = JSON.stringify(temporaryDataObject);
         localStorage.setItem("temporaryData" + id, temporaryDataString);
       }
@@ -515,14 +508,6 @@ export const SchedulingCard = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log(
-  //     "aqui" +
-  //       currentChangeDateValue +
-  //       " " +
-  //       transformarData(currentChangeDateValue)
-  //   );
-  // }, currentChangeDateValue);
 
   function verificarFormatoString(string: any) {
     // Expressão regular para verificar o formato xx-xx-xxxx

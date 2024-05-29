@@ -264,8 +264,6 @@ const DashboardPage = () => {
       return item.date === simpleDateFormated;
     });
 
-    console.log(newArr);
-
     if (newArr.length > 0) {
       setNumberOfSchedulings(newArr.length);
       let foundOccupied = false; // Controle para verificar se encontramos um status "occupied"
@@ -343,11 +341,6 @@ const DashboardPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // const deleteOldTemporaryValuesInLocalStorage = () => {
-  //   occupiedDays.forEach((item: any) => {
-  //     if (item.id) console.log("aquiii teste" + item.id);
-  //   });
-  // };
 
   useEffect(() => {
     deleteOldScheduling();
