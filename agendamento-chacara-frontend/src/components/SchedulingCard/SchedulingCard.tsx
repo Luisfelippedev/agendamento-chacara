@@ -307,8 +307,8 @@ export const SchedulingCard = ({
         numberOfBusyDays: numberOfBusyDays,
         phoneNumber: phoneNumberFormated,
         date: date,
-        additionalServices: additionalServices
-      }
+        additionalServices: additionalServices,
+      };
       return dateProps;
     }
 
@@ -342,7 +342,7 @@ export const SchedulingCard = ({
       numberOfBusyDays: numberOfBusyDays,
       phoneNumber: phoneNumberFormated,
       date: date,
-      additionalServices: additionalServices
+      additionalServices: additionalServices,
     };
 
     return dateProps;
@@ -428,7 +428,7 @@ export const SchedulingCard = ({
     });
 
     const currentDate = new Date();
-    const isDisabled = currentDate.getDate() > day.getDate(); // Verificar se o dia é anterior ao dia atual
+    const isDisabled = currentDate.setDate(currentDate.getDate() - 1) > day; // Verificar se o dia é anterior ao dia atual
 
     return (
       <PickersDay
@@ -507,7 +507,6 @@ export const SchedulingCard = ({
       return;
     }
   };
-
 
   function verificarFormatoString(string: any) {
     // Expressão regular para verificar o formato xx-xx-xxxx
@@ -675,7 +674,6 @@ export const SchedulingCard = ({
       setNewServiceName(value);
     }
   };
-
 
   return (
     isMounted && (
