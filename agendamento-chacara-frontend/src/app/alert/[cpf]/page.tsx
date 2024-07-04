@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { SchedulingService } from "@/services/SchedulingService";
 import loadingAnimation from "../../../../public/loading-animation.json";
-import { isBefore, parse, startOfDay } from "date-fns";
 
 const AlertPage = () => {
   const params = useParams<{ cpf: string }>();
@@ -19,55 +18,33 @@ const AlertPage = () => {
   const schedulingService = new SchedulingService();
   const [isLogged, setIsLogged] = useState(false);
 
-  const delay = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-
-  const schedulingExists = async () => {
+  const schedulingExists = async (windowReference: Window | null) => {
     const filteredCpf = params.cpf.replace(/\D/g, "");
     try {
-      const schedulingByCpf: any = await schedulingService.getByCpf(
-        filteredCpf
-      );
+      const schedulingByCpf: any = await schedulingService.getByCpf(filteredCpf);
       setIsLogged(true);
       const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
-      await delay(2000);
-      window.open(
-        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A%0A*Data:*%20${date.replace(
+      if (windowReference) {
+        windowReference.location.href = `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A%0A*Data:*%20${date.replace(
           /-/g,
           "/"
-        )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
-      );
+        )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`;
+      }
     } catch (error) {
+      if (windowReference) windowReference.close();
       router.push("/reservation");
     }
   };
 
-  const handleClickWhatsappButton = async () => {
-    const filteredCpf = params.cpf.replace(/\D/g, "");
-    try {
-      const schedulingByCpf: any = await schedulingService.getByCpf(
-        filteredCpf
-      );
-      setIsLogged(true);
-      const { clientName, cpf, date, phoneNumber } = schedulingByCpf[0];
-      window.open(
-        `https://api.whatsapp.com/send?phone=5583991921727&text=*Ch%C3%A1cara%20do%20Dand%C3%A3o*%20(%20https://www.dandaochacara.com.br/login%20)%0A%0A*Data:*%20${date.replace(
-          /-/g,
-          "/"
-        )}%0A*Nome:*%20${clientName}%0A*Cpf:*%20${cpf}%0A*Telefone:*%20${phoneNumber}`
-      );
-    } catch (error) {
-      return;
-    }
+  const handleClickWhatsappButton = () => {
+    const windowReference = window.open("");
+    schedulingExists(windowReference);
   };
 
-  // danda phoneNumber: 5583991921727
-
   useEffect(() => {
-    schedulingExists();
-    // deleteOldScheduling();
-  });
+    const windowReference = window.open("");
+    schedulingExists(windowReference);
+  }, []);
 
   if (!isLogged) {
     return (
@@ -78,7 +55,7 @@ const AlertPage = () => {
           loop={true}
         />
       </div>
-    ); // Não renderiza nada enquanto a verificação não estiver concluída
+    );
   }
 
   return (
