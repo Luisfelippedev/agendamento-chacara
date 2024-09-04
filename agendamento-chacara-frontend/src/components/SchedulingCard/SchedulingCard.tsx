@@ -23,6 +23,7 @@ import { SchedulingService } from "@/services/SchedulingService";
 import changeDateIcon from "../../../public/change-date-icon.png";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
+import AppConfirmDialog from "../AppConfirmDialog";
 const numero = require("numero-por-extenso");
 
 export interface SchedulingCardProps {
@@ -93,6 +94,20 @@ export const SchedulingCard = ({
   const [dateIsOccupied, setDateIsOccupied]: any = useState();
   const [availableDays, setAvailableDays]: any = useState();
   const [isTemporaryValues, setIsTemporaryValues]: any = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleDeny = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleConfirm = async () => {
+    try {
+      await schedulingService.deleteById(id);
+      window.location.reload();
+    } catch (error) {
+      console.log("delete error", error);
+    }
+  };
 
   const [currentChangeDateValue, setCurrentChangeDateValue]: any =
     useState(null);
@@ -1014,86 +1029,98 @@ export const SchedulingCard = ({
                 </div>
                 <div className={styles.buttonsSubmitBox}>
                   <div className={styles.downloadButtonsBox}>
-                    <Button
-                      disabled={
-                        fullNameClient.length < 5 ||
-                        phoneNumberFormated.length < 13 ||
-                        cpfClient.length < 11 ||
-                        entryTime == "" ||
-                        departureTime == "" ||
-                        numberOfBusyDays == "" ||
-                        // parseInt(entryTime, 10) < 1000 ||
-                        // parseInt(departureTime, 10) < 1000 ||
-                        isNaN(initialValue) ||
-                        initialValue == undefined ||
-                        // (additionalServices.length > 0 &&
-                        //   additionalServices.every(
-                        //     (service: any) =>
-                        //       isNaN(service.value) ||
-                        //       service.value == undefined ||
-                        //       service.value == ""
-                        //   ))
-                        (additionalServices.length > 0 &&
-                          additionalServices.some(
-                            (service: any) =>
-                              isNaN(service.value) ||
-                              service.value === undefined ||
-                              service.value === ""
-                          ))
-                      }
-                    >
-                      <ContractGenerator
-                        data={getDataToContractPdf()}
-                        childComponent={
-                          <Button
-                            onClick={setTemporaryValuesInLocalStorage}
-                            variant="contained"
-                            className={styles.downloadButton}
-                            style={{
-                              backgroundColor:
-                                fullNameClient.length < 5 ||
-                                phoneNumberFormated.length < 13 ||
-                                cpfClient.length < 11 ||
-                                entryTime == "" ||
-                                departureTime == "" ||
-                                entryTime.length < 5 ||
-                                departureTime.length < 5 ||
-                                numberOfBusyDays == "" ||
-                                isNaN(initialValue) ||
-                                initialValue == undefined ||
-                                (additionalServices.length > 0 &&
-                                  additionalServices.some(
-                                    (service: any) =>
-                                      isNaN(service.value) ||
-                                      service.value === undefined ||
-                                      service.value === ""
-                                  ))
-                                  ? "#ad7f7f"
-                                  : "#d32f2f",
-                            }}
-                          >
-                            <p className={styles.textDownloadButton}>PDF</p>
-                            <FaDownload
-                              className={styles.downloadIcon}
-                              size={30}
-                            />
-                          </Button>
-                        }
-                      />
-                    </Button>
-                    <Button disabled={phoneNumberFormated.length < 13}>
+                    <div>
                       <Button
-                        href={`https://api.whatsapp.com/send?phone=55${phoneNumber}&text=*CONTRATO%20-%20Loca%C3%A7%C3%A3o%20da%20Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Assinatura%20Digital:*%20Baixe%20o%20PDF%20do%20contrato%20a%20seguir%20e%20assine%20agora%20mesmo%20atrav%C3%A9s%20de%20uma%20das%20plataformas%20a%20seguir:%0A%0A*1*%20-%20https://assinador.iti.br/assinatura/index.xhtml%0A*ou*%0A*2*%20-%20https://www.autentique.com.br/%0A%0APor%20gentileza,%20ap%C3%B3s%20assinar%20o%20documento,%20na%20pr%C3%B3pria%20plataforma%20baixe%20o%20PDF%20assinado%20e%20envie%20aqui%20mesmo.`}
-                        target="_blank"
-                        variant="contained"
-                        disabled={phoneNumberFormated.length < 13}
-                        className={styles.sendButton}
+                        disabled={
+                          fullNameClient.length < 5 ||
+                          phoneNumberFormated.length < 13 ||
+                          cpfClient.length < 11 ||
+                          entryTime == "" ||
+                          departureTime == "" ||
+                          numberOfBusyDays == "" ||
+                          // parseInt(entryTime, 10) < 1000 ||
+                          // parseInt(departureTime, 10) < 1000 ||
+                          isNaN(initialValue) ||
+                          initialValue == undefined ||
+                          // (additionalServices.length > 0 &&
+                          //   additionalServices.every(
+                          //     (service: any) =>
+                          //       isNaN(service.value) ||
+                          //       service.value == undefined ||
+                          //       service.value == ""
+                          //   ))
+                          (additionalServices.length > 0 &&
+                            additionalServices.some(
+                              (service: any) =>
+                                isNaN(service.value) ||
+                                service.value === undefined ||
+                                service.value === ""
+                            ))
+                        }
                       >
-                        <p className={styles.textSendButton}>ENVIAR</p>
-                        <RiFolderSharedFill
-                          className={styles.sendIcon}
-                          size={30}
+                        <ContractGenerator
+                          data={getDataToContractPdf()}
+                          childComponent={
+                            <Button
+                              onClick={setTemporaryValuesInLocalStorage}
+                              variant="contained"
+                              className={styles.downloadButton}
+                              style={{
+                                backgroundColor:
+                                  fullNameClient.length < 5 ||
+                                  phoneNumberFormated.length < 13 ||
+                                  cpfClient.length < 11 ||
+                                  entryTime == "" ||
+                                  departureTime == "" ||
+                                  entryTime.length < 5 ||
+                                  departureTime.length < 5 ||
+                                  numberOfBusyDays == "" ||
+                                  isNaN(initialValue) ||
+                                  initialValue == undefined ||
+                                  (additionalServices.length > 0 &&
+                                    additionalServices.some(
+                                      (service: any) =>
+                                        isNaN(service.value) ||
+                                        service.value === undefined ||
+                                        service.value === ""
+                                    ))
+                                    ? "#ad7f7f"
+                                    : "#d32f2f",
+                              }}
+                            >
+                              <p className={styles.textDownloadButton}>PDF</p>
+                              <FaDownload
+                                className={styles.downloadIcon}
+                                size={30}
+                              />
+                            </Button>
+                          }
                         />
+                      </Button>
+                      <Button disabled={phoneNumberFormated.length < 13}>
+                        <Button
+                          href={`https://api.whatsapp.com/send?phone=55${phoneNumber}&text=*CONTRATO%20-%20Loca%C3%A7%C3%A3o%20da%20Ch%C3%A1cara%20do%20Dand%C3%A3o*%0A*Assinatura%20Digital:*%20Baixe%20o%20PDF%20do%20contrato%20a%20seguir%20e%20assine%20agora%20mesmo%20atrav%C3%A9s%20de%20uma%20das%20plataformas%20a%20seguir:%0A%0A*1*%20-%20https://assinador.iti.br/assinatura/index.xhtml%0A*ou*%0A*2*%20-%20https://www.autentique.com.br/%0A%0APor%20gentileza,%20ap%C3%B3s%20assinar%20o%20documento,%20na%20pr%C3%B3pria%20plataforma%20baixe%20o%20PDF%20assinado%20e%20envie%20aqui%20mesmo.`}
+                          target="_blank"
+                          variant="contained"
+                          disabled={phoneNumberFormated.length < 13}
+                          className={styles.sendButton}
+                        >
+                          <p className={styles.textSendButton}>ENVIAR</p>
+                          <RiFolderSharedFill
+                            className={styles.sendIcon}
+                            size={30}
+                          />
+                        </Button>
+                      </Button>
+                    </div>
+                    <Button>
+                      <Button
+                        onClick={() => setIsDialogOpen(true)}
+                        variant="contained"
+                        className={styles.deleteButton}
+                      >
+                        <p className={styles.textSendButton}>EXCLUIR</p>
+                        <MdDelete className={styles.sendIcon} size={30} />
                       </Button>
                     </Button>
                   </div>
@@ -1374,6 +1401,14 @@ export const SchedulingCard = ({
             </div>
           </div>
         )}
+        <AppConfirmDialog
+          reverseButtons
+          open={isDialogOpen}
+          onDeny={handleDeny}
+          onConfirm={handleConfirm}
+          title="Você está prestes a atualizar o endereço do tomador. Deseja continuar com esta ação?"
+          dialogTitle="Confirmação de Edição"
+        />
       </>
     )
   );

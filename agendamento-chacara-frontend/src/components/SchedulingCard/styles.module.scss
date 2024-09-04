@@ -215,11 +215,11 @@
 
                 .downloadButtonsBox{
                     display: flex;
-                    justify-content: flex-start;
+                    // justify-content: flex-end;
+                    justify-content: space-between;
                     gap: 10px;
-                    @media(min-width: 500px){
-                        justify-content: flex-start;
-                    }
+                    // background-color: red;
+         
                     
 
                     .downloadButton {
@@ -271,6 +271,30 @@
                         }
                       }
                 }
+                .deleteButton {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 8px 8px 8px 10px;
+                    border-radius: 8px;
+                    color: #ffffff; /* Cor do texto branco */
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    text-decoration: none;
+                    transition: background-color 0.3s ease;
+                    background-color: #fd1d1d;
+                    cursor: pointer;
+                    border: none;
+                  
+                    &:hover {
+                      background-color: red; /* Cor de fundo azul mais escura ao passar o mouse */
+                    }
+                  
+                    .sendIcon {
+                        margin-left: 4px;
+                        color: #ffffff; /* Cor do ícone branco */
+                    }
+                  }
 
                 .reserveButtonBox{
                     display: flex;
