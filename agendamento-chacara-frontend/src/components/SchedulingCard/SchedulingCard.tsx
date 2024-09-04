@@ -1406,8 +1406,8 @@ export const SchedulingCard = ({
           open={isDialogOpen}
           onDeny={handleDeny}
           onConfirm={handleConfirm}
-          title="Você está prestes a atualizar o endereço do tomador. Deseja continuar com esta ação?"
-          dialogTitle="Confirmação de Edição"
+          title="Você está prestes a EXCLUIR permanentemente essa reserva. Deseja continuar com esta ação?"
+          dialogTitle="Confirmação de Exclusão"
         />
       </>
     )
